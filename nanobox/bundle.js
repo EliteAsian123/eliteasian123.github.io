@@ -3389,7 +3389,7 @@ noa.registry.registerMaterial("grass_top", null, "grass_top.png");
 noa.registry.registerMaterial("grass_side", null, "grass_side.png");
 noa.registry.registerMaterial("stone_bricks", null, "stone_bricks.png");
 noa.registry.registerMaterial("planks", null, "planks.png");
-noa.registry.registerMaterial("glass", null, "glass.png");
+noa.registry.registerMaterial("glass", null, "glass.png", true);
 noa.registry.registerMaterial("stone", null, "stone.png");
 
 // Register blocks
@@ -3415,9 +3415,11 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 			for (var y1 = 0; y1 < data.shape[1]; ++y1) {
 				if (y1 + y === 5) {
 					data.set(x1, y1, z1, grass);
-				} else if (y1 + y < 5) {
+				} else if (y1 + y < 5 && y1 + y > 0) {
 					data.set(x1, y1, z1, dirt);
-				}
+				} else if (y1 + y <= 0) {
+					data.set(x1, y1, z1, stone);
+				}	
 			}
 		}
 	}
