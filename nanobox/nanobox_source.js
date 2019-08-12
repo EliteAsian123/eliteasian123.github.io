@@ -41,9 +41,9 @@ noa.registry.registerMaterial("stone", null, "stone.png");
 var dirt = noa.registry.registerBlock(1, { material: "dirt" });
 var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
 var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
-var stone_bricks = noa.registry.registerBlock(4, { material: "planks" });
-var stone_bricks = noa.registry.registerBlock(5, { material: "glass" });
-var stone_bricks = noa.registry.registerBlock(6, { material: "stone" });
+var planks = noa.registry.registerBlock(4, { material: "planks" });
+var glass = noa.registry.registerBlock(5, { material: "glass" });
+var stone = noa.registry.registerBlock(6, { material: "stone" });
 
 var block_array = [stone_bricks, planks, glass, dirt, grass, stone];
 
