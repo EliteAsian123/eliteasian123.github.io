@@ -3354,9 +3354,9 @@ function hasOwnProperty(obj, prop) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":7,"_process":5,"inherits":6}],9:[function(require,module,exports){
 /* globals BABYLON */
-'use strict';
+"use strict";
 
-var noaEngine = require('noa-engine');
+var noaEngine = require("noa-engine");
 
 // Game engine settings
 var opts = {
@@ -3367,8 +3367,8 @@ var opts = {
 	chunkAddDistance: 4,
 	chunkRemoveDistance: 4,
 	blockTestDistance: 50,
-	texturePath: 'textures/',
-	playerStart: [0.5, 5, 0.5],
+	texturePath: "textures/",
+	playerStart: [0.5, 6, 0.5],
 	playerHeight: 1.6,
 	playerWidth: 0.8,
 	playerAutoStep: true,
@@ -3384,24 +3384,30 @@ var noa = noaEngine(opts);
 
 // Register
 // Register block materials
-noa.registry.registerMaterial('dirt', null, "dirt.png");
-noa.registry.registerMaterial('grass_top', null, "grass_top.png");
-noa.registry.registerMaterial('grass_side', null, "grass_side.png");
+noa.registry.registerMaterial("dirt", null, "dirt.png");
+noa.registry.registerMaterial("grass_top", null, "grass_top.png");
+noa.registry.registerMaterial("grass_side", null, "grass_side.png");
+noa.registry.registerMaterial("stone_bricks", null, "stone_bricks.png");
 
 // Register blocks
-var dirtID = noa.registry.registerBlock(1, { material: 'dirt' });
-var grassID = noa.registry.registerBlock(2, { material: ['grass_top', 'dirt', 'grass_side'] });
+var dirt = noa.registry.registerBlock(1, { material: "dirt" });
+var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
+var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
 
 
 
 // Terrain
 // Add a listener for when the engine requests a new world chunk
-noa.world.on('worldDataNeeded', function (id, data, x, y, z) {
+noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 	
-	for (var x = 0; x < data.shape[0]; ++x) {
-		for (var z = 0; z < data.shape[1]; ++z) {		
-			if (y <= 5) {
-				data.set(x, y, z, dirtID);
+	for (var x1 = 0; x1 < data.shape[0]; ++x1) {
+		for (var z1 = 0; z1 < data.shape[2]; ++z1) {
+			for (var y1 = 0; y1 < data.shape[1]; ++y1) {
+				if (y1 + y === 5) {
+					data.set(x1, y1, z1, grass);
+				} else if (y1 + y < 5) {
+					data.set(x1, y1, z1, dirt);
+				}
 			}
 		}
 	}
@@ -3411,7 +3417,7 @@ noa.world.on('worldDataNeeded', function (id, data, x, y, z) {
 
 
 // Add player mesh
-// Get the player entity's ID and other info (aabb, size)
+// Get the player entity"s ID and other info (aabb, size)
 var eid = noa.playerEntity;
 var dat = noa.entities.getPositionData(eid);
 var w = dat.width;
@@ -3419,11 +3425,11 @@ var h = dat.height;
 
 // Make a Babylon.js mesh and scale it, etc.
 var scene = noa.rendering.getScene();
-var mesh = BABYLON.Mesh.CreateBox('player', 1, scene);
+var mesh = BABYLON.Mesh.CreateBox("player", 1, scene);
 mesh.scaling.x = mesh.scaling.z = w;
 mesh.scaling.y = h;
 
-// Offset of mesh relative to the entity's position (center of its feet)
+// Offset of mesh relative to the entity"s position (center of its feet)
 var offset = [0, h / 2, 0];
 
 // Add a mesh component to the player entity
@@ -3436,18 +3442,18 @@ noa.entities.addComponent(eid, noa.entities.names.mesh, {
 
 // Input
 // On left mouse, set targeted block to be air
-noa.inputs.down.on('fire', function () {
+noa.inputs.down.on("fire", function () {
 	if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
 });
 
 // On right mouse, place some grass
-noa.inputs.down.on('alt-fire', function () {
-	if (noa.targetedBlock) noa.addBlock(grassID, noa.targetedBlock.adjacent);
+noa.inputs.down.on("alt-fire", function () {
+	if (noa.targetedBlock) noa.addBlock(stone_bricks, noa.targetedBlock.adjacent);
 });
 
 // Each tick, consume any scroll events and use them to zoom camera
 var zoom = 0
-noa.on('tick', function (dt) {
+noa.on("tick", function (dt) {
 	var scroll = noa.inputs.state.scrolly;
 	if (scroll === 0) return;
 
