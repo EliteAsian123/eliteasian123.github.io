@@ -1,1 +1,1 @@
-This project uses voxel.js, a javascript based voxel engine. [Click here](https://github.com/voxel) to visit the Voxel.js Project.
+This project uses NOA, a javascript based voxel engine. [Click here](https://github.com/andyhall/noa) to visit the github page.
