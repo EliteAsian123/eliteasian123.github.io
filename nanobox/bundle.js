@@ -3394,6 +3394,10 @@ var dirt = noa.registry.registerBlock(1, { material: "dirt" });
 var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
 var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
 
+var block_array = [stone_bricks, dirt, grass];
+
+var currentblock = stone_bricks;
+
 
 
 // Terrain
@@ -3448,20 +3452,20 @@ noa.inputs.down.on("fire", function () {
 
 // On right mouse, place some grass
 noa.inputs.down.on("alt-fire", function () {
-	if (noa.targetedBlock) noa.addBlock(stone_bricks, noa.targetedBlock.adjacent);
+	if (noa.targetedBlock) noa.addBlock(currentblock, noa.targetedBlock.adjacent);
 });
 
 // Each tick, consume any scroll events and use them to zoom camera
-var zoom = 0
+var block_array_i = 0;
 noa.on("tick", function (dt) {
 	var scroll = noa.inputs.state.scrolly;
 	if (scroll === 0) return;
 
-	// Handle zoom controls
-	zoom += (scroll > 0) ? 1 : -1;
-	if (zoom < 0) zoom = 0;
-	if (zoom > 10) zoom = 10
-	noa.rendering.zoomDistance = zoom;
+	// Handle block switching
+	block_array_i += (scroll > 0) ? 1 : -1;
+	if (block_array_i < 0) block_array_i = block_array.length-1;
+	if (block_array_i > block_array.length-1) block_array_i = 0;
+	currentblock = block_array[block_array_i];
 })
 },{"noa-engine":95}],10:[function(require,module,exports){
 module.exports = AABB
