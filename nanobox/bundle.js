@@ -3414,12 +3414,13 @@ var noa = noaEngine(opts);
 // register some block materials (just colors here)
 var textureURL = "textures/"; // replace that to use a texture
 noa.registry.registerMaterial('dirt', null, textureURL + "dirt.png");
-noa.registry.registerMaterial('grass', null, textureURL + "grass.png");
+noa.registry.registerMaterial('grass_top', null, textureURL + "grass_top.png");
+noa.registry.registerMaterial('grass_side', null, textureURL + "grass_side.png");
 
 
 // register block types and their material name
 var dirtID = noa.registry.registerBlock(1, { material: 'dirt' });
-var grassID = noa.registry.registerBlock(2, { material: 'grass' });
+var grassID = noa.registry.registerBlock(2, { material: ['grass_top', 'dirt', 'grass_side'] });
 
 
 // add a listener for when the engine requests a new world chunk
