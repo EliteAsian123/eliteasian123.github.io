@@ -3388,13 +3388,19 @@ noa.registry.registerMaterial("dirt", null, "dirt.png");
 noa.registry.registerMaterial("grass_top", null, "grass_top.png");
 noa.registry.registerMaterial("grass_side", null, "grass_side.png");
 noa.registry.registerMaterial("stone_bricks", null, "stone_bricks.png");
+noa.registry.registerMaterial("planks", null, "planks.png");
+noa.registry.registerMaterial("glass", null, "glass.png");
+noa.registry.registerMaterial("stone", null, "stone.png");
 
 // Register blocks
 var dirt = noa.registry.registerBlock(1, { material: "dirt" });
 var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
 var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
+var stone_bricks = noa.registry.registerBlock(4, { material: "planks" });
+var stone_bricks = noa.registry.registerBlock(5, { material: "glass" });
+var stone_bricks = noa.registry.registerBlock(6, { material: "stone" });
 
-var block_array = [stone_bricks, dirt, grass];
+var block_array = [stone_bricks, planks, glass, dirt, grass, stone];
 
 var currentblock = stone_bricks;
 
