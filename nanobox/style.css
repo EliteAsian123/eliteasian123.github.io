@@ -15,8 +15,16 @@ body {
     height: 20px;
     line-height: 20px;
     margin: -10px 0 0 -10px;
-    z-index: 99;
+    z-index: 150;
     color: white;
     text-shadow: 1px 1px 0px black;
     text-align: center;
+}
+
+#ui_block {
+	background-color: transparent;
+	z-index: 140;
+	position: fixed;
+	top: 0;
+	left: 0;
 }

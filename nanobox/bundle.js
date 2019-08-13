@@ -3369,7 +3369,7 @@ var opts = {
 	blockTestDistance: 50,
 	texturePath: "textures/",
 	playerStart: [0.5, 6, 0.5],
-	playerHeight: 1.6,
+	playerHeight: 2.0,
 	playerWidth: 0.8,
 	playerAutoStep: true,
 	useAO: true,
@@ -3400,9 +3400,10 @@ var planks = noa.registry.registerBlock(4, { material: "planks" });
 var glass = noa.registry.registerBlock(5, { material: "glass" });
 var stone = noa.registry.registerBlock(6, { material: "stone" });
 
-var block_array = [stone_bricks, planks, glass, dirt, grass, stone];
+var blockArray = [stone_bricks, planks, glass, dirt, grass, stone];
+var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone"];
 
-var currentblock = stone_bricks;
+var currentBlock = stone_bricks;
 
 
 
@@ -3426,6 +3427,7 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 	// Pass the finished data back to the game engine
 	noa.world.setChunkData(id, data);
 })
+
 
 
 // Add player mesh
@@ -3452,6 +3454,11 @@ noa.entities.addComponent(eid, noa.entities.names.mesh, {
 
 
 
+// UI
+var uiBlockCanvas = document.getElementById("ui_block");
+var uiBlockContext = uiBlockCanvas.getContext("2d");
+
+
 // Input
 // On left mouse, set targeted block to be air
 noa.inputs.down.on("fire", function () {
@@ -3460,20 +3467,30 @@ noa.inputs.down.on("fire", function () {
 
 // On right mouse, place some grass
 noa.inputs.down.on("alt-fire", function () {
-	if (noa.targetedBlock) noa.addBlock(currentblock, noa.targetedBlock.adjacent);
+	if (noa.targetedBlock) noa.addBlock(currentBlock, noa.targetedBlock.adjacent);
 });
 
-// Each tick, consume any scroll events and use them to zoom camera
-var block_array_i = 0;
+// Ran each tick
+var blockArray_i = 0;
+var currentBlockImage = new Image(128, 128);
+currentBlockImage.src = "textures/stone_bricks_icon.png"
 noa.on("tick", function (dt) {
+	// Handle UI
+	uiBlockContext.clearRect(0, 0, uiBlockCanvas.width, uiBlockCanvas.height);
+	uiBlockContext.drawImage(currentBlockImage, 0, 0);
+	
+	// Handle scrolling
 	var scroll = noa.inputs.state.scrolly;
-	if (scroll === 0) return;
-
-	// Handle block switching
-	block_array_i += (scroll > 0) ? 1 : -1;
-	if (block_array_i < 0) block_array_i = block_array.length-1;
-	if (block_array_i > block_array.length-1) block_array_i = 0;
-	currentblock = block_array[block_array_i];
+	if (scroll !== 0) {
+		// Handle block switching
+		blockArray_i += (scroll > 0) ? 1 : -1;
+		if (blockArray_i < 0) blockArray_i = blockArray.length-1;
+		if (blockArray_i > blockArray.length-1) blockArray_i = 0;
+		currentBlock = blockArray[blockArray_i];
+	
+		// Handle block image switching
+		currentBlockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
+	}
 })
 },{"noa-engine":95}],10:[function(require,module,exports){
 module.exports = AABB
