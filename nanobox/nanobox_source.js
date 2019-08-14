@@ -24,6 +24,7 @@ var opts = {
 
 // Create engine
 var noa = noaEngine(opts);
+var scene = noa.rendering.getScene();
 
 
 
@@ -34,15 +35,15 @@ noa.registry.registerMaterial("grass_top", null, "grass_top.png");
 noa.registry.registerMaterial("grass_side", null, "grass_side.png");
 noa.registry.registerMaterial("stone_bricks", null, "stone_bricks.png");
 noa.registry.registerMaterial("planks", null, "planks.png");
-noa.registry.registerMaterial("glass", null, "glass.png", true);
 noa.registry.registerMaterial("stone", null, "stone.png");
+noa.registry.registerMaterial("glass", null, "glass.png", true);
 
 // Register blocks
 var dirt = noa.registry.registerBlock(1, { material: "dirt" });
 var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
 var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
 var planks = noa.registry.registerBlock(4, { material: "planks" });
-var glass = noa.registry.registerBlock(5, { material: "glass" });
+var glass = noa.registry.registerBlock(5, { material: "glass", opaque: false });
 var stone = noa.registry.registerBlock(6, { material: "stone" });
 
 var blockArray = [stone_bricks, planks, glass, dirt, grass, stone];
@@ -99,11 +100,6 @@ noa.entities.addComponent(eid, noa.entities.names.mesh, {
 
 
 
-// UI
-var uiBlockCanvas = document.getElementById("ui_block");
-var uiBlockContext = uiBlockCanvas.getContext("2d");
-
-
 // Input
 // On left mouse, set targeted block to be air
 noa.inputs.down.on("fire", function () {
@@ -117,13 +113,8 @@ noa.inputs.down.on("alt-fire", function () {
 
 // Ran each tick
 var blockArray_i = 0;
-var currentBlockImage = new Image(128, 128);
-currentBlockImage.src = "textures/stone_bricks_icon.png"
+var blockImage = document.getElementById("block_img");
 noa.on("tick", function (dt) {
-	// Handle UI
-	uiBlockContext.clearRect(0, 0, uiBlockCanvas.width, uiBlockCanvas.height);
-	uiBlockContext.drawImage(currentBlockImage, 0, 0);
-	
 	// Handle scrolling
 	var scroll = noa.inputs.state.scrolly;
 	if (scroll !== 0) {
@@ -134,6 +125,6 @@ noa.on("tick", function (dt) {
 		currentBlock = blockArray[blockArray_i];
 	
 		// Handle block image switching
-		currentBlockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
+		blockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
 	}
 })

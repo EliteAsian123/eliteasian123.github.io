@@ -21,8 +21,7 @@ body {
     text-align: center;
 }
 
-#ui_block {
-	background-color: transparent;
+#block_img {
 	z-index: 140;
 	position: fixed;
 	top: 0;
