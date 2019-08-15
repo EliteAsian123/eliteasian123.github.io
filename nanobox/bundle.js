@@ -3357,6 +3357,7 @@ function hasOwnProperty(obj, prop) {
 "use strict";
 
 var noaEngine = require("noa-engine");
+var voxelCrunch = require("voxel-crunch");
 
 // Game engine settings
 var opts = {
@@ -3369,7 +3370,7 @@ var opts = {
 	blockTestDistance: 50,
 	texturePath: "textures/",
 	playerStart: [0.5, 6, 0.5],
-	playerHeight: 2.0,
+	playerHeight: 1.9,
 	playerWidth: 0.8,
 	playerAutoStep: true,
 	useAO: true,
@@ -3377,9 +3378,11 @@ var opts = {
 	reverseAOmultiplier: 1.0
 };
 
-// Create engine
+// Create engine and important variables
 var noa = noaEngine(opts);
 var scene = noa.rendering.getScene();
+var guiOpen = false;
+var saveData = {};
 
 
 
@@ -3409,32 +3412,41 @@ var currentBlock = stone_bricks;
 
 
 // Terrain
+// When chunk is being removed, store it's data
+noa.world.on('chunkBeingRemoved', function (id, array, userData) {
+    //var encodedData = voxelCrunch.encode(array.data);
+	saveData[id.toString()] = array.data;
+});
+
 // Add a listener for when the engine requests a new world chunk
 noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
-	
-	for (var x1 = 0; x1 < data.shape[0]; ++x1) {
-		for (var z1 = 0; z1 < data.shape[2]; ++z1) {
-			for (var y1 = 0; y1 < data.shape[1]; ++y1) {
-				if (y1 + y === 5) {
-					data.set(x1, y1, z1, grass);
-				} else if (y1 + y < 5 && y1 + y > 0) {
-					data.set(x1, y1, z1, dirt);
-				} else if (y1 + y <= 0) {
-					data.set(x1, y1, z1, stone);
-				}	
+	if (id.toString() in saveData) {
+		//var decodedData = voxelCrunch.decode(saveData[id.toString()], []);
+		data.data = saveData[id.toString()];
+    } else {
+		for (var x1 = 0; x1 < data.shape[0]; ++x1) {
+			for (var z1 = 0; z1 < data.shape[2]; ++z1) {
+				for (var y1 = 0; y1 < data.shape[1]; ++y1) {
+					if (y1 + y === 5) {
+						data.set(x1, y1, z1, grass);
+					} else if (y1 + y < 5 && y1 + y > 0) {
+						data.set(x1, y1, z1, dirt);
+					} else if (y1 + y <= 0) {
+						data.set(x1, y1, z1, stone);
+					}	
+				}
 			}
 		}
-	}
-	// Pass the finished data back to the game engine
-	noa.world.setChunkData(id, data);
+    }
+	noa.world.setChunkData(id, data);	
 })
 
 
 
 // Add player mesh
-// Get the player entity"s ID and other info (aabb, size)
-var eid = noa.playerEntity;
-var dat = noa.entities.getPositionData(eid);
+// Get the player entity's ID and other info (aabb, size)
+var playerEnt = noa.playerEntity;
+var dat = noa.entities.getPositionData(playerEnt);
 var w = dat.width;
 var h = dat.height;
 
@@ -3448,7 +3460,7 @@ mesh.scaling.y = h;
 var offset = [0, h / 2, 0];
 
 // Add a mesh component to the player entity
-noa.entities.addComponent(eid, noa.entities.names.mesh, {
+noa.entities.addComponent(playerEnt, noa.entities.names.mesh, {
 	mesh: mesh,
 	offset: offset
 });
@@ -3482,8 +3494,8 @@ noa.on("tick", function (dt) {
 		// Handle block image switching
 		blockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
 	}
-})
-},{"noa-engine":95}],10:[function(require,module,exports){
+});
+},{"noa-engine":95,"voxel-crunch":113}],10:[function(require,module,exports){
 module.exports = AABB
 
 var vec3 = require('gl-vec3')
@@ -11698,7 +11710,7 @@ function makePhysics(noa, opts) {
     return physics
 }
 
-},{"voxel-physics-engine":113}],104:[function(require,module,exports){
+},{"voxel-physics-engine":115}],104:[function(require,module,exports){
 'use strict'
 
 module.exports = function (noa, opts) {
@@ -14929,6 +14941,103 @@ module.exports = sweep
 
 
 },{}],113:[function(require,module,exports){
+var bits = require("bit-twiddle")
+
+function size(chunk) {
+  var count = 0
+  var chunk_len = chunk.length
+  var i = 0, v, l
+  while(i<chunk.length) {
+    v = chunk[i]
+    l = 0
+    while(i < chunk_len && chunk[i] === v) {
+      ++i
+      ++l
+    }
+    count += (bits.log2(l) / 7)|0
+    count += (bits.log2(v>>>0) / 7)|0
+    count += 2
+  }
+  return count
+}
+exports.size = size
+
+function encode(chunk, runs) {
+  if(!runs) {
+    runs = new Uint8Array(size(chunk))
+  }
+  var rptr = 0, nruns = runs.length
+  var i = 0, v, l
+  while(i<chunk.length) {
+    v = chunk[i]
+    l = 0
+    while(i < chunk.length && chunk[i] === v) {
+      ++i
+      ++l
+    }
+    while(rptr < nruns && l >= 128) {
+      runs[rptr++] = 128 + (l&0x7f)
+      l >>>= 7
+    }
+    if(rptr >= nruns) {
+      throw new Error("RLE buffer overflow")
+    }
+    runs[rptr++] = l
+    v >>>= 0
+    while(rptr < nruns && v >= 128) {
+      runs[rptr++] = 128 + (v&0x7f)
+      v >>>= 7
+    }
+    if(rptr >= nruns) {
+      throw new Error("RLE buffer overflow")
+    }
+    runs[rptr++] = v
+  }
+  return runs
+}
+exports.encode = encode
+
+function decode(runs, chunk) {
+  var buf_len = chunk.length
+  var nruns = runs.length
+  var cptr = 0
+  var ptr = 0
+  var l, s, v, i
+  while(ptr < nruns) {
+    l = 0
+    s = 0
+    while(ptr < nruns && runs[ptr] >= 128) {
+      l += (runs[ptr++]&0x7f) << s
+      s += 7
+    }
+    l += runs[ptr++] << s
+    if(ptr >= nruns) {
+      throw new Error("RLE buffer underrun")
+    }
+    if(cptr + l > buf_len) {
+      throw new Error("Chunk buffer overflow")
+    }
+    v = 0
+    s = 0
+    while(ptr < nruns && runs[ptr] >= 128) {
+      v += (runs[ptr++]&0x7f) << s
+      s += 7
+    }
+    if(ptr >= nruns) {
+      throw new Error("RLE buffer underrun")
+    }
+    v += runs[ptr++] << s
+    for(i=0; i<l; ++i) {
+      chunk[cptr++] = v
+    }
+  }
+  return chunk
+}
+exports.decode = decode
+
+},{"bit-twiddle":114}],114:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"dup":12}],115:[function(require,module,exports){
 'use strict'
 
 var aabb = require('aabb-3d')
@@ -15353,7 +15462,7 @@ if (DEBUG) sanityCheck = function (v) {
     if (isNaN(vec3.length(v))) throw 'Vector with NAN: ', v
 }
 
-},{"./rigidBody":114,"aabb-3d":10,"gl-vec3":50,"voxel-aabb-sweep":112}],114:[function(require,module,exports){
+},{"./rigidBody":116,"aabb-3d":10,"gl-vec3":50,"voxel-aabb-sweep":112}],116:[function(require,module,exports){
 'use strict'
 
 var aabb = require('aabb-3d')

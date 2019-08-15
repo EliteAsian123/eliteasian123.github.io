@@ -2,6 +2,7 @@
 "use strict";
 
 var noaEngine = require("noa-engine");
+var voxelCrunch = require("voxel-crunch");
 
 // Game engine settings
 var opts = {
@@ -14,7 +15,7 @@ var opts = {
 	blockTestDistance: 50,
 	texturePath: "textures/",
 	playerStart: [0.5, 6, 0.5],
-	playerHeight: 2.0,
+	playerHeight: 1.9,
 	playerWidth: 0.8,
 	playerAutoStep: true,
 	useAO: true,
@@ -22,9 +23,11 @@ var opts = {
 	reverseAOmultiplier: 1.0
 };
 
-// Create engine
+// Create engine and important variables
 var noa = noaEngine(opts);
 var scene = noa.rendering.getScene();
+var guiOpen = false;
+var saveData = {};
 
 
 
@@ -54,32 +57,41 @@ var currentBlock = stone_bricks;
 
 
 // Terrain
+// When chunk is being removed, store it's data
+noa.world.on('chunkBeingRemoved', function (id, array, userData) {
+    //var encodedData = voxelCrunch.encode(array.data);
+	saveData[id.toString()] = array.data;
+});
+
 // Add a listener for when the engine requests a new world chunk
 noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
-	
-	for (var x1 = 0; x1 < data.shape[0]; ++x1) {
-		for (var z1 = 0; z1 < data.shape[2]; ++z1) {
-			for (var y1 = 0; y1 < data.shape[1]; ++y1) {
-				if (y1 + y === 5) {
-					data.set(x1, y1, z1, grass);
-				} else if (y1 + y < 5 && y1 + y > 0) {
-					data.set(x1, y1, z1, dirt);
-				} else if (y1 + y <= 0) {
-					data.set(x1, y1, z1, stone);
-				}	
+	if (id.toString() in saveData) {
+		//var decodedData = voxelCrunch.decode(saveData[id.toString()], []);
+		data.data = saveData[id.toString()];
+    } else {
+		for (var x1 = 0; x1 < data.shape[0]; ++x1) {
+			for (var z1 = 0; z1 < data.shape[2]; ++z1) {
+				for (var y1 = 0; y1 < data.shape[1]; ++y1) {
+					if (y1 + y === 5) {
+						data.set(x1, y1, z1, grass);
+					} else if (y1 + y < 5 && y1 + y > 0) {
+						data.set(x1, y1, z1, dirt);
+					} else if (y1 + y <= 0) {
+						data.set(x1, y1, z1, stone);
+					}	
+				}
 			}
 		}
-	}
-	// Pass the finished data back to the game engine
-	noa.world.setChunkData(id, data);
+    }
+	noa.world.setChunkData(id, data);	
 })
 
 
 
 // Add player mesh
-// Get the player entity"s ID and other info (aabb, size)
-var eid = noa.playerEntity;
-var dat = noa.entities.getPositionData(eid);
+// Get the player entity's ID and other info (aabb, size)
+var playerEnt = noa.playerEntity;
+var dat = noa.entities.getPositionData(playerEnt);
 var w = dat.width;
 var h = dat.height;
 
@@ -93,7 +105,7 @@ mesh.scaling.y = h;
 var offset = [0, h / 2, 0];
 
 // Add a mesh component to the player entity
-noa.entities.addComponent(eid, noa.entities.names.mesh, {
+noa.entities.addComponent(playerEnt, noa.entities.names.mesh, {
 	mesh: mesh,
 	offset: offset
 });
@@ -127,4 +139,4 @@ noa.on("tick", function (dt) {
 		// Handle block image switching
 		blockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
 	}
-})
+});
