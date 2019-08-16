@@ -56,25 +56,19 @@ nav {
 	animation: nav 0.4s ease-out;
 	-webkit-animation: nav 0.4s ease-out;
 	font-size: 3vh;
-}
-
-ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
 	overflow: hidden;
 }
 
-li {
+nav a {
 	float: left;
+	color: #e2e2e2;
+	text-align: center;
+	padding: 1.8vh 1vw;
+	text-decoration: none;
 }
 
-li a {
-	display: block;
+nav a:hover {
 	color: white;
-	text-align: center;
-	padding: 16%;
-	text-decoration: none;
 }
 
 @keyframes slide {
