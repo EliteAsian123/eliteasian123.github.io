@@ -3414,15 +3414,15 @@ var currentBlock = stone_bricks;
 // Terrain
 // When chunk is being removed, store it's data
 noa.world.on('chunkBeingRemoved', function (id, array, userData) {
-    //var encodedData = voxelCrunch.encode(array.data);
-	saveData[id.toString()] = array.data;
+    var encodedData = voxelCrunch.encode(array.data);
+	saveData[id.toString()] = encodedData;
 });
 
 // Add a listener for when the engine requests a new world chunk
 noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 	if (id.toString() in saveData) {
-		//var decodedData = voxelCrunch.decode(saveData[id.toString()], []);
-		data.data = saveData[id.toString()];
+		var decodedData = voxelCrunch.decode(saveData[id.toString()], new Uint32Array(data.data.length));
+		data.data = decodedData;
     } else {
 		for (var x1 = 0; x1 < data.shape[0]; ++x1) {
 			for (var z1 = 0; z1 < data.shape[2]; ++z1) {
@@ -3476,6 +3476,12 @@ noa.inputs.down.on("fire", function () {
 // On right mouse, place some grass
 noa.inputs.down.on("alt-fire", function () {
 	if (noa.targetedBlock) noa.addBlock(currentBlock, noa.targetedBlock.adjacent);
+});
+
+// Write save data
+noa.inputs.bind('savedata', 'L')
+noa.inputs.down.on('savedata', function () {
+    console.log(saveData);
 });
 
 // Ran each tick
