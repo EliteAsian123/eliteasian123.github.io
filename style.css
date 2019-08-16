@@ -16,7 +16,6 @@ body {
 	width: 100%;
 	overflow: hidden;
 	z-index: 0;
-	background: linear-gradient(red, orange);
 	animation: rainbow-bg 30s linear infinite;
 	-webkit-animation: rainbow-bg 30s linear infinite;
 }
