@@ -27,3 +27,29 @@ body {
 	top: 0;
 	left: 0;
 }
+
+
+#author {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: 20px;
+	line-height: 20px;
+	z-index: 150;
+	color: white;
+	text-shadow: 1px 1px 0px black;
+	font-family: Arial;
+	margin-left: 2px;
+}
+
+#author a {
+	color: blue;
+}
+
+#author a:hover {
+	color: blue;
+}
+
+#author a:active {
+	color: blue;
+}
