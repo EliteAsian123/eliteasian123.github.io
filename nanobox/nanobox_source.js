@@ -118,12 +118,26 @@ noa.inputs.down.on("fire", function () {
 	if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
 });
 
-// On right mouse, place some grass
+// On right mouse, place block
 noa.inputs.down.on("alt-fire", function () {
 	if (noa.targetedBlock) noa.addBlock(currentBlock, noa.targetedBlock.adjacent);
 });
 
-// Write save data
+// On mid mouse, pick block
+noa.inputs.down.on("mid-fire", function () {
+	var i = 0;
+	for(var element of blockArray) {
+		if (element === noa.targetedBlock.blockID) {
+			setPickedBlock(element, blockNameArray[i]);
+			blockArray_i = i;
+			break;
+		}
+		i++;
+	}
+});
+
+
+// Write save data (DEBUG)
 noa.inputs.bind('savedata', 'L')
 noa.inputs.down.on('savedata', function () {
     console.log(saveData);
@@ -140,9 +154,17 @@ noa.on("tick", function (dt) {
 		blockArray_i += (scroll > 0) ? 1 : -1;
 		if (blockArray_i < 0) blockArray_i = blockArray.length-1;
 		if (blockArray_i > blockArray.length-1) blockArray_i = 0;
-		currentBlock = blockArray[blockArray_i];
-	
-		// Handle block image switching
-		blockImage.src = "textures/" + blockNameArray[blockArray_i] + "_icon.png";
+		setPickedBlock(blockArray[blockArray_i], blockNameArray[blockArray_i]);
+		
+		
+		
 	}
 });
+
+function setPickedBlock(block, blockName) {
+	// Switch picked block
+	currentBlock = block;
+	
+	// Switch block image
+	blockImage.src = "textures/" + blockName + "_icon.png";
+}
