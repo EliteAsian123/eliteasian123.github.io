@@ -3383,6 +3383,13 @@ var noa = noaEngine(opts);
 var scene = noa.rendering.getScene();
 var guiOpen = false;
 var saveData = {};
+var guiCanvas = document.getElementById("gui");
+guiCanvas.width = window.innerWidth;
+guiCanvas.height = window.innerHeight;
+window.addEventListener("keydown", keydown);
+guiCanvas.addEventListener("click", click, false);
+
+var guiContext = guiCanvas.getContext("2d");
 
 
 
@@ -3411,17 +3418,23 @@ var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone
 
 var currentBlock = stone_bricks;
 
+// Register guis
+var gui_pause = [];
+gui_pause.push({type: "button", x: 10, y: 10, w: 100, h: 50, func: save});
+
+var currentGui = null;
+
 
 
 // Terrain
 // When chunk is being removed, store it's data
-noa.world.on('chunkBeingRemoved', function (id, array, userData) {
+noa.world.on('chunkBeingRemoved', function(id, array, userData) {
     var encodedData = voxelCrunch.encode(array.data);
 	saveData[id.toString()] = encodedData;
 });
 
 // Add a listener for when the engine requests a new world chunk
-noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
+noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 	if (id.toString() in saveData) {
 		var decodedData = voxelCrunch.decode(saveData[id.toString()], new Uint32Array(data.data.length));
 		data.data = decodedData;
@@ -3458,7 +3471,7 @@ var mesh = BABYLON.Mesh.CreateBox("player", 1, scene);
 mesh.scaling.x = mesh.scaling.z = w;
 mesh.scaling.y = h;
 
-// Offset of mesh relative to the entity"s position (center of its feet)
+// Offset of mesh relative to the entity's position (center of its feet)
 var offset = [0, h / 2, 0];
 
 // Add a mesh component to the player entity
@@ -3471,17 +3484,17 @@ noa.entities.addComponent(playerEnt, noa.entities.names.mesh, {
 
 // Input
 // On left mouse, set targeted block to be air
-noa.inputs.down.on("fire", function () {
+noa.inputs.down.on("fire", function() {
 	if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
 });
 
 // On right mouse, place block
-noa.inputs.down.on("alt-fire", function () {
+noa.inputs.down.on("alt-fire", function() {
 	if (noa.targetedBlock) noa.addBlock(currentBlock, noa.targetedBlock.adjacent);
 });
 
 // On mid mouse, pick block
-noa.inputs.down.on("mid-fire", function () {
+noa.inputs.down.on("mid-fire", function() {
 	var i = 0;
 	for(var element of blockArray) {
 		if (element === noa.targetedBlock.blockID) {
@@ -3493,17 +3506,10 @@ noa.inputs.down.on("mid-fire", function () {
 	}
 });
 
-
-// Write save data (DEBUG)
-noa.inputs.bind('savedata', 'L')
-noa.inputs.down.on('savedata', function () {
-    console.log(saveData);
-});
-
 // Ran each tick
 var blockArray_i = 0;
 var blockImage = document.getElementById("block_img");
-noa.on("tick", function (dt) {
+noa.on("tick", function(dt) {
 	// Handle scrolling
 	var scroll = noa.inputs.state.scrolly;
 	if (scroll !== 0) {
@@ -3512,11 +3518,29 @@ noa.on("tick", function (dt) {
 		if (blockArray_i < 0) blockArray_i = blockArray.length-1;
 		if (blockArray_i > blockArray.length-1) blockArray_i = 0;
 		setPickedBlock(blockArray[blockArray_i], blockNameArray[blockArray_i]);
-		
-		
-		
+	}
+	
+	// GUI Drawing
+	if (currentGui !== null) {
+		guiContext.clearRect(0, 0, guiCanvas.width, guiCanvas.height);
+		for (var element of currentGui) {
+			if (element.type === "button") {
+				guiContext.fillStyle = "white";
+				guiContext.rect(element.x, element.y, element.w, element.h);
+				guiContext.fill();
+			}
+		}	
 	}
 });
+
+
+
+// Functions
+function keydown(e) {
+	if (e.key === "p") {
+		togglePauseMenu();
+	}
+}
 
 function setPickedBlock(block, blockName) {
 	// Switch picked block
@@ -3525,6 +3549,51 @@ function setPickedBlock(block, blockName) {
 	// Switch block image
 	blockImage.src = "textures/" + blockName + "_icon.png";
 }
+
+function togglePauseMenu() {
+	if (guiOpen) {
+		guiCanvas.style.display = "none";
+		noa.container.setPointerLock(true);
+		noa.entities.addComponent(playerEnt, noa.ents.names.receivesInputs);
+		currentGui = null;
+	} else {
+		guiCanvas.style.display = "block";
+		noa.container.setPointerLock(false);
+		noa.entities.removeComponent(playerEnt, noa.ents.names.receivesInputs);
+		currentGui = gui_pause;
+	}
+	guiOpen = !guiOpen;
+}
+
+function getMousePos(event) {
+    var rect = guiCanvas.getBoundingClientRect();
+    return {x: event.clientX - rect.left, y: event.clientY - rect.top};
+}
+
+function isInside(pos, rect){
+    return pos.x > rect.x && pos.x < rect.x + rect.w && pos.y < rect.y  + rect.h && pos.y > rect.y;
+}
+
+function click(event) {
+	if (guiOpen && currentGui !== null) {
+		for (var element of currentGui) {
+			if (element.type === "button") {
+				var mousePos = getMousePos(event);
+				if (isInside(mousePos, element)) {
+					element.func();
+				}
+			}
+		}
+	}
+}
+
+function save() {
+	var saveString;
+	saveString = JSON.stringify(saveData);
+	saveString = LZString.compress(saveString);
+	console.log(saveString);
+}
+
 },{"noa-engine":95,"voxel-crunch":113}],10:[function(require,module,exports){
 module.exports = AABB
 
