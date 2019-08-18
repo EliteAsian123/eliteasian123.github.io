@@ -15,7 +15,7 @@ body {
     height: 20px;
     line-height: 20px;
     margin: -10px 0 0 -10px;
-    z-index: 150;
+    z-index: 140;
     color: white;
     text-shadow: 1px 1px 0px black;
     text-align: center;
@@ -35,7 +35,7 @@ body {
 	left: 0;
 	height: 20px;
 	line-height: 20px;
-	z-index: 150;
+	z-index: 200;
 	color: white;
 	text-shadow: 1px 1px 0px black;
 	font-family: Arial;
@@ -52,4 +52,13 @@ body {
 
 #author a:active {
 	color: blue;
+}
+
+#gui {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 150;
+	background-color: rgba(0, 0, 0, 0.5);
 }
