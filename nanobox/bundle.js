@@ -3386,8 +3386,10 @@ var saveData = {};
 var guiCanvas = document.getElementById("gui");
 guiCanvas.width = window.innerWidth;
 guiCanvas.height = window.innerHeight;
+
 window.addEventListener("keydown", keydown);
 guiCanvas.addEventListener("click", click, false);
+window.addEventListener("resize", resize);
 
 var guiContext = guiCanvas.getContext("2d");
 
@@ -3526,7 +3528,7 @@ noa.on("tick", function(dt) {
 		for (var element of currentGui) {
 			if (element.type === "button") {
 				guiContext.fillStyle = "white";
-				guiContext.rect(element.x, element.y, element.w, element.h);
+				guiContext.rect(getGridPosX(element.x), getGridPosY(element.y), getGridPosX(element.w), getGridPosY(element.h));
 				guiContext.fill();
 			}
 		}	
@@ -3574,6 +3576,14 @@ function isInside(pos, rect){
     return pos.x > rect.x && pos.x < rect.x + rect.w && pos.y < rect.y  + rect.h && pos.y > rect.y;
 }
 
+function getGridPosX(arg) {
+	return (arg * window.innerWidth) / 1920;
+}
+
+function getGridPosY(arg) {
+	return (arg * window.innerHeight) / 1080;
+}
+
 function click(event) {
 	if (guiOpen && currentGui !== null) {
 		for (var element of currentGui) {
@@ -3592,6 +3602,11 @@ function save() {
 	saveString = JSON.stringify(saveData);
 	saveString = LZString.compress(saveString);
 	console.log(saveString);
+}
+
+function resize() {
+	guiCanvas.width = window.innerWidth;
+	guiCanvas.height = window.innerHeight;
 }
 
 },{"noa-engine":95,"voxel-crunch":113}],10:[function(require,module,exports){
