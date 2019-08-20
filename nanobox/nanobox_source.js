@@ -67,9 +67,33 @@ var currentBlock = stone_bricks;
 
 // Register guis
 var gui_pause = [];
-gui_pause.push({type: "button", x: 10, y: 10, w: 100, h: 50, func: save});
+gui_pause.push({type: "button", x: 10, y: 10, w: 250, h: 50, color: "white", func: save});
+gui_pause.push({type: "button", x: 10, y: 70, w: 250, h: 50, color: "white", func: resetWorld});
 
 var currentGui = null;
+
+
+
+// Load game
+if (localStorage.getItem("world") !== null && localStorage.getItem("world") !== "empty") {
+	var saveString = localStorage.getItem("world");
+	saveString = LZString.decompress(saveString);
+	saveString = JSON.parse(saveString);
+	
+	// Get object keys
+	var saveStringKeys = Object.keys(saveString);
+	
+	// Convert any objects in the array into a array
+	for (var element of saveStringKeys) {
+		if (typeof saveString[element] !== Uint8Array) {
+			saveString[element] = Object.keys(saveString[element]).map(function(key) {
+				return saveString[element][key];
+			});
+		}
+	}
+	
+	saveData = saveString;
+}
 
 
 
@@ -143,7 +167,7 @@ noa.inputs.down.on("alt-fire", function() {
 // On mid mouse, pick block
 noa.inputs.down.on("mid-fire", function() {
 	var i = 0;
-	for(var element of blockArray) {
+	for (var element of blockArray) {
 		if (element === noa.targetedBlock.blockID) {
 			setPickedBlock(element, blockNameArray[i]);
 			blockArray_i = i;
@@ -167,16 +191,24 @@ noa.on("tick", function(dt) {
 		setPickedBlock(blockArray[blockArray_i], blockNameArray[blockArray_i]);
 	}
 	
-	// GUI Drawing
+	// Handle GUI drawing
 	if (currentGui !== null) {
 		guiContext.clearRect(0, 0, guiCanvas.width, guiCanvas.height);
-		for (var element of currentGui) {
+		for (var i = 0; i < currentGui.length; ++i) {
+			var element = currentGui[i];
 			if (element.type === "button") {
 				guiContext.fillStyle = "white";
 				guiContext.rect(getGridPosX(element.x), getGridPosY(element.y), getGridPosX(element.w), getGridPosY(element.h));
 				guiContext.fill();
+				
+				/*
+				guiContext.fillStyle = "black";
+				guiContext.font = "24px Arial";
+				guiContext.textAlign = "center";
+				guiContext.fillText(element.text, getGridPosX(element.w / 2), getGridPosY(element.h / 2));
+				*/
 			}
-		}	
+		}
 	}
 });
 
@@ -231,22 +263,38 @@ function getGridPosY(arg) {
 
 function click(event) {
 	if (guiOpen && currentGui !== null) {
-		for (var element of currentGui) {
+		currentGui.forEach(function(element) {
 			if (element.type === "button") {
 				var mousePos = getMousePos(event);
 				if (isInside(mousePos, element)) {
 					element.func();
 				}
 			}
-		}
+		});
 	}
 }
 
 function save() {
-	var saveString;
-	saveString = JSON.stringify(saveData);
-	saveString = LZString.compress(saveString);
-	console.log(saveString);
+	if (typeof(Storage) !== "undefined") {
+		var saveString;
+		noa.world.invalidateAllChunks();
+		
+		setTimeout(function() {
+			saveString = JSON.stringify(saveData);
+			saveString = LZString.compress(saveString);
+			localStorage.setItem("world", saveString);
+		}, 100);
+	} else {
+		alert("This browser does not support local storage!");
+	}
+}
+
+function resetWorld() {
+	if (typeof(Storage) !== "undefined") {
+		localStorage.setItem("world", "empty");
+	}
+	
+	location.reload();
 }
 
 function resize() {
