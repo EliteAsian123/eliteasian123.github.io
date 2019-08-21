@@ -67,8 +67,8 @@ var currentBlock = stone_bricks;
 
 // Register guis
 var gui_pause = [];
-gui_pause.push({type: "button", x: 10, y: 10, w: 250, h: 50, color: "white", func: save});
-gui_pause.push({type: "button", x: 10, y: 70, w: 250, h: 50, color: "white", func: resetWorld});
+gui_pause.push({type: "button", x: 10, y: 10, w: 1900, h: 50, color: "lime", text: "Save", func: save});
+gui_pause.push({type: "button", x: 10, y: 70, w: 1900, h: 50, color: "red", text: "Reset World", func: resetWorld});
 
 var currentGui = null;
 
@@ -197,16 +197,7 @@ noa.on("tick", function(dt) {
 		for (var i = 0; i < currentGui.length; ++i) {
 			var element = currentGui[i];
 			if (element.type === "button") {
-				guiContext.fillStyle = "white";
-				guiContext.rect(getGridPosX(element.x), getGridPosY(element.y), getGridPosX(element.w), getGridPosY(element.h));
-				guiContext.fill();
-				
-				/*
-				guiContext.fillStyle = "black";
-				guiContext.font = "24px Arial";
-				guiContext.textAlign = "center";
-				guiContext.fillText(element.text, getGridPosX(element.w / 2), getGridPosY(element.h / 2));
-				*/
+				drawButton(element);
 			}
 		}
 	}
@@ -216,7 +207,7 @@ noa.on("tick", function(dt) {
 
 // Functions
 function keydown(e) {
-	if (e.key === "p") {
+	if (e.key === "P") {
 		togglePauseMenu();
 	}
 }
@@ -300,4 +291,17 @@ function resetWorld() {
 function resize() {
 	guiCanvas.width = window.innerWidth;
 	guiCanvas.height = window.innerHeight;
+}
+
+function drawButton(element) {
+	guiContext.beginPath();
+	guiContext.fillStyle = element.color;
+	guiContext.rect(getGridPosX(element.x), getGridPosY(element.y), getGridPosX(element.w), getGridPosY(element.h));
+	guiContext.fill();
+	
+	guiContext.beginPath();
+	guiContext.fillStyle = "black";
+	guiContext.font = getGridPosY(36).toString() + "px Arial";
+	guiContext.textAlign = "center";
+	guiContext.fillText(element.text, getGridPosX(element.w / 2 + element.x), getGridPosY(element.h / 2 + element.y + element.h / 4));
 }
