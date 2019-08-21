@@ -3553,11 +3553,11 @@ noa.on("tick", function(dt) {
 			var element = currentGui[i];
 			if (element.type === "button") {
 				var text = element.text;
-				if (element.textS !== null) {
+				if (element.textS !== "undefined") {
 						switch (element.textS) {
 							case "localStorage":
 								// https://stackoverflow.com/questions/4391575/how-to-find-the-size-of-localstorage
-								var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen;};text += " (" + (_lsTotal / 1024).toFixed(2) + " KB / 5120 KB)";
+								var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen;};text += " (" + (_lsTotal / 1024).toFixed(2) + " KB / 5120 KB used)";
 								break;
 							default:
 								console.error(element.textS + " is not a valid special.");
