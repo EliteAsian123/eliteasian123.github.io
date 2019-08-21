@@ -207,7 +207,7 @@ noa.on("tick", function(dt) {
 
 // Functions
 function keydown(e) {
-	if (e.key === "P") {
+	if (e.key === "p") {
 		togglePauseMenu();
 	}
 }
