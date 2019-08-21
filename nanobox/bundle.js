@@ -3562,7 +3562,7 @@ noa.on("tick", function(dt) {
 
 // Functions
 function keydown(e) {
-	if (e.key === "Escape") {
+	if (e.key === "P") {
 		togglePauseMenu();
 	}
 }
