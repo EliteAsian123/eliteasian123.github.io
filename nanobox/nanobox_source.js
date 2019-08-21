@@ -67,7 +67,7 @@ var currentBlock = stone_bricks;
 
 // Register guis
 var gui_pause = [];
-gui_pause.push({type: "button", x: 10, y: 10, w: 1900, h: 50, color: "lime", text: "Save", func: save});
+gui_pause.push({type: "button", x: 10, y: 10, w: 1900, h: 50, color: "lime", text: "Save", textS: "localStorage", func: save});
 gui_pause.push({type: "button", x: 10, y: 70, w: 1900, h: 50, color: "red", text: "Reset World", func: resetWorld});
 
 var currentGui = null;
@@ -197,7 +197,19 @@ noa.on("tick", function(dt) {
 		for (var i = 0; i < currentGui.length; ++i) {
 			var element = currentGui[i];
 			if (element.type === "button") {
-				drawButton(element);
+				var text = element.text;
+				if (element.textS !== null) {
+						switch (element.textS) {
+							case "localStorage":
+								// https://stackoverflow.com/questions/4391575/how-to-find-the-size-of-localstorage
+								var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen;};text += " (" + (_lsTotal / 1024).toFixed(2) + " KB / 5120 KB)";
+								break;
+							default:
+								console.error(element.textS + " is not a valid special.");
+						}
+				}
+				
+				drawButton(element, text);
 			}
 		}
 	}
@@ -293,7 +305,7 @@ function resize() {
 	guiCanvas.height = window.innerHeight;
 }
 
-function drawButton(element) {
+function drawButton(element, text) {
 	guiContext.beginPath();
 	guiContext.fillStyle = element.color;
 	guiContext.rect(getGridPosX(element.x), getGridPosY(element.y), getGridPosX(element.w), getGridPosY(element.h));
@@ -303,5 +315,5 @@ function drawButton(element) {
 	guiContext.fillStyle = "black";
 	guiContext.font = getGridPosY(36).toString() + "px Arial";
 	guiContext.textAlign = "center";
-	guiContext.fillText(element.text, getGridPosX(element.w / 2 + element.x), getGridPosY(element.h / 2 + element.y + element.h / 4));
+	guiContext.fillText(text, getGridPosX(element.w / 2 + element.x), getGridPosY(element.h / 2 + element.y + element.h / 4));
 }
