@@ -3,10 +3,11 @@
 
 var noaEngine = require("noa-engine");
 var voxelCrunch = require("voxel-crunch");
+var glvec3 = require("gl-vec3");
 
 // Game engine settings
 var opts = {
-	debug: true,
+	debug: false,
 	showFPS: true,
 	inverseY: false,
 	chunkSize: 16,
@@ -73,6 +74,10 @@ gui_pause.push({type: "button", x: 10, y: 10, w: 1900, h: 50, color: "lime", tex
 gui_pause.push({type: "button", x: 10, y: 70, w: 1900, h: 50, color: "red", text: "Reset World", func: resetWorld});
 
 var currentGui = null;
+
+// Make break decal variable
+var breakDecalMesh;
+renderBreakDecal();
 
 
 
@@ -177,6 +182,12 @@ noa.inputs.down.on("mid-fire", function() {
 		}
 		i++;
 	}
+});
+
+// Debug
+noa.inputs.bind("debug", "M");
+noa.inputs.down.on("debug", function() {
+	renderBreakDecal(true, noa.targetedBlock.position, noa.targetedBlock.normal);
 });
 
 // Ran each tick
@@ -318,4 +329,29 @@ function drawButton(element, text) {
 	guiContext.font = getGridPosY(36).toString() + "px Arial";
 	guiContext.textAlign = "center";
 	guiContext.fillText(text, getGridPosX(element.w / 2 + element.x), getGridPosY(element.h / 2 + element.y + element.h / 4));
+}
+
+function renderBreakDecal(show, positionArray, normalArray) {
+	if (!breakDecalMesh) {
+		breakDecalMesh = BABYLON.Mesh.CreatePlane("breakDecal", 1.0, scene);
+		var material = noa.rendering.makeStandardMaterial("breakDecalMaterial");
+		material.backFaceCulling = false;
+		breakDecalMesh.material = material;
+		noa.rendering.addMeshToScene(breakDecalMesh);
+	}
+	
+	if (show) {
+		// Borrowed from NOA rendering.js line 200
+        var dist = glvec3.dist(noa.getPlayerEyePosition(), positionArray);
+        var slop = 0.0005 * dist;
+        var pos = glvec3.create();
+        for (var i = 0; i < 3; ++i) {
+            pos[i] = Math.floor(positionArray[i]) + .5 + ((0.5 + slop) * normalArray[i]);
+        }
+        breakDecalMesh.position.copyFromFloats(pos[0], pos[1], pos[2]);
+        breakDecalMesh.rotation.x = (normalArray[1]) ? Math.PI / 2 : 0;
+        breakDecalMesh.rotation.y = (normalArray[0]) ? Math.PI / 2 : 0;
+	}
+	
+	breakDecalMesh.setEnabled(show);
 }
