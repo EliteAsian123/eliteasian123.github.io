@@ -3405,6 +3405,7 @@ noa.registry.registerMaterial("planks", null, "planks.png");
 noa.registry.registerMaterial("glass", null, "glass.png", true);
 noa.registry.registerMaterial("stone", null, "stone.png");
 noa.registry.registerMaterial("rusty_steel", null, "rusty_steel.png");
+noa.registry.registerMaterial("future_block", null, "future_block.png");
 
 // Register blocks
 var dirt = noa.registry.registerBlock(1, { material: "dirt" });
@@ -3414,9 +3415,10 @@ var planks = noa.registry.registerBlock(4, { material: "planks" });
 var glass = noa.registry.registerBlock(5, { material: "glass", opaque: false });
 var stone = noa.registry.registerBlock(6, { material: "stone" });
 var rusty_steel = noa.registry.registerBlock(7, { material: "rusty_steel" });
+var future_block = noa.registry.registerBlock(8, { material: "future_block" });
 
-var blockArray = [stone_bricks, planks, glass, dirt, grass, stone, rusty_steel];
-var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone", "rusty_steel"];
+var blockArray = [stone_bricks, planks, glass, dirt, grass, stone, rusty_steel, future_block];
+var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone", "rusty_steel", "future_block"];
 
 var currentBlock = stone_bricks;
 
