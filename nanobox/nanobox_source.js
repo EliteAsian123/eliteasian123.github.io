@@ -29,7 +29,10 @@ var noa = noaEngine(opts);
 var scene = noa.rendering.getScene();
 var guiOpen = false;
 var saveData = {};
+var breakingBlock = null;
 var guiCanvas = document.getElementById("gui");
+var blockCustomProperties = [];
+var breakingProgress = 0;
 guiCanvas.width = window.innerWidth;
 guiCanvas.height = window.innerHeight;
 
@@ -54,14 +57,14 @@ noa.registry.registerMaterial("rusty_steel", null, "rusty_steel.png");
 noa.registry.registerMaterial("future_block", null, "future_block.png");
 
 // Register blocks
-var dirt = noa.registry.registerBlock(1, { material: "dirt" });
-var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
-var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
-var planks = noa.registry.registerBlock(4, { material: "planks" });
-var glass = noa.registry.registerBlock(5, { material: "glass", opaque: false });
-var stone = noa.registry.registerBlock(6, { material: "stone" });
-var rusty_steel = noa.registry.registerBlock(7, { material: "rusty_steel" });
-var future_block = noa.registry.registerBlock(8, { material: "future_block" });
+var dirt = registerBlock(1, { material: "dirt" }, { hardness: 2 });
+var grass = registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] }, { hardness: 2.1 });
+var stone_bricks = registerBlock(3, { material: "stone_bricks" }, { hardness: 5 });
+var planks = registerBlock(4, { material: "planks" }, { hardness: 3 });
+var glass = registerBlock(5, { material: "glass", opaque: false }, { hardness: 2 });
+var stone = registerBlock(6, { material: "stone" }, { hardness: 5 });
+var rusty_steel = registerBlock(7, { material: "rusty_steel" }, { hardness: 8 });
+var future_block = registerBlock(8, { material: "future_block" }, { hardness: 2 });
 
 var blockArray = [stone_bricks, planks, glass, dirt, grass, stone, rusty_steel, future_block];
 var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone", "rusty_steel", "future_block"];
@@ -132,7 +135,7 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 		}
     }
 	noa.world.setChunkData(id, data);	
-})
+});
 
 
 
@@ -161,9 +164,19 @@ noa.entities.addComponent(playerEnt, noa.entities.names.mesh, {
 
 
 // Input
-// On left mouse, set targeted block to be air
+// On left mouse, set breaking block
 noa.inputs.down.on("fire", function() {
-	if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
+	if (noa.targetedBlock) {
+		if (breakingBlock === null) {
+			breakingBlock = noa.targetedBlock;
+		}
+	}
+});
+
+// On left mouse up, remove breaking block
+noa.inputs.up.on("fire", function() {
+	breakingBlock = null;
+	breakingProgress = 0;
 });
 
 // On right mouse, place block
@@ -187,7 +200,7 @@ noa.inputs.down.on("mid-fire", function() {
 // Debug
 noa.inputs.bind("debug", "M");
 noa.inputs.down.on("debug", function() {
-	renderBreakDecal(true, noa.targetedBlock.position, noa.targetedBlock.normal);
+	
 });
 
 // Ran each tick
@@ -225,6 +238,25 @@ noa.on("tick", function(dt) {
 				drawButton(element, text);
 			}
 		}
+	}
+	
+	// Handle block breaking
+	if (breakingBlock !== null) {
+		if (breakingProgress >= getBlockCustomProperties(breakingBlock.blockID).hardness) {
+			noa.setBlock(0, breakingBlock.position);
+			breakingProgress = 0;
+		} else {
+			breakingProgress += 1/dt * 10;
+			
+			var texture = new BABYLON.Texture("textures/break_decal_" + Math.floor(breakingProgress / (getBlockCustomProperties(breakingBlock.blockID).hardness / 7)) + ".png", 
+				scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
+			breakDecalMesh.material.diffuseTexture = texture;
+			breakDecalMesh.material.opacityTexture = texture;
+			
+			renderBreakDecal(true, breakingBlock.position, breakingBlock.normal);
+		}
+	} else {
+		renderBreakDecal(false, null, null);
 	}
 });
 
@@ -336,6 +368,9 @@ function renderBreakDecal(show, positionArray, normalArray) {
 		breakDecalMesh = BABYLON.Mesh.CreatePlane("breakDecal", 1.0, scene);
 		var material = noa.rendering.makeStandardMaterial("breakDecalMaterial");
 		material.backFaceCulling = false;
+		material.diffuseTexture = new BABYLON.Texture("textures/break_decal_7.png", scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
+		material.diffuseTexture.hasAlpha = true;
+		material.opacityTexture = new BABYLON.Texture("textures/break_decal_7.png", scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
 		breakDecalMesh.material = material;
 		noa.rendering.addMeshToScene(breakDecalMesh);
 	}
@@ -354,4 +389,13 @@ function renderBreakDecal(show, positionArray, normalArray) {
 	}
 	
 	breakDecalMesh.setEnabled(show);
+}
+
+function registerBlock(id, options_d, options) {
+	blockCustomProperties[id] = options;
+	return noa.registry.registerBlock(id, options_d);
+}
+
+function getBlockCustomProperties(id) {
+	return blockCustomProperties[id];
 }

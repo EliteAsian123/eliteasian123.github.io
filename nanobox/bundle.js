@@ -166,6 +166,7 @@ function fromByteArray (uint8) {
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
+var customInspectSymbol = typeof Symbol === 'function' ? Symbol.for('nodejs.util.inspect.custom') : null
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -202,7 +203,9 @@ function typedArraySupport () {
   // Can typed array instances can be augmented?
   try {
     var arr = new Uint8Array(1)
-    arr.__proto__ = { __proto__: Uint8Array.prototype, foo: function () { return 42 } }
+    var proto = { foo: function () { return 42 } }
+    Object.setPrototypeOf(proto, Uint8Array.prototype)
+    Object.setPrototypeOf(arr, proto)
     return arr.foo() === 42
   } catch (e) {
     return false
@@ -231,7 +234,7 @@ function createBuffer (length) {
   }
   // Return an augmented `Uint8Array` instance
   var buf = new Uint8Array(length)
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
   return buf
 }
 
@@ -281,7 +284,7 @@ function from (value, encodingOrOffset, length) {
   }
 
   if (value == null) {
-    throw TypeError(
+    throw new TypeError(
       'The first argument must be one of type string, Buffer, ArrayBuffer, Array, ' +
       'or Array-like Object. Received type ' + (typeof value)
     )
@@ -333,8 +336,8 @@ Buffer.from = function (value, encodingOrOffset, length) {
 
 // Note: Change prototype *after* Buffer.from is defined to workaround Chrome bug:
 // https://github.com/feross/buffer/pull/148
-Buffer.prototype.__proto__ = Uint8Array.prototype
-Buffer.__proto__ = Uint8Array
+Object.setPrototypeOf(Buffer.prototype, Uint8Array.prototype)
+Object.setPrototypeOf(Buffer, Uint8Array)
 
 function assertSize (size) {
   if (typeof size !== 'number') {
@@ -438,7 +441,8 @@ function fromArrayBuffer (array, byteOffset, length) {
   }
 
   // Return an augmented `Uint8Array` instance
-  buf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(buf, Buffer.prototype)
+
   return buf
 }
 
@@ -760,6 +764,9 @@ Buffer.prototype.inspect = function inspect () {
   if (this.length > max) str += ' ... '
   return '<Buffer ' + str + '>'
 }
+if (customInspectSymbol) {
+  Buffer.prototype[customInspectSymbol] = Buffer.prototype.inspect
+}
 
 Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
   if (isInstance(target, Uint8Array)) {
@@ -885,7 +892,7 @@ function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
         return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
       }
     }
-    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+    return arrayIndexOf(buffer, [val], byteOffset, encoding, dir)
   }
 
   throw new TypeError('val must be string, number or Buffer')
@@ -1251,7 +1258,8 @@ Buffer.prototype.slice = function slice (start, end) {
 
   var newBuf = this.subarray(start, end)
   // Return an augmented `Uint8Array` instance
-  newBuf.__proto__ = Buffer.prototype
+  Object.setPrototypeOf(newBuf, Buffer.prototype)
+
   return newBuf
 }
 
@@ -3384,7 +3392,10 @@ var noa = noaEngine(opts);
 var scene = noa.rendering.getScene();
 var guiOpen = false;
 var saveData = {};
+var breakingBlock = null;
 var guiCanvas = document.getElementById("gui");
+var blockCustomProperties = [];
+var breakingProgress = 0;
 guiCanvas.width = window.innerWidth;
 guiCanvas.height = window.innerHeight;
 
@@ -3409,14 +3420,14 @@ noa.registry.registerMaterial("rusty_steel", null, "rusty_steel.png");
 noa.registry.registerMaterial("future_block", null, "future_block.png");
 
 // Register blocks
-var dirt = noa.registry.registerBlock(1, { material: "dirt" });
-var grass = noa.registry.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] });
-var stone_bricks = noa.registry.registerBlock(3, { material: "stone_bricks" });
-var planks = noa.registry.registerBlock(4, { material: "planks" });
-var glass = noa.registry.registerBlock(5, { material: "glass", opaque: false });
-var stone = noa.registry.registerBlock(6, { material: "stone" });
-var rusty_steel = noa.registry.registerBlock(7, { material: "rusty_steel" });
-var future_block = noa.registry.registerBlock(8, { material: "future_block" });
+var dirt = registerBlock(1, { material: "dirt" }, { hardness: 2 });
+var grass = registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] }, { hardness: 2.1 });
+var stone_bricks = registerBlock(3, { material: "stone_bricks" }, { hardness: 5 });
+var planks = registerBlock(4, { material: "planks" }, { hardness: 3 });
+var glass = registerBlock(5, { material: "glass", opaque: false }, { hardness: 2 });
+var stone = registerBlock(6, { material: "stone" }, { hardness: 5 });
+var rusty_steel = registerBlock(7, { material: "rusty_steel" }, { hardness: 8 });
+var future_block = registerBlock(8, { material: "future_block" }, { hardness: 2 });
 
 var blockArray = [stone_bricks, planks, glass, dirt, grass, stone, rusty_steel, future_block];
 var blockNameArray = ["stone_bricks", "planks", "glass", "dirt", "grass", "stone", "rusty_steel", "future_block"];
@@ -3487,7 +3498,7 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 		}
     }
 	noa.world.setChunkData(id, data);	
-})
+});
 
 
 
@@ -3516,9 +3527,19 @@ noa.entities.addComponent(playerEnt, noa.entities.names.mesh, {
 
 
 // Input
-// On left mouse, set targeted block to be air
+// On left mouse, set breaking block
 noa.inputs.down.on("fire", function() {
-	if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
+	if (noa.targetedBlock) {
+		if (breakingBlock === null) {
+			breakingBlock = noa.targetedBlock;
+		}
+	}
+});
+
+// On left mouse up, remove breaking block
+noa.inputs.up.on("fire", function() {
+	breakingBlock = null;
+	breakingProgress = 0;
 });
 
 // On right mouse, place block
@@ -3542,7 +3563,7 @@ noa.inputs.down.on("mid-fire", function() {
 // Debug
 noa.inputs.bind("debug", "M");
 noa.inputs.down.on("debug", function() {
-	renderBreakDecal(true, noa.targetedBlock.position, noa.targetedBlock.normal);
+	
 });
 
 // Ran each tick
@@ -3580,6 +3601,25 @@ noa.on("tick", function(dt) {
 				drawButton(element, text);
 			}
 		}
+	}
+	
+	// Handle block breaking
+	if (breakingBlock !== null) {
+		if (breakingProgress >= getBlockCustomProperties(breakingBlock.blockID).hardness) {
+			noa.setBlock(0, breakingBlock.position);
+			breakingProgress = 0;
+		} else {
+			breakingProgress += 1/dt * 10;
+			
+			var texture = new BABYLON.Texture("textures/break_decal_" + Math.floor(breakingProgress / (getBlockCustomProperties(breakingBlock.blockID).hardness / 7)) + ".png", 
+				scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
+			breakDecalMesh.material.diffuseTexture = texture;
+			breakDecalMesh.material.opacityTexture = texture;
+			
+			renderBreakDecal(true, breakingBlock.position, breakingBlock.normal);
+		}
+	} else {
+		renderBreakDecal(false, null, null);
 	}
 });
 
@@ -3691,6 +3731,9 @@ function renderBreakDecal(show, positionArray, normalArray) {
 		breakDecalMesh = BABYLON.Mesh.CreatePlane("breakDecal", 1.0, scene);
 		var material = noa.rendering.makeStandardMaterial("breakDecalMaterial");
 		material.backFaceCulling = false;
+		material.diffuseTexture = new BABYLON.Texture("textures/break_decal_7.png", scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
+		material.diffuseTexture.hasAlpha = true;
+		material.opacityTexture = new BABYLON.Texture("textures/break_decal_7.png", scene, false, true, BABYLON.Texture.NEAREST_SAMPLINGMODE);
 		breakDecalMesh.material = material;
 		noa.rendering.addMeshToScene(breakDecalMesh);
 	}
@@ -3709,6 +3752,15 @@ function renderBreakDecal(show, positionArray, normalArray) {
 	}
 	
 	breakDecalMesh.setEnabled(show);
+}
+
+function registerBlock(id, options_d, options) {
+	blockCustomProperties[id] = options;
+	return noa.registry.registerBlock(id, options_d);
+}
+
+function getBlockCustomProperties(id) {
+	return blockCustomProperties[id];
 }
 },{"gl-vec3":50,"noa-engine":95,"voxel-crunch":113}],10:[function(require,module,exports){
 module.exports = AABB
