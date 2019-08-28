@@ -1,18 +1,44 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Nanobox</title>
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div id="reticle">+</div>
-		<img id="block_img" src="textures/stone_bricks_icon.png" alt="Picked Block" width="128" height="128">
-		<div id="author">By <a href="https://eliteasian123.github.io/">EliteAsian123</a>. MIT License.</div>
-		
-		<canvas id="gui"></canvas>
-		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/4.0.3/babylon.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-		<script src="bundle.js"></script>
-	</body>
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>noa-hello-world</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style type="text/css">
+    body {
+      background-color: white;
+      margin: 0px;
+      overflow: hidden;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+
+    #reticle {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      margin: -10px 0 0 -10px;
+      z-index: 99;
+      color: white;
+      text-shadow: 1px 1px 0px black;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="reticle">+</div>
+  
+  <script type="text/javascript" src="plugins/noa-plus-plugins-base.js"></script>
+  <script type="text/javascript" src="plugins/noa-terrain-gen.js"></script>
+  <script type="text/javascript" src="plugins/noa-chunk-save.js"></script>
+  <script type="text/javascript" src="plugins/noa-environment.js"></script>
+  <script type="text/javascript" src="bundle.js"></script>
+</body>
+
 </html>
