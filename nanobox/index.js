@@ -15,6 +15,7 @@ var opts = {
     chunkSize: 32,
     chunkAddDistance: 2.5,
     chunkRemoveDistance: 3.5,
+	playerAutoStep: true
 }
 var noa = new Engine(opts)
 
