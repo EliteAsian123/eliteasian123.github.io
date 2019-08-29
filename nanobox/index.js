@@ -24,7 +24,14 @@ var nppb = new NoaPlusPlugins(noa, BABYLON);
 
 var noaTerrainGen = new NoaTerrainGen(nppb);
 nppb.addPlugin(noaTerrainGen);
-noaTerrainGen.setTerrainGenType("simplex");
+var terrainOptions = {
+	a_zoom: 100,
+	a_height: 7,
+	b_zoom: 50,
+	b_height: 3,
+	c_zoom: 500,
+	c_height: 100
+};
 
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
@@ -55,7 +62,7 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 	if (noaChunkSave.isChunkSaved(id)) {
 		data = noaChunkSave.chunkLoad(id, data);
 	} else {
-		data = noaTerrainGen.genTerrain(id, data, x, y, z, [grassID, dirtID, stoneID]);
+		data = noaTerrainGen.genAdvancedTerrain(id, data, x, y, z, [grassID, dirtID, stoneID], terrainOptions);
 	}
     // Tell noa the chunk's terrain data is now set
     noa.world.setChunkData(id, data);
