@@ -245,23 +245,21 @@ function NoaTerrainGen(nppb) {
 	this.nppb = nppb;
 }
 
-NoaTerrainGen.prototype.init = function() {}
+NoaTerrainGen.prototype.init = function() {
+	this.random = Math.random();
+}
 
 NoaTerrainGen.prototype.getName = function() {
 	return "Noa Terrain Gen";
 }
 
-NoaTerrainGen.prototype.setTerrainGenType = function(type, seed) {
-	this.genType = type;
+NoaTerrainGen.prototype.genSimpleTerrain = function(id, data, x, y, z, blockIDs, type, seed) {
 	if (seed) {
-		this.seed = noise.seed(seed);
+		noise.seed(seed);
 	} else {
-		this.seed = noise.seed(Math.random());
+		noise.seed(this.random);
 	}
-}
-
-NoaTerrainGen.prototype.genTerrain = function(id, data, x, y, z, blockIDs) {
-	switch (this.genType) {
+	switch (type) {
 		case "default":
 			// From hello-world example
 			for (var x1 = 0; x1 < data.shape[0]; x1++) {
@@ -315,3 +313,30 @@ NoaTerrainGen.prototype.genTerrain = function(id, data, x, y, z, blockIDs) {
 	}
 	return data;
 }
+
+NoaTerrainGen.prototype.genAdvancedTerrain = function(id, data, x, y, z, blockIDs, options, seed) {
+	if (seed) {
+		noise.seed(seed);
+	} else {
+		noise.seed(this.random);
+	}
+	for (var x1 = 0; x1 < data.shape[0]; ++x1) {
+		for (var z1 = 0; z1 < data.shape[2]; ++z1) {
+			var random = Math.floor((noise.simplex2((x1 + x) / options.a_zoom, (z1 + z) / options.a_zoom) * options.a_height) + (noise.simplex2((x1 + x) / options.b_zoom, (z1 + z) / options.b_zoom) * options.b_height) + (noise.simplex2((x1 + x) / options.c_zoom, (z1 + z) / options.c_zoom) * options.c_height));
+			for (var y1 = 0; y1 < data.shape[1]; ++y1) {
+				if (y1 + y === random + 1) {
+					data.set(x1, y1, z1, blockIDs[0]);
+				} else if (y1 + y < random + 1 && y1 + y > random - 5) {
+					data.set(x1, y1, z1, blockIDs[1]);
+				} else if (y1 + y <= random - 5) {
+					data.set(x1, y1, z1, blockIDs[2]);
+				}	
+			}
+		}
+	}
+	return data;
+}
+
+
+
+			
