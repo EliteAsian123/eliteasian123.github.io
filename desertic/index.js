@@ -110,3 +110,8 @@ noa.inputs.down.on("alt-fire", function () {
 noa.on("tick", function (dt) {
 
 });
+
+// Ran before every frame
+noa.on('beforeRender', function(dt) {
+	noaEnvironment.moveClouds(dt / 1000000, 0);
+});
