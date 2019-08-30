@@ -18,7 +18,8 @@ NoaEnvironment.prototype.init = function() {
 	this.scene = this.nppb.getNoa().rendering.getScene();
 	this.cloudMesh = this.nppb.getBabylon().MeshBuilder.CreatePlane("cloudMesh", {
 			height: 2e3,
-			width: 2e3
+			width: 2e3,
+			updatable: true
 	}, this.scene);
 	var cloudMat = new babylon.StandardMaterial("cloud", this.scene);
 	
@@ -34,6 +35,8 @@ NoaEnvironment.prototype.init = function() {
 	this.cloudMesh.material = cloudMat;
 	this.nppb.getNoa().rendering.addMeshToScene(this.cloudMesh, true);
 	this.cloudMesh.setEnabled(false);
+	this.uOffset = 0;
+	this.vOffset = 0;
 }
 
 NoaEnvironment.prototype.getName = function() {
@@ -57,10 +60,18 @@ NoaEnvironment.prototype.setCloudOptions = function(alpha, babylonColorCloud, he
 	this.cloudMesh.setEnabled(true);
 }
 
-NoaEnvironment.prototype.setProceduralOptions = function(speed) {
-	this.cloudMesh.material.diffuseTexture.animationSpeedFactor = speed;
-}
-
 NoaEnvironment.prototype.disableClouds = function() {
 	this.cloudMesh.setEnabled(false);
+}
+
+NoaEnvironment.prototype.moveClouds = function(uOffset, vOffset) {
+	var playerPosition = this.nppb.getNoa().ents.getPosition(this.nppb.getNoa().playerEntity);
+	this.cloudMesh.position.x = playerPosition[0];
+	this.cloudMesh.position.z = playerPosition[2];
+	this.cloudMesh.material.diffuseTexture.uOffset = playerPosition[0] / 1000 + this.uOffset;
+	this.cloudMesh.material.opacityTexture.uOffset = playerPosition[0] / 1000 + this.uOffset;
+	this.cloudMesh.material.diffuseTexture.vOffset = -playerPosition[2] / 1000 + this.vOffset;
+	this.cloudMesh.material.opacityTexture.vOffset = -playerPosition[2] / 1000 + this.vOffset;
+	this.uOffset += uOffset;
+	this.vOffset += vOffset;
 }
