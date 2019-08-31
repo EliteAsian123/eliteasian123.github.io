@@ -35,12 +35,12 @@ NoaChunkSave.prototype.isChunkSaved = function(id) {
 }
 
 NoaChunkSave.prototype.getSaveData = function() {
-	this.nppb.getNoa().world.invalidateAllChunks();
+	this.nppb.noa.world.invalidateAllChunks();
 	return this.saveData;
 }
 
 NoaChunkSave.prototype.getSaveDataJSON = function() {
-	this.nppb.getNoa().world.invalidateAllChunks();
+	this.nppb.noa.world.invalidateAllChunks();
 	return JSON.stringify(this.saveData);
 }
 

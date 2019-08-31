@@ -9,6 +9,9 @@ import * as BABYLON from "@babylonjs/core/Legacy/legacy";
 // Voxel Crunch
 var voxelCrunch = require("voxel-crunch");
 
+// Murmur Numbers
+var hash = require("murmur-numbers");
+
 var opts = {
     debug: true,
     showFPS: true,
@@ -16,22 +19,14 @@ var opts = {
     chunkAddDistance: 2.5,
     chunkRemoveDistance: 3.5,
 	playerAutoStep: true
-}
-var noa = new Engine(opts)
+};
+var noa = new Engine(opts);
 
 // Loading plugins (noa-plus-plugins)
 var nppb = new NoaPlusPlugins(noa, BABYLON);
 
-var noaTerrainGen = new NoaTerrainGen(nppb);
-nppb.addPlugin(noaTerrainGen);
-var terrainOptions = {
-	a_zoom: 100,
-	a_height: 2,
-	b_zoom: 50,
-	b_height: 1,
-	c_zoom: 500,
-	c_height: 3
-};
+var seed = Math.random();
+var noise = new SimplexNoise(seed);
 
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
@@ -46,13 +41,17 @@ noa.registry.registerMaterial("grass_top", null, "textures/grass_top.png");
 noa.registry.registerMaterial("grass_side", null, "textures/grass_side.png");
 noa.registry.registerMaterial("stone", null, "textures/stone.png");
 noa.registry.registerMaterial("dry_dirt", null, "textures/dry_dirt.png");
-noa.registry.registerMaterial("dry_stone", null, "textures/dry_stone.png");
 
 // Block types
 var dirtID = nppb.registerBlock(1, { material: "dirt" }, {});
 var grassID = nppb.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] }, {});
 var stoneID = nppb.registerBlock(3, { material: "stone" }, {});
 var dryDirtID = nppb.registerBlock(4, { material: "dry_dirt" }, {});
+
+// Resource generation options
+var genResources = [
+	{block: dirtID, chance: 0.1, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: dryDirtID}
+];
 
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
@@ -65,7 +64,32 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 	if (noaChunkSave.isChunkSaved(id)) {
 		data = noaChunkSave.chunkLoad(id, data);
 	} else {
-		data = noaTerrainGen.genAdvancedTerrain(id, data, x, y, z, [dryDirtID, stoneID, stoneID], terrainOptions);
+		var resourceNoise = new SimplexNoise();
+		for (var x1 = 0; x1 < data.shape[0]; ++x1) {
+				for (var z1 = 0; z1 < data.shape[2]; ++z1) {
+					var random = Math.floor(noise.noise2D((x1 + x) / 250, (z1 + z) / 250) * 3);
+					var resources = Math.floor(resourceNoise.noise2D((x1 + x) / 250, (z1 + z) / 250));
+					for (var y1 = 0; y1 < data.shape[1]; ++y1) {
+						// Create main land
+						if (y1 + y < random && y1 + y > random - 5) {
+							data.set(x1, y1, z1, dryDirtID);
+						} else if (y1 + y <= random - 5) {
+							data.set(x1, y1, z1, stoneID);
+						}
+
+						// Generate resources
+						for (var i of genResources) {
+							if (data.get(x1, y1, z1) === i.inBlock) {
+								if (y1 + y <= i.maxY && y1 + y >= i.minY) {
+									if (hash(x1, y1, z1, seed) < i.chance) {
+										data.set(x1, y1, z1, i.block);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 	}
     // Tell noa the chunk's terrain data is now set
     noa.world.setChunkData(id, data);
