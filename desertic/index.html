@@ -2,43 +2,72 @@
 <html lang="en">
 
 <head>
-  <title>Desertic</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <style type="text/css">
-    body {
-      background-color: white;
-      margin: 0px;
-      overflow: hidden;
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-    }
+	<title>Desertic</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style type="text/css">
+		body {
+			background-color: white;
+			margin: 0px;
+			overflow: hidden;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
 
-    #reticle {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
-      margin: -10px 0 0 -10px;
-      z-index: 99;
-      color: white;
-      text-shadow: 1px 1px 0px black;
-      text-align: center;
-    }
-  </style>
+		#reticle {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			width: 20px;
+			height: 20px;
+			line-height: 20px;
+			margin: -10px 0 0 -10px;
+			z-index: 99;
+			color: white;
+			text-shadow: 1px 1px 0px black;
+			text-align: center;
+		}
+		
+		img { 
+			image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
+			image-rendering: -moz-crisp-edges;          /* Firefox                        */
+			image-rendering: -o-crisp-edges;            /* Opera                          */
+			image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+			image-rendering: pixelated;                 /* Chrome */
+			image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
+			-ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
+		}
+		
+		#itemBar {
+			position: fixed;
+			bottom: 0;
+			left: 50%;
+			margin: -178px 0 0 -178px;
+			z-index: 100;
+		}
+		
+		#itemBar_selection {
+			position: fixed;
+			bottom: 0;
+			left: 50%;
+			margin: -34px 8px 8px -34px;
+			z-index: 101;
+		}
+	</style>
 </head>
 
 <body>
-  <div id="reticle">+</div>
+	<div id="reticle">+</div>
+	<!--<img src="textures/item_bar.png" alt="Item Bar" id="itemBar" width="356" height="84"></img>
+	<img src="textures/item_bar_selection.png" alt="Item Bar Selection" id="itemBar_selection" width="68" height="68"></img>-->
   
-  <script type="text/javascript" src="plugins/noa-plus-plugins-base.js"></script>
-  <script type="text/javascript" src="plugins/noa-terrain-gen.js"></script>
-  <script type="text/javascript" src="plugins/noa-chunk-save.js"></script>
-  <script type="text/javascript" src="plugins/noa-environment.js"></script>
-  <script type="text/javascript" src="bundle.js"></script>
+	<script type="text/javascript" src="plugins/noa-plus-plugins-base.js"></script>
+	<script type="text/javascript" src="plugins/noa-terrain-gen.js"></script>
+	<script type="text/javascript" src="plugins/noa-chunk-save.js"></script>
+	<script type="text/javascript" src="plugins/noa-environment.js"></script>
+	<script type="text/javascript" src="plugins/noa-block-break.js"></script>
+	<script type="text/javascript" src="bundle.js"></script>
 </body>
 
 </html>

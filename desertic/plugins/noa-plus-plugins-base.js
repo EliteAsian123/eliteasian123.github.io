@@ -45,12 +45,12 @@ function Decal(nppb, glvec3, name, texturePath) {
 	
 	this.mesh = decalMesh;
 	
-	this.changeDecalTexture(decalMesh, texturePath);
+	this.changeTexture(decalMesh, texturePath);
 	
 	this.showing = false;
 }
 
-Decal.prototype.changeDecalTexture = function(texturePath) {
+Decal.prototype.changeTexture = function(texturePath) {
 	this.mesh.material.diffuseTexture = new this.nppb.babylon.Texture(texturePath, scene, false, true, this.nppb.babylon.Texture.NEAREST_SAMPLINGMODE);
 	this.mesh.material.diffuseTexture.hasAlpha = true;
 	this.mesh.material.opacityTexture = new this.nppb.babylon.Texture(texturePath, scene, false, true, this.nppb.babylon.Texture.NEAREST_SAMPLINGMODE);

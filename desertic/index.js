@@ -12,6 +12,9 @@ var voxelCrunch = require("voxel-crunch");
 // Murmur Numbers
 var hash = require("murmur-numbers");
 
+// GL Vector3
+var glvec3 = require("gl-vec3");
+
 var opts = {
     debug: true,
     showFPS: true,
@@ -35,22 +38,38 @@ var noaEnvironment = new NoaEnvironment(nppb, "textures/clouds.png");
 nppb.addPlugin(noaEnvironment);
 noaEnvironment.setCloudOptions(1, new BABYLON.Color3(1, 1, 1), 100);
 
+var texturesArray = [
+	"textures/break_decal_0.png",
+	"textures/break_decal_1.png",
+	"textures/break_decal_2.png",
+	"textures/break_decal_3.png",
+	"textures/break_decal_4.png",
+	"textures/break_decal_5.png",
+	"textures/break_decal_6.png",
+	"textures/break_decal_7.png"
+];
+var noaBlockBreak = new NoaBlockBreak(nppb, glvec3, texturesArray);
+nppb.addPlugin(noaBlockBreak);
+var tools = {
+	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
+	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
+	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
+};
+var currentTool = tools.shovel;
+
 // Block materials
 noa.registry.registerMaterial("dirt", null, "textures/dirt.png");
-noa.registry.registerMaterial("grass_top", null, "textures/grass_top.png");
-noa.registry.registerMaterial("grass_side", null, "textures/grass_side.png");
 noa.registry.registerMaterial("stone", null, "textures/stone.png");
 noa.registry.registerMaterial("dry_dirt", null, "textures/dry_dirt.png");
 
 // Block types
-var dirtID = nppb.registerBlock(1, { material: "dirt" }, {});
-var grassID = nppb.registerBlock(2, { material: ["grass_top", "dirt", "grass_side"] }, {});
-var stoneID = nppb.registerBlock(3, { material: "stone" }, {});
-var dryDirtID = nppb.registerBlock(4, { material: "dry_dirt" }, {});
+var dirtID = nppb.registerBlock(1, { material: "dirt" }, { hardness: 3, tool: ["hands", "shovel"] });
+var stoneID = nppb.registerBlock(2, { material: "stone" }, { hardness: 10, tool: ["pickaxe"] });
+var dryDirtID = nppb.registerBlock(3, { material: "dry_dirt" }, { hardness: 3, tool: ["hands", "shovel"] });
 
 // Resource generation options
 var genResources = [
-	{block: dirtID, chance: 0.1, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: dryDirtID}
+	{block: dirtID, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: dryDirtID}
 ];
 
 // chunkBeingRemoved Event
@@ -81,7 +100,7 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 						for (var i of genResources) {
 							if (data.get(x1, y1, z1) === i.inBlock) {
 								if (y1 + y <= i.maxY && y1 + y >= i.minY) {
-									if (hash(x1, y1, z1, seed) < i.chance) {
+									if (hash(x1 + x, y1 + y, z1 + z, seed) < i.chance) {
 										data.set(x1, y1, z1, i.block);
 									}
 								}
@@ -120,10 +139,15 @@ noa.entities.addComponent(player, noa.entities.names.mesh, {
     offset: [0, h / 2, 0]
 });
 
-// Clear targeted block on on left click
+// Breaks blocks on fire down
 noa.inputs.down.on("fire", function () {
-    if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
-})
+    //if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
+	noaBlockBreak.fireDown();
+});
+
+noa.inputs.up.on("fire", function () {
+	noaBlockBreak.fireUp();
+});
 
 // Place some grass on right click
 noa.inputs.down.on("alt-fire", function () {
@@ -138,4 +162,19 @@ noa.on("tick", function (dt) {
 // Ran before every frame
 noa.on('beforeRender', function(dt) {
 	noaEnvironment.moveClouds(dt / 1000000, 0);
+	if (noa.targetedBlock) {
+		var tool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
+		var correct = false;
+		for (var i of tool) {
+			if (i === currentTool.name) {
+				correct = true;
+				break;
+			}
+		}
+		if (correct) {
+			noaBlockBreak.render(dt, currentTool.correctToolEfficiency);
+		} else {
+			noaBlockBreak.render(dt, currentTool.incorrectToolEfficiency);
+		}
+	}
 });
