@@ -71,8 +71,10 @@ var itemBarElement = document.getElementById("itemBar");
 var itemBarContext = itemBarElement.getContext("2d");
 itemBarContext.imageSmoothingEnabled = false;
 var itemBarImage = new Image();
+itemBarImage.width = 89; itemBarImage.height = 21;
 itemBarImage.src = "/textures/item_bar.png";
 var itemBarImageSelection = new Image();
+itemBarImage.width = 17; itemBarImage.height = 17;
 itemBarImageSelection.src = "/textures/item_bar_selection.png";
 var itemBarItems = [ 
 	items.pickaxe,
@@ -249,6 +251,7 @@ noa.on('beforeRender', function(dt) {
 	for (var i = 0; i < itemBarItems.length; i++) {
 		if (itemBarItems[i] !== null) {
 			var img = new Image();
+			itemBarImage.width = 16; itemBarImage.height = 16;
 			img.src = itemBarItems[i].texture;
 			itemBarContext.drawImage(img, (i * 68) + 8, 8, 68, 68);
 		}
