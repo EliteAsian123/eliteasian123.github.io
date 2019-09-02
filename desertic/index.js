@@ -1,4 +1,40 @@
-"use strict";
+/*
+ * Desertic by: EliteAsian123
+ * 
+ * Copyright © 2019 EliteAsian123
+ *
+*/
+
+///////////////////////
+// Declaring objects //
+///////////////////////
+
+var tools = {
+	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
+	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
+	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95}
+};
+
+var items = {
+	pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/pickaxe.png"},
+	shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"}
+};
+
+var materials = [
+	{name: "dirt", color: null, texture: "textures/dirt.png"},
+	{name: "dry_dirt", color: null, texture: "textures/dry_dirt.png"},
+	{name: "stone", color: null, texture: "textures/stone.png"}
+];
+
+var blocks = {
+	dirt: {name: "dirt", material: "dirt", hardness: 3, tool: ["hands", "shovel"]},
+	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel"]},
+	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]}
+};
+
+/////////////////
+// Actual game //
+/////////////////
 
 // Engine options object, and engine instantiation:
 import Engine from "noa-engine";
@@ -25,12 +61,28 @@ var opts = {
 };
 var noa = new Engine(opts);
 
-// Loading plugins (noa-plus-plugins)
+// Loading plugins (noa-plus-plugins) and variables
 var nppb = new NoaPlusPlugins(noa, BABYLON);
 
 var seed = Math.random();
 var noise = new SimplexNoise(seed);
 
+var itemBarElement = document.getElementById("itemBar");
+var itemBarContext = itemBarElement.getContext("2d");
+itemBarContext.imageSmoothingEnabled = false;
+var itemBarImage = new Image();
+itemBarImage.src = "/textures/item_bar.png";
+var itemBarImageSelection = new Image();
+itemBarImageSelection.src = "/textures/item_bar_selection.png";
+var itemBarItems = [ 
+	items.pickaxe,
+	items.shovel,
+	null,
+	null,
+	null
+];
+var itemBarSelection = 0;
+ 
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
 
@@ -50,26 +102,22 @@ var texturesArray = [
 ];
 var noaBlockBreak = new NoaBlockBreak(nppb, glvec3, texturesArray);
 nppb.addPlugin(noaBlockBreak);
-var tools = {
-	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
-	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
-	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
-};
-var currentTool = tools.shovel;
 
 // Block materials
-noa.registry.registerMaterial("dirt", null, "textures/dirt.png");
-noa.registry.registerMaterial("stone", null, "textures/stone.png");
-noa.registry.registerMaterial("dry_dirt", null, "textures/dry_dirt.png");
+for (var i of materials) {
+	noa.registry.registerMaterial(i.name, i.color, i.texture);
+}
 
 // Block types
-var dirtID = nppb.registerBlock(1, { material: "dirt" }, { hardness: 3, tool: ["hands", "shovel"] });
-var stoneID = nppb.registerBlock(2, { material: "stone" }, { hardness: 10, tool: ["pickaxe"] });
-var dryDirtID = nppb.registerBlock(3, { material: "dry_dirt" }, { hardness: 3, tool: ["hands", "shovel"] });
+var currentID = 0;
+for (var i of Object.keys(blocks)) {
+	nppb.registerBlock(++currentID, { material: blocks[i].material }, { hardness: blocks[i].hardness, tool: blocks[i].tool });
+	blocks[i] = currentID;
+}
 
 // Resource generation options
 var genResources = [
-	{block: dirtID, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: dryDirtID}
+	{block: blocks.dirt, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: blocks.dry_dirt}
 ];
 
 // chunkBeingRemoved Event
@@ -91,9 +139,9 @@ noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
 					for (var y1 = 0; y1 < data.shape[1]; ++y1) {
 						// Create main land
 						if (y1 + y < random && y1 + y > random - 5) {
-							data.set(x1, y1, z1, dryDirtID);
+							data.set(x1, y1, z1, blocks.dry_dirt);
 						} else if (y1 + y <= random - 5) {
-							data.set(x1, y1, z1, stoneID);
+							data.set(x1, y1, z1, blocks.stone);
 						}
 
 						// Generate resources
@@ -140,6 +188,7 @@ noa.entities.addComponent(player, noa.entities.names.mesh, {
 });
 
 // Breaks blocks on fire down
+noa.inputs.bind("fire", "Q");
 noa.inputs.down.on("fire", function () {
     //if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
 	noaBlockBreak.fireDown();
@@ -151,30 +200,58 @@ noa.inputs.up.on("fire", function () {
 
 // Place some grass on right click
 noa.inputs.down.on("alt-fire", function () {
-    if (noa.targetedBlock) noa.addBlock(stoneID, noa.targetedBlock.adjacent);
+    if (noa.targetedBlock) noa.addBlock(blocks.stone, noa.targetedBlock.adjacent);
 })
 
 // Ran each tick
 noa.on("tick", function (dt) {
-
+	// Handle item scrolling
+	var scroll = noa.inputs.state.scrolly;
+    if (scroll !== 0) {
+        itemBarSelection += (scroll > 0) ? 1 : -1;
+        if (itemBarSelection < 0) itemBarSelection = 4;
+        if (itemBarSelection > 4) itemBarSelection = 0;
+    }
 });
 
 // Ran before every frame
 noa.on('beforeRender', function(dt) {
+	// Move clouds
 	noaEnvironment.moveClouds(dt / 1000000, 0);
+	
+	// Handle block breaking
 	if (noa.targetedBlock) {
-		var tool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
+		var neededTool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
 		var correct = false;
-		for (var i of tool) {
-			if (i === currentTool.name) {
+		var itemTool = itemBarItems[itemBarSelection];
+		if (itemTool === null) {
+			itemTool = tools.hands;
+		} else {
+			itemTool = itemTool.tool;
+		}
+		for (var i of neededTool) {
+			if (i === itemTool.name) {
 				correct = true;
 				break;
 			}
 		}
 		if (correct) {
-			noaBlockBreak.render(dt, currentTool.correctToolEfficiency);
+			noaBlockBreak.render(dt, itemTool.correctToolEfficiency);
 		} else {
-			noaBlockBreak.render(dt, currentTool.incorrectToolEfficiency);
+			noaBlockBreak.render(dt, itemTool.incorrectToolEfficiency);
 		}
 	}
+	
+	// Handle itemBar drawing
+	itemBarContext.clearRect(0, 0, itemBarElement.width, itemBarElement.height);
+	itemBarContext.drawImage(itemBarImage, 0, 0, itemBarElement.width, itemBarElement.height);
+	itemBarContext.drawImage(itemBarImageSelection, (itemBarSelection * 68) + 8, 8, 68, 68);
+	for (var i = 0; i < itemBarItems.length; i++) {
+		if (itemBarItems[i] !== null) {
+			var img = new Image();
+			img.src = itemBarItems[i].texture;
+			itemBarContext.drawImage(img, (i * 68) + 8, 8, 68, 68);
+		}
+	}
+	
 });

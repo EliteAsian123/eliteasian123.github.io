@@ -18,7 +18,6 @@ function NoaBlockBreak(nppb, glvec3, textures) {
 
 NoaBlockBreak.prototype.init = function() {
 	this.breakDecal = new Decal(this.nppb, this.glvec3, "breakDecal", this.textures[0]);
-	console.log(this.breakDecal);
 }
 
 NoaBlockBreak.prototype.getName = function() {
