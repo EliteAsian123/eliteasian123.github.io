@@ -71,9 +71,9 @@ var itemBarElement = document.getElementById("itemBar");
 var itemBarContext = itemBarElement.getContext("2d");
 itemBarContext.imageSmoothingEnabled = false;
 var itemBarImage = new Image();
-itemBarImage.src = "/textures/item_bar.png";
+itemBarImage.src = "textures/item_bar.png";
 var itemBarImageSelection = new Image();
-itemBarImageSelection.src = "/textures/item_bar_selection.png";
+itemBarImageSelection.src = "textures/item_bar_selection.png";
 var itemBarItems = [ 
 	items.pickaxe,
 	items.shovel,
