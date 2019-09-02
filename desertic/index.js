@@ -16,8 +16,8 @@ var tools = {
 };
 
 var items = {
-	pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/pickaxe.png"},
-	shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"}
+	item_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
+	item_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"}
 };
 
 var materials = [
@@ -74,14 +74,6 @@ var itemBarImage = new Image();
 itemBarImage.src = "textures/item_bar.png";
 var itemBarImageSelection = new Image();
 itemBarImageSelection.src = "textures/item_bar_selection.png";
-var itemBarItems = [ 
-	items.pickaxe,
-	items.shovel,
-	null,
-	null,
-	null
-];
-var itemBarSelection = 0;
  
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
@@ -108,11 +100,13 @@ for (var i of materials) {
 	noa.registry.registerMaterial(i.name, i.color, i.texture);
 }
 
-// Block types
+// Block types and Block items
 var currentID = 0;
 for (var i of Object.keys(blocks)) {
 	nppb.registerBlock(++currentID, { material: blocks[i].material }, { hardness: blocks[i].hardness, tool: blocks[i].tool });
+	items["block_" + i] = {name: blocks[i].name, tool: tools.hands, texture: "textures/" + blocks[i].name + ".png"};
 	blocks[i] = currentID;
+	items["block_" + i].placeBlock = currentID;
 }
 
 // Get item images
@@ -127,6 +121,16 @@ var genResources = [
 	{block: blocks.dirt, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: blocks.dry_dirt}
 ];
 
+// Set itemBar items
+var itemBarItems = [ 
+	items.item_pickaxe,
+	items.item_shovel,
+	items.block_dirt,
+	items.block_dry_dirt,
+	items.block_stone
+];
+var itemBarSelection = 0;
+
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
     noaChunkSave.chunkSave(id, array);
@@ -134,7 +138,7 @@ noa.world.on("chunkBeingRemoved", function(id, array, userData) {
 
 
 // worldDataNeeded Event
-noa.world.on("worldDataNeeded", function (id, data, x, y, z) {
+noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 	if (noaChunkSave.isChunkSaved(id)) {
 		data = noaChunkSave.chunkLoad(id, data);
 	} else {
@@ -196,22 +200,28 @@ noa.entities.addComponent(player, noa.entities.names.mesh, {
 
 // Breaks blocks on fire down
 noa.inputs.bind("fire", "Q");
-noa.inputs.down.on("fire", function () {
+noa.inputs.down.on("fire", function() {
     //if (noa.targetedBlock) noa.setBlock(0, noa.targetedBlock.position);
 	noaBlockBreak.fireDown();
 });
 
-noa.inputs.up.on("fire", function () {
+noa.inputs.up.on("fire", function() {
 	noaBlockBreak.fireUp();
 });
 
 // Place some grass on right click
-noa.inputs.down.on("alt-fire", function () {
-    if (noa.targetedBlock) noa.addBlock(blocks.stone, noa.targetedBlock.adjacent);
+noa.inputs.down.on("alt-fire", function() {
+	if (noa.targetedBlock) {
+		if (itemBarItems[itemBarSelection] !== null) {
+			if (itemBarItems[itemBarSelection].placeBlock !== null) {
+				noa.addBlock(itemBarItems[itemBarSelection].placeBlock, noa.targetedBlock.adjacent);
+			}
+		}
+	}
 })
 
 // Ran each tick
-noa.on("tick", function (dt) {
+noa.on("tick", function(dt) {
 	// Handle item scrolling
 	var scroll = noa.inputs.state.scrolly;
     if (scroll !== 0) {
@@ -220,6 +230,27 @@ noa.on("tick", function (dt) {
         if (itemBarSelection > 4) itemBarSelection = 0;
     }
 });
+
+// Item bar slots
+for (var i = 1; i < 6; i++) {
+	noa.inputs.bind("slot" + i, i.toString());
+}
+noa.inputs.down.on("slot1", function() {
+	itemBarSelection = 0;
+});
+noa.inputs.down.on("slot2", function() {
+	itemBarSelection = 1;
+});
+noa.inputs.down.on("slot3", function() {
+	itemBarSelection = 2;
+});
+noa.inputs.down.on("slot4", function() {
+	itemBarSelection = 3;
+});
+noa.inputs.down.on("slot5", function() {
+	itemBarSelection = 4;
+});
+
 
 // Ran before every frame
 noa.on('beforeRender', function(dt) {
@@ -252,10 +283,10 @@ noa.on('beforeRender', function(dt) {
 	// Handle itemBar drawing
 	itemBarContext.clearRect(0, 0, itemBarElement.width, itemBarElement.height);
 	itemBarContext.drawImage(itemBarImage, 0, 0, itemBarElement.width, itemBarElement.height);
-	itemBarContext.drawImage(itemBarImageSelection, (itemBarSelection * 68) + 8, 8, 68, 68);
+	itemBarContext.drawImage(itemBarImageSelection, (itemBarSelection * 72) + 8, 8, 72, 72);
 	for (var i = 0; i < itemBarItems.length; i++) {
 		if (itemBarItems[i] !== null) {
-			itemBarContext.drawImage(itemBarItems[i].texture, (i * 68) + 8, 8, 68, 68);
+			itemBarContext.drawImage(itemBarItems[i].texture, (i * 72) + 12, 12, 64, 64);
 		}
 	}
 });
