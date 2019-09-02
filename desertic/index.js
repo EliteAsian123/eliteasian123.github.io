@@ -11,13 +11,17 @@
 
 var tools = {
 	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
+	rocks: {name: "rocks", incorrectToolEfficiency: 0.25, correctToolEfficiency: 0.65},
 	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
 	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95}
 };
 
 var items = {
 	item_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
-	item_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"}
+	item_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"},
+	item_twine: {name: "Twine", tool: tools.hands, texture: "textures/twine.png"},
+	item_rocks: {name: "Rocks", tool: tools.rocks, texture: "textures/rocks.png"},
+	item_stick: {name: "Stick", tool: tools.hands, texture: "textures/stick.png"}
 };
 
 var materials = [
@@ -27,8 +31,8 @@ var materials = [
 ];
 
 var blocks = {
-	dirt: {name: "dirt", material: "dirt", hardness: 3, tool: ["hands", "shovel"]},
-	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel"]},
+	dirt: {name: "dirt", material: "dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
+	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
 	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]}
 };
 
@@ -125,7 +129,7 @@ var genResources = [
 var itemBarItems = [ 
 	items.item_pickaxe,
 	items.item_shovel,
-	items.block_dirt,
+	items.item_rocks,
 	items.block_dry_dirt,
 	items.block_stone
 ];
