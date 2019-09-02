@@ -80,7 +80,7 @@ nppb.addPlugin(noaChunkSave);
 
 var noaEnvironment = new NoaEnvironment(nppb, "textures/clouds.png");
 nppb.addPlugin(noaEnvironment);
-noaEnvironment.setCloudOptions(1, new BABYLON.Color3(1, 1, 1), 100);
+noaEnvironment.setCloudOptions(0.35, new BABYLON.Color4(1, 1, 1), 250);
 
 var texturesArray = [
 	"textures/break_decal_0.png",
@@ -255,7 +255,7 @@ noa.inputs.down.on("slot5", function() {
 // Ran before every frame
 noa.on('beforeRender', function(dt) {
 	// Move clouds
-	noaEnvironment.moveClouds(dt / 1000000, 0);
+	noaEnvironment.moveClouds(dt / 500000, dt / 1000000);
 	
 	// Handle block breaking
 	if (noa.targetedBlock) {
