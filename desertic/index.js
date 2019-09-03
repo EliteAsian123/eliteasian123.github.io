@@ -1,4 +1,4 @@
-/*
+/*!
  * Desertic by: EliteAsian123
  * 
  * Copyright © 2019 EliteAsian123
@@ -13,27 +13,34 @@ var tools = {
 	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
 	rocks: {name: "rocks", incorrectToolEfficiency: 0.25, correctToolEfficiency: 0.65},
 	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
-	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95}
+	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
+	cactus_saw: {name: "cactus_saw", incorrectToolEfficiency: 0.35, correctToolEfficiency: 0.65}
 };
 
 var items = {
 	item_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
 	item_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"},
+	item_cactus_saw: {name: "Cactus Saw", tool: tools.cactus_saw, texture: "textures/crude_cactus_saw.png"},
 	item_twine: {name: "Twine", tool: tools.hands, texture: "textures/twine.png"},
 	item_rocks: {name: "Rocks", tool: tools.rocks, texture: "textures/rocks.png"},
 	item_stick: {name: "Stick", tool: tools.hands, texture: "textures/stick.png"}
 };
 
 var materials = [
-	{name: "dirt", color: null, texture: "textures/dirt.png"},
 	{name: "dry_dirt", color: null, texture: "textures/dry_dirt.png"},
-	{name: "stone", color: null, texture: "textures/stone.png"}
+	{name: "sand", color: null, texture: "textures/sand.png"},
+	{name: "stone", color: null, texture: "textures/stone.png"},
+	{name: "cactus_side", color: null, texture: "textures/cactus_side.png"},
+	{name: "cactus_top", color: null, texture: "textures/cactus_top.png"},
+	{name: "cactus_bottom", color: null, texture: "textures/cactus_bottom.png"}
 ];
 
 var blocks = {
-	dirt: {name: "dirt", material: "dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
 	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
-	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]}
+	sand: {name: "sand", material: "sand", hardness: 2.8, tool: ["hands", "shovel", "rocks"]},
+	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]},
+	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"]},
+	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"]}
 };
 
 /////////////////
@@ -55,6 +62,7 @@ var hash = require("murmur-numbers");
 // GL Vector3
 var glvec3 = require("gl-vec3");
 
+// Load game engine
 var opts = {
     debug: true,
     showFPS: true,
@@ -64,6 +72,13 @@ var opts = {
 	playerAutoStep: true
 };
 var noa = new Engine(opts);
+
+// Setup player properties
+var playerMovementState = noa.entities.getMovement(noa.playerEntity);
+playerMovementState.airJumps = 0;
+playerMovementState.maxSpeed = 8.5;
+playerMovementState.jumpImpulse = 7;
+playerMovementState.jumpTime = 150;
 
 // Loading plugins (noa-plus-plugins) and variables
 var nppb = new NoaPlusPlugins(noa, BABYLON);
@@ -122,14 +137,14 @@ for (var i of Object.keys(items)) {
 
 // Resource generation options
 var genResources = [
-	{block: blocks.dirt, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: blocks.dry_dirt}
+	//{block: blocks.dirt, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: blocks.dry_dirt}
 ];
 
 // Set itemBar items
 var itemBarItems = [ 
 	items.item_pickaxe,
 	items.item_shovel,
-	items.item_rocks,
+	items.block_sand,
 	items.block_dry_dirt,
 	items.block_stone
 ];
@@ -153,13 +168,24 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 					var resources = Math.floor(resourceNoise.noise2D((x1 + x) / 250, (z1 + z) / 250));
 					for (var y1 = 0; y1 < data.shape[1]; ++y1) {
 						// Create main land
-						if (y1 + y < random && y1 + y > random - 5) {
-							data.set(x1, y1, z1, blocks.dry_dirt);
+						if (y1 + y === random) {
+							// Generate cactus
+							if (hash(x1 + x, y1 + y, z1 + z, seed) < 0.001) {
+								var cactusHeight = Math.floor(hash(x1 + x, y1 + y, z1 + z, seed, "cactus") * 2) + 3;
+								console.log(cactusHeight);
+								for (var i = 0; i < cactusHeight; i++) {
+									data.set(x1, y1 + i, z1, blocks.cactus_bottom);
+								}
+								data.set(x1, y1 + cactusHeight, z1, blocks.cactus_top);
+							} 
+							
+						} else if (y1 + y < random && y1 + y > random - 5) {
+							data.set(x1, y1, z1, blocks.sand);
 						} else if (y1 + y <= random - 5) {
 							data.set(x1, y1, z1, blocks.stone);
 						}
 
-						// Generate resources
+						// Generate random resources
 						for (var i of genResources) {
 							if (data.get(x1, y1, z1) === i.inBlock) {
 								if (y1 + y <= i.maxY && y1 + y >= i.minY) {
