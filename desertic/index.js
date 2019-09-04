@@ -84,7 +84,6 @@ playerMovementState.jumpTime = 150;
 var nppb = new NoaPlusPlugins(noa, BABYLON);
 
 var seed = Math.random();
-var noise = new SimplexNoise(seed);
 
 var itemBarElement = document.getElementById("itemBar");
 var itemBarContext = itemBarElement.getContext("2d");
@@ -161,14 +160,11 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 	if (noaChunkSave.isChunkSaved(id)) {
 		data = noaChunkSave.chunkLoad(id, data);
 	} else {
-		var resourceNoise = new SimplexNoise();
 		for (var x1 = 0; x1 < data.shape[0]; ++x1) {
 				for (var z1 = 0; z1 < data.shape[2]; ++z1) {
-					var random = Math.floor(noise.noise2D((x1 + x) / 250, (z1 + z) / 250) * 3);
-					var resources = Math.floor(resourceNoise.noise2D((x1 + x) / 250, (z1 + z) / 250));
 					for (var y1 = 0; y1 < data.shape[1]; ++y1) {
 						// Create main land
-						if (y1 + y === random) {
+						if (y1 + y === 1) {
 							// Generate cactus
 							if (hash(x1 + x, y1 + y, z1 + z, seed) < 0.001) {
 								var cactusHeight = Math.floor(hash(x1 + x, y1 + y, z1 + z, seed, "cactus") * 2) + 3;
@@ -179,9 +175,9 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 								data.set(x1, y1 + cactusHeight, z1, blocks.cactus_top);
 							} 
 							
-						} else if (y1 + y < random && y1 + y > random - 5) {
+						} else if (y1 + y < 1 && y1 + y > -5) {
 							data.set(x1, y1, z1, blocks.sand);
-						} else if (y1 + y <= random - 5) {
+						} else if (y1 + y <= -5) {
 							data.set(x1, y1, z1, blocks.stone);
 						}
 
