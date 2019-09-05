@@ -18,9 +18,9 @@ var tools = {
 };
 
 var items = {
-	item_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
-	item_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/shovel.png"},
-	item_cactus_saw: {name: "Cactus Saw", tool: tools.cactus_saw, texture: "textures/crude_cactus_saw.png"},
+	item_crude_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
+	item_crude_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/crude_shovel.png"},
+	item_crude_cactus_saw: {name: "Cactus Saw", tool: tools.cactus_saw, texture: "textures/crude_cactus_saw.png"},
 	item_twine: {name: "Twine", tool: tools.hands, texture: "textures/twine.png"},
 	item_rocks: {name: "Rocks", tool: tools.rocks, texture: "textures/rocks.png"},
 	item_stick: {name: "Stick", tool: tools.hands, texture: "textures/stick.png"}
@@ -141,8 +141,8 @@ var genResources = [
 
 // Set itemBar items
 var itemBarItems = [ 
-	items.item_pickaxe,
-	items.item_shovel,
+	items.item_crude_pickaxe,
+	items.item_crude_shovel,
 	items.block_sand,
 	items.block_dry_dirt,
 	items.block_stone

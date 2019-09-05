@@ -14,6 +14,7 @@ function NoaBlockBreak(nppb, glvec3, textures) {
 	
 	this.block = null;
 	this.timer = 0;
+	this.down = false;
 }
 
 NoaBlockBreak.prototype.init = function() {
@@ -25,16 +26,11 @@ NoaBlockBreak.prototype.getName = function() {
 }
 
 NoaBlockBreak.prototype.fireDown = function() {
-	if (this.nppb.noa.targetedBlock) {
-		if (this.block === null) {
-			this.block = this.nppb.noa.targetedBlock;
-		}
-	}
+	this.down = true;
 }
 
 NoaBlockBreak.prototype.fireUp = function() {
-	this.block = null;
-	this.timer = 0;
+	this.down = false;
 }
 
 NoaBlockBreak.prototype.render = function(dt, modifier) {
@@ -42,6 +38,7 @@ NoaBlockBreak.prototype.render = function(dt, modifier) {
 		if (this.timer >= this.nppb.getBlockCustomOptions(this.block.blockID, "hardness")) {
 			this.nppb.noa.setBlock(0, this.block.position);
 			this.timer = -1;
+			this.block = null;
 		} else {
 			this.timer += dt / 150 * modifier;
 			this.breakDecal.changeTexture(this.textures[Math.floor(this.timer / (this.nppb.getBlockCustomOptions(this.block.blockID, "hardness") / 7))]);
@@ -52,7 +49,18 @@ NoaBlockBreak.prototype.render = function(dt, modifier) {
 		this.breakDecal.hide();
 	}
 	
-	if (this.nppb.noa.targetedBlock === null) {
+	if (this.nppb.noa.targetedBlock === null || this.block === null) {
 		this.breakDecal.hide();
+	}
+	
+	if (this.nppb.noa.targetedBlock && this.down) {
+		if (this.block === null) {
+			this.block = this.nppb.noa.targetedBlock;
+		}
+	}
+	
+	if (!this.down) {
+		this.block = null;
+		this.timer = 0;
 	}
 }
