@@ -39,8 +39,8 @@ var blocks = {
 	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
 	sand: {name: "sand", material: "sand", hardness: 2.8, tool: ["hands", "shovel", "rocks"]},
 	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]},
-	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"]},
-	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"]}
+	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"], updatingBlock: true},
+	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"], updatingBlock: true}
 };
 
 /////////////////
@@ -85,6 +85,15 @@ var nppb = new NoaPlusPlugins(noa, BABYLON);
 
 var seed = Math.random();
 
+// Updating block stuff
+var updatingBlockLocations = [];
+function addUpdatingBlock(x, y, z) {
+	updatingBlockLocations.push([x, y, z]);
+}
+function removeUpdatingBlock(x, y, z) {
+	updatingBlockLocations = updatingBlockLocations.filter(word => word.equals([x, y, z]) === false);
+}
+
 var itemBarElement = document.getElementById("itemBar");
 var itemBarContext = itemBarElement.getContext("2d");
 itemBarContext.imageSmoothingEnabled = false;
@@ -121,7 +130,14 @@ for (var i of materials) {
 // Block types and Block items
 var currentID = 0;
 for (var i of Object.keys(blocks)) {
-	nppb.registerBlock(++currentID, { material: blocks[i].material }, { hardness: blocks[i].hardness, tool: blocks[i].tool });
+	var j = { material: blocks[i].material };
+	if (blocks[i].updatingBlock) {
+		j['onSet'] = addUpdatingBlock;
+		j['onLoad'] = addUpdatingBlock;
+		j['onUnset'] = removeUpdatingBlock;
+		j['onUnload'] = removeUpdatingBlock;
+	}
+	nppb.registerBlock(++currentID, j, { hardness: blocks[i].hardness, tool: blocks[i].tool });
 	items["block_" + i] = {name: blocks[i].name, tool: tools.hands, texture: "textures/" + blocks[i].name + ".png"};
 	blocks[i] = currentID;
 	items["block_" + i].placeBlock = currentID;
@@ -144,7 +160,7 @@ var itemBarItems = [
 	items.item_crude_pickaxe,
 	items.item_crude_shovel,
 	items.block_sand,
-	items.block_dry_dirt,
+	items.block_cactus_top,
 	items.block_stone
 ];
 var itemBarSelection = 0;
@@ -165,15 +181,14 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 					for (var y1 = 0; y1 < data.shape[1]; ++y1) {
 						// Create main land
 						if (y1 + y === 1) {
-							// Generate cactus
+							// Generate cactus 
 							if (hash(x1 + x, y1 + y, z1 + z, seed) < 0.001) {
 								var cactusHeight = Math.floor(hash(x1 + x, y1 + y, z1 + z, seed, "cactus") * 2) + 3;
-								console.log(cactusHeight);
 								for (var i = 0; i < cactusHeight; i++) {
 									data.set(x1, y1 + i, z1, blocks.cactus_bottom);
 								}
 								data.set(x1, y1 + cactusHeight, z1, blocks.cactus_top);
-							} 
+							}
 							
 						} else if (y1 + y < 1 && y1 + y > -5) {
 							data.set(x1, y1, z1, blocks.sand);
@@ -255,6 +270,48 @@ noa.on("tick", function(dt) {
         if (itemBarSelection < 0) itemBarSelection = 4;
         if (itemBarSelection > 4) itemBarSelection = 0;
     }
+	
+	// Handle updating blocks
+	for (var i of updatingBlockLocations) {
+		var block = noa.getBlock(i[0], i[1], i[2]);
+		var random = Math.random();
+		switch(block) {
+			case blocks.cactus_top:
+				if (noa.getBlock(i[0], i[1] + 1, i[2]) !== 0) {
+					noa.setBlock(blocks.cactus_bottom, i[0], i[1], i[2]);
+				} else if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
+					noa.setBlock(0, i[0], i[1], i[2]);
+				} else {
+					if (random <= 0.00001) {
+						var j = 1;
+						for (var k = 1; k < 5; k++) {
+							if (noa.getBlock(i[0], i[1] - k, i[2]) === blocks.cactus_bottom) {
+								j++;
+							}
+						}
+					
+						if (j < 5) {
+							noa.setBlock(blocks.cactus_bottom, i[0], i[1], i[2]);
+							noa.setBlock(blocks.cactus_top, i[0], i[1] + 1, i[2]);
+						}
+					}
+				}
+				
+			break;
+			
+			case blocks.cactus_bottom:
+				if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
+					noa.setBlock(0, i[0], i[1], i[2]);
+				} else {
+					if (random <= 0.0001) {
+						if (noa.getBlock(i[0], i[1] + 1, i[2]) === 0) {
+							noa.setBlock(blocks.cactus_top, i[0], i[1], i[2]);
+						}
+					}
+				}
+			break;
+		}
+	}
 });
 
 // Item bar slots
