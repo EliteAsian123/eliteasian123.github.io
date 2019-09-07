@@ -43,6 +43,18 @@ var blocks = {
 	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"], updatingBlock: true}
 };
 
+var uis = {
+	inventory: [
+		{type: "image", path: "textures/item_inventory.png", x: "center", y: "center", width: 130, height: 78, children: [
+			{type: "slot", x: (18 * 1) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 0},
+			{type: "slot", x: (18 * 2) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 1},
+			{type: "slot", x: (18 * 3) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 2},
+			{type: "slot", x: (18 * 4) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 3},
+			{type: "slot", x: (18 * 5) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 4}
+		]}
+	]
+}
+
 /////////////////
 // Actual game //
 /////////////////
@@ -80,19 +92,15 @@ playerMovementState.maxSpeed = 8.5;
 playerMovementState.jumpImpulse = 7;
 playerMovementState.jumpTime = 150;
 
+// Adding keydown listener
+document.addEventListener('keydown', keyDown);
+
 // Loading plugins (noa-plus-plugins) and variables
 var nppb = new NoaPlusPlugins(noa, BABYLON);
 
 var seed = Math.random();
 
-// Updating block stuff
 var updatingBlockLocations = [];
-function addUpdatingBlock(x, y, z) {
-	updatingBlockLocations.push([x, y, z]);
-}
-function removeUpdatingBlock(x, y, z) {
-	updatingBlockLocations = updatingBlockLocations.filter(word => word.equals([x, y, z]) === false);
-}
 
 var itemBarElement = document.getElementById("itemBar");
 var itemBarContext = itemBarElement.getContext("2d");
@@ -101,6 +109,15 @@ var itemBarImage = new Image();
 itemBarImage.src = "textures/item_bar.png";
 var itemBarImageSelection = new Image();
 itemBarImageSelection.src = "textures/item_bar_selection.png";
+
+var currentUI = null;
+
+var uiElement = document.getElementById("ui");
+var uiContext = uiElement.getContext("2d");
+uiElement.width = window.innerWidth;
+uiElement.height = window.innerHeight;
+uiContext.imageSmoothingEnabled = false;
+showUI(false);
  
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
@@ -165,6 +182,24 @@ var itemBarItems = [
 ];
 var itemBarSelection = 0;
 
+var inventoryItems = [
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null
+];
+
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
     noaChunkSave.chunkSave(id, array);
@@ -215,8 +250,7 @@ noa.world.on("worldDataNeeded", function(id, data, x, y, z) {
 });
 
 // Get the player entity's ID and other info (position, size, ..)
-var player = noa.playerEntity;
-var dat = noa.entities.getPositionData(player);
+var dat = noa.entities.getPositionData(noa.playerEntity);
 var w = dat.width;
 var h = dat.height;
 
@@ -231,7 +265,7 @@ mesh.scaling.y = h;
 
 // Add "mesh" component to the player entity
 // This causes the mesh to move around in sync with the player entity
-noa.entities.addComponent(player, noa.entities.names.mesh, {
+noa.entities.addComponent(noa.playerEntity, noa.entities.names.mesh, {
     mesh: mesh,
     /* Offset vector is needed because noa positions are always the 
 	   bottom-center of the entity, and Babylon"s CreateBox gives a 
@@ -372,4 +406,89 @@ noa.on('beforeRender', function(dt) {
 			itemBarContext.drawImage(itemBarItems[i].texture, (i * 72) + 12, 12, 64, 64);
 		}
 	}
+
+	// Handle UI drawing
+	if (currentUI !== null) {
+		uiContext.clearRect(0, 0, uiElement.width, uiElement.height);
+		drawUI(currentUI, 0, 0);
+	}
 });
+
+// Functions
+
+function addUpdatingBlock(x, y, z) {
+	updatingBlockLocations.push([x, y, z]);
+}
+
+function removeUpdatingBlock(x, y, z) {
+	updatingBlockLocations = updatingBlockLocations.filter(word => word.equals([x, y, z]) === false);
+}
+
+function showUI(arg) {
+	if (!arg) {
+		uiElement.style.display = "none";
+	} else {
+		uiElement.style.display = "block";
+	}
+}
+
+function keyDown(event) {
+	if (event.keyCode === 9) {
+		event.preventDefault();
+		if (currentUI === null) {
+			currentUI = uis.inventory;
+			showUI(true);
+			noa.container.setPointerLock(false);
+			noa.entities.removeComponent(noa.playerEntity, noa.ents.names.receivesInputs);
+		} else {
+			currentUI = null;
+			showUI(false);
+			noa.container.setPointerLock(true);
+			noa.entities.addComponent(noa.playerEntity, noa.ents.names.receivesInputs);
+		}
+	}
+}
+
+function drawUI(arg, xo, yo) {
+	for (var i of arg) {
+		var x = parsePosition(i.x, uiElement.width, i.width * 4);
+		var y = parsePosition(i.y, uiElement.height, i.height * 4);
+		x += xo;
+		y += yo;
+
+		switch(i.type) {
+			case "image":
+				var j = new Image();
+				j.src = i.path;
+				uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+				
+				break;
+
+			case "slot":
+				var j = new Image();
+				if (i.slotLoc === "itemBar") {
+					j = itemBarItems[i.slotNum].texture;
+				} else {
+					j.src = "textures/break_decal_7.png";
+				}
+				uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+
+				break;
+
+			default:
+				console.error("Type " + i.type + " is not a correct type.");
+		}
+
+		if (i.children !== undefined) {
+			drawUI(i.children, x, y);
+		}
+	}
+}
+
+function parsePosition(arg, line, localLine) {
+	if (arg === "center") {
+		return (line / 2) - (localLine / 2);
+	} else {
+		return arg * 4;
+	}
+}

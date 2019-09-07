@@ -36,12 +36,21 @@
 			margin: -188px 0 0 -188px;
 			z-index: 100;
 		}
+
+		#ui {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 110;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
 	</style>
 </head>
 
 <body>
 	<div id="reticle">+</div>
 	<canvas id="itemBar" width="376" height="88"></canvas>
+	<canvas id="ui" width="0" height="0"></canvas>
   
 	<script type="text/javascript" src="compareArrays.js"></script>
 	<script type="text/javascript" src="plugins/noa-plus-plugins-base.js"></script>
