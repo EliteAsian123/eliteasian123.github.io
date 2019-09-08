@@ -5,60 +5,6 @@
  *
 */
 
-///////////////////////
-// Declaring objects //
-///////////////////////
-
-var tools = {
-	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
-	rocks: {name: "rocks", incorrectToolEfficiency: 0.25, correctToolEfficiency: 0.65},
-	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
-	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
-	cactus_saw: {name: "cactus_saw", incorrectToolEfficiency: 0.35, correctToolEfficiency: 0.65}
-};
-
-var items = {
-	item_crude_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
-	item_crude_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/crude_shovel.png"},
-	item_crude_cactus_saw: {name: "Cactus Saw", tool: tools.cactus_saw, texture: "textures/crude_cactus_saw.png"},
-	item_twine: {name: "Twine", tool: tools.hands, texture: "textures/twine.png"},
-	item_rocks: {name: "Rocks", tool: tools.rocks, texture: "textures/rocks.png"},
-	item_stick: {name: "Stick", tool: tools.hands, texture: "textures/stick.png"}
-};
-
-var materials = [
-	{name: "dry_dirt", color: null, texture: "textures/dry_dirt.png"},
-	{name: "sand", color: null, texture: "textures/sand.png"},
-	{name: "stone", color: null, texture: "textures/stone.png"},
-	{name: "cactus_side", color: null, texture: "textures/cactus_side.png"},
-	{name: "cactus_top", color: null, texture: "textures/cactus_top.png"},
-	{name: "cactus_bottom", color: null, texture: "textures/cactus_bottom.png"}
-];
-
-var blocks = {
-	dry_dirt: {name: "dry_dirt", material: "dry_dirt", hardness: 3, tool: ["hands", "shovel", "rocks"]},
-	sand: {name: "sand", material: "sand", hardness: 2.8, tool: ["hands", "shovel", "rocks"]},
-	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]},
-	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"], updatingBlock: true},
-	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 3, tool: ["cactus_saw"], updatingBlock: true}
-};
-
-var uis = {
-	inventory: [
-		{type: "image", path: "textures/item_inventory.png", x: "center", y: "center", width: 130, height: 78, children: [
-			{type: "slot", x: (18 * 1) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 0},
-			{type: "slot", x: (18 * 2) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 1},
-			{type: "slot", x: (18 * 3) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 2},
-			{type: "slot", x: (18 * 4) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 3},
-			{type: "slot", x: (18 * 5) + 3, y: (18 * 3) + 5, width: 16, height: 16, slotLoc: "itemBar", slotNum: 4}
-		]}
-	]
-}
-
-/////////////////
-// Actual game //
-/////////////////
-
 // Engine options object, and engine instantiation:
 import Engine from "noa-engine";
 
@@ -91,9 +37,6 @@ playerMovementState.airJumps = 0;
 playerMovementState.maxSpeed = 8.5;
 playerMovementState.jumpImpulse = 7;
 playerMovementState.jumpTime = 150;
-
-// Adding keydown listener
-document.addEventListener('keydown', keyDown);
 
 // Loading plugins (noa-plus-plugins) and variables
 var nppb = new NoaPlusPlugins(noa, BABYLON);
@@ -139,6 +82,11 @@ var texturesArray = [
 var noaBlockBreak = new NoaBlockBreak(nppb, glvec3, texturesArray);
 nppb.addPlugin(noaBlockBreak);
 
+// Adding listeners
+window.addEventListener("keydown", keyDown);
+window.addEventListener("resize", resize);
+uiElement.addEventListener("click", click, false);
+
 // Block materials
 for (var i of materials) {
 	noa.registry.registerMaterial(i.name, i.color, i.texture);
@@ -176,29 +124,30 @@ var genResources = [
 var itemBarItems = [ 
 	items.item_crude_pickaxe,
 	items.item_crude_shovel,
-	items.block_sand,
-	items.block_cactus_top,
+	items.item_crude_cactus_saw,
+	null,
 	items.block_stone
 ];
 var itemBarSelection = 0;
 
 var inventoryItems = [
-	null,
-	null,
-	null,
+	items.block_sand,
+	items.block_cactus_top,
+	items.block_dry_dirt,
 	null,
 	null,
 	null,
 	null,
 
-	null,
-	null,
-	null,
+	items.item_twine,
+	items.item_rocks,
+	items.item_stick,
 	null,
 	null,
 	null,
 	null
 ];
+var heldItem = null;
 
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
@@ -293,7 +242,7 @@ noa.inputs.down.on("alt-fire", function() {
 			}
 		}
 	}
-})
+});
 
 // Ran each tick
 noa.on("tick", function(dt) {
@@ -410,7 +359,41 @@ noa.on('beforeRender', function(dt) {
 	// Handle UI drawing
 	if (currentUI !== null) {
 		uiContext.clearRect(0, 0, uiElement.width, uiElement.height);
-		drawUI(currentUI, 0, 0);
+		for (var i of currentUI) {
+			var x = (uiElement.width / 2) - (i.width * 4 / 2) + i.x * 4;
+			var y = (uiElement.height / 2) - (i.height * 4 / 2) + i.y * 4;
+	
+			switch (i.type) {
+				case "image":
+					var j = new Image();
+					j.src = i.path;
+					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+					
+					break;
+	
+				case "slot":
+					var j = new Image();
+					if (i.slotLoc === "itemBar") {
+						var item = itemBarItems[i.slotNum];
+						if (item !== null) {
+							j = item.texture;
+						}
+					} else if (i.slotLoc === "inventory") {
+						var item = inventoryItems[i.slotNum];
+						if (item !== null) {
+							j = item.texture;
+						}
+					} else {
+						j.src = "textures/break_decal_7.png";
+					}
+					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+	
+					break;
+	
+				default:
+					console.error("Type " + i.type + " is not a correct type.");
+			}
+		}
 	}
 });
 
@@ -449,46 +432,65 @@ function keyDown(event) {
 	}
 }
 
-function drawUI(arg, xo, yo) {
-	for (var i of arg) {
-		var x = parsePosition(i.x, uiElement.width, i.width * 4);
-		var y = parsePosition(i.y, uiElement.height, i.height * 4);
-		x += xo;
-		y += yo;
+function click(event) {
+	if (currentUI !== null) {
+		var mousePos = getMousePos(event);
 
-		switch(i.type) {
-			case "image":
-				var j = new Image();
-				j.src = i.path;
-				uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
-				
-				break;
+		for (var i of currentUI) {
+			var x = (uiElement.width / 2) - (i.width * 4 / 2) + i.x * 4;
+			var y = (uiElement.height / 2) - (i.height * 4 / 2) + i.y * 4;
 
-			case "slot":
-				var j = new Image();
-				if (i.slotLoc === "itemBar") {
-					j = itemBarItems[i.slotNum].texture;
-				} else {
-					j.src = "textures/break_decal_7.png";
-				}
-				uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+			switch (i.type) {
+				case "slot":
+					if (isInsideRect(mousePos, x, y, i.width, i.height)) {
+						if (i.slotLoc === "itemBar") {
+							if (heldItem === null) {
+								heldItem = itemBarItems[i.slotNum];
+								itemBarItems[i.slotNum] = null;
+							} else {
+								if (itemBarItems[i.slotNum] === null) {
+									itemBarItems[i.slotNum] = heldItem;
+									heldItem = null;
+								} else {
+									var temp = heldItem;
+									heldItem = itemBarItems[i.slotNum];
+									itemBarItems[i.slotNum] = temp;
+								}
+							}
+						} else if (i.slotLoc === "inventory") {
+							if (heldItem === null) {
+								heldItem = inventoryItems[i.slotNum];
+								inventoryItems[i.slotNum] = null;
+							} else {
+								if (inventoryItems[i.slotNum] === null) {
+									inventoryItems[i.slotNum] = heldItem;
+									heldItem = null;
+								} else {
+									var temp = heldItem;
+									heldItem = inventoryItems[i.slotNum];
+									inventoryItems[i.slotNum] = temp;
+								}
+							}
+						}
+					}
 
-				break;
-
-			default:
-				console.error("Type " + i.type + " is not a correct type.");
-		}
-
-		if (i.children !== undefined) {
-			drawUI(i.children, x, y);
+					break;
+			}
 		}
 	}
 }
 
-function parsePosition(arg, line, localLine) {
-	if (arg === "center") {
-		return (line / 2) - (localLine / 2);
-	} else {
-		return arg * 4;
-	}
+function resize() {
+	uiElement.width = window.innerWidth;
+	uiElement.height = window.innerHeight;
+	uiContext.imageSmoothingEnabled = false;
+}
+
+function isInsideRect(pos, x, y, w, h){
+	return pos.x > x && pos.x < x + w * 4 && pos.y < y + h * 4 && pos.y > y;
+}
+
+function getMousePos(event) {
+    var rect = uiElement.getBoundingClientRect();
+    return {x: event.clientX - rect.left, y: event.clientY - rect.top};
 }
