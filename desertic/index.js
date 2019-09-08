@@ -69,6 +69,9 @@ var noaEnvironment = new NoaEnvironment(nppb, "textures/clouds.png");
 nppb.addPlugin(noaEnvironment);
 noaEnvironment.setCloudOptions(0.35, new BABYLON.Color4(1, 1, 1), 250);
 
+var mouseX = 0;
+var mouseY = 0;
+
 var texturesArray = [
 	"textures/break_decal_0.png",
 	"textures/break_decal_1.png",
@@ -85,7 +88,8 @@ nppb.addPlugin(noaBlockBreak);
 // Adding listeners
 window.addEventListener("keydown", keyDown);
 window.addEventListener("resize", resize);
-uiElement.addEventListener("click", click, false);
+window.addEventListener("mousemove", move);
+window.addEventListener("click", click, false);
 
 // Block materials
 for (var i of materials) {
@@ -395,6 +399,9 @@ noa.on('beforeRender', function(dt) {
 			}
 		}
 	}
+	if (heldItem !== null) {
+		uiContext.drawImage(heldItem.texture, mouseX - 32, mouseY - 32, 64, 64);
+	}
 });
 
 // Functions
@@ -475,6 +482,15 @@ function click(event) {
 					}
 
 					break;
+
+				case "trash":
+					if (isInsideRect(mousePos, x, y, i.width, i.height)) {
+						if (heldItem !== null) {
+							heldItem = null;
+						}
+					}
+					
+					break;
 			}
 		}
 	}
@@ -493,4 +509,9 @@ function isInsideRect(pos, x, y, w, h){
 function getMousePos(event) {
     var rect = uiElement.getBoundingClientRect();
     return {x: event.clientX - rect.left, y: event.clientY - rect.top};
+}
+
+function move(event) {
+	mouseX = event.clientX;
+	mouseY = event.clientY;
 }

@@ -56,5 +56,7 @@ var uis = {
 		{type: "slot", x: -54 + (18 * 4), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 11},
 		{type: "slot", x: -54 + (18 * 5), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 12},
 		{type: "slot", x: -54 + (18 * 6), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 13},
+
+		{type: "trash", x: 54, y: -30, width: 16, height: 16}
 	]
 };
