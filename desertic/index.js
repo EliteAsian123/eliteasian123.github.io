@@ -52,6 +52,8 @@ var itemBarImage = new Image();
 itemBarImage.src = "textures/item_bar.png";
 var itemBarImageSelection = new Image();
 itemBarImageSelection.src = "textures/item_bar_selection.png";
+var numbersImage = new Image();
+numbersImage.src = "textures/numbers.png";
 
 var currentUI = null;
 
@@ -132,6 +134,13 @@ var itemBarItems = [
 	null,
 	items.block_stone
 ];
+var itemBarItemsCount = [
+	1,
+	1,
+	1,
+	0,
+	1
+];
 var itemBarSelection = 0;
 
 var inventoryItems = [
@@ -150,6 +159,23 @@ var inventoryItems = [
 	null,
 	null,
 	null
+];
+var inventoryItemsCount = [
+	1,
+	1,
+	1,
+	0,
+	0,
+	0,
+	0,
+
+	1,
+	1,
+	1,
+	0,
+	0,
+	0,
+	0
 ];
 var heldItem = null;
 
@@ -377,25 +403,29 @@ noa.on('beforeRender', function(dt) {
 	
 				case "slot":
 					var j = new Image();
+					var num;
 					if (i.slotLoc === "itemBar") {
 						var item = itemBarItems[i.slotNum];
 						if (item !== null) {
 							j = item.texture;
+							num = itemBarItemsCount[i.slotNum];
 						}
 					} else if (i.slotLoc === "inventory") {
 						var item = inventoryItems[i.slotNum];
 						if (item !== null) {
 							j = item.texture;
+							num = inventoryItemsCount[i.slotNum];
 						}
 					} else {
 						j.src = "textures/break_decal_7.png";
 					}
 					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
+
+					if (num) {
+						//uiContext.drawImage(numbersImage, (3 * num), 0, 3, 6, x, y, 3 * 4, 6 * 4);
+					}
 	
 					break;
-	
-				default:
-					console.error("Type " + i.type + " is not a correct type.");
 			}
 		}
 	}
