@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+	<title>Desertic</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style type="text/css">
+		body {
+			background-color: white;
+			margin: 0px;
+			overflow: hidden;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+
+		#reticle {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			width: 20px;
+			height: 20px;
+			line-height: 20px;
+			margin: -10px 0 0 -10px;
+			z-index: 99;
+			color: white;
+			text-shadow: 1px 1px 0px black;
+			text-align: center;
+		}
+		
+		#itemBar {
+			position: fixed;
+			bottom: 0;
+			left: 50%;
+			margin: -188px 0 0 -188px;
+			z-index: 100;
+		}
+
+		#ui {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 110;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+	</style>
+</head>
+
+<body>
+	<div id="reticle">+</div>
+	<canvas id="itemBar" width="376" height="88"></canvas>
+	<canvas id="ui" width="0" height="0"></canvas>
+  
+	<script type="text/javascript" src="compareArrays.js"></script>
+	<script type="text/javascript" src="plugins/noa-plus-plugins-base.js"></script>
+	<script type="text/javascript" src="plugins/noa-chunk-save.js"></script>
+	<script type="text/javascript" src="plugins/noa-environment.js"></script>
+	<script type="text/javascript" src="plugins/noa-block-break.js"></script>
+	<script type="text/javascript" src="registry.js"></script>
+	<script type="text/javascript" src="bundle.js"></script>
+</body>
+
+</html>

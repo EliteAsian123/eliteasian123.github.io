@@ -1,10 +1,8 @@
 html {
-	height: 100%;
 	font-family: Arial;
 }
 
 body {
-	height: 100%;
 	margin: 0;
 }
 
@@ -12,9 +10,8 @@ body {
 	position: fixed;
 	top: 0;
 	left: 0;
-	height: 100%;
+	height: 100vh;
 	width: 100%;
-	overflow: hidden;
 	z-index: 0;
 	animation: rainbow-bg 30s linear infinite;
 	-webkit-animation: rainbow-bg 30s linear infinite;
@@ -55,7 +52,6 @@ nav {
 	animation: nav 0.4s ease-out;
 	-webkit-animation: nav 0.4s ease-out;
 	font-size: 3vh;
-	overflow: hidden;
 }
 
 nav a {
@@ -68,6 +64,42 @@ nav a {
 
 nav a:hover {
 	color: white;
+}
+
+#cover-after {
+	position: absolute;
+	bottom: 0;
+	transform: translateY(100%);
+	width: 100%;
+	background-color: rgba(255, 255, 255, 0.95);
+}
+
+#cover-after p {
+	padding: 1vw;
+	margin: 0;
+	font-size: 125%;
+}
+
+#cover-after h1 {
+	padding: 1vw;
+	margin: 0;
+}
+
+#cover-after a {
+	color: blue;
+	text-decoration: none;
+}
+
+#cover-after a:hover {
+	color: blue;
+	text-decoration: underline;
+}
+
+#cover-after iframe {
+	border: none;
+	width: 100%;
+	height: 45vh;
+	background-color: rgba(0, 0, 0, 0.1);
 }
 
 @keyframes slide {
