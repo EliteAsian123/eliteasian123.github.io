@@ -139,7 +139,7 @@ var itemBarItemsCount = [
 	1,
 	1,
 	0,
-	1
+	99
 ];
 var itemBarSelection = 0;
 
@@ -161,9 +161,9 @@ var inventoryItems = [
 	null
 ];
 var inventoryItemsCount = [
-	1,
-	1,
-	1,
+	99,
+	99,
+	99,
 	0,
 	0,
 	0,
@@ -178,6 +178,7 @@ var inventoryItemsCount = [
 	0
 ];
 var heldItem = null;
+var heldItemCount = 0;
 
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
@@ -267,8 +268,9 @@ noa.inputs.up.on("fire", function() {
 noa.inputs.down.on("alt-fire", function() {
 	if (noa.targetedBlock) {
 		if (itemBarItems[itemBarSelection] !== null) {
-			if (itemBarItems[itemBarSelection].placeBlock !== null) {
+			if (itemBarItems[itemBarSelection].placeBlock !== null && itemBarItems[itemBarSelection].placeBlock) {
 				noa.addBlock(itemBarItems[itemBarSelection].placeBlock, noa.targetedBlock.adjacent);
+				itemBarItemsCount[itemBarSelection]--;
 			}
 		}
 	}
@@ -383,6 +385,14 @@ noa.on('beforeRender', function(dt) {
 	for (var i = 0; i < itemBarItems.length; i++) {
 		if (itemBarItems[i] !== null) {
 			itemBarContext.drawImage(itemBarItems[i].texture, (i * 72) + 12, 12, 64, 64);
+			if (itemBarItemsCount[i] > 1) {
+				if (itemBarItemsCount[i] < 10) {
+					itemBarContext.drawImage(numbersImage, (itemBarItemsCount[i] * 3), 0, 3, 6, (i * 72) + 12, 12, 3 * 4, 6 * 4);
+				} else {
+					itemBarContext.drawImage(numbersImage, (Math.floor(itemBarItemsCount[i] / 10) * 3), 0, 3, 6, (i * 72) + 12, 12, 3 * 4, 6 * 4);
+					itemBarContext.drawImage(numbersImage, ((itemBarItemsCount[i] - Math.floor(itemBarItemsCount[i] / 10) * 10) * 3), 0, 3, 6, (i * 72) + 28, 12, 3 * 4, 6 * 4);
+				}
+			}
 		}
 	}
 
@@ -403,7 +413,7 @@ noa.on('beforeRender', function(dt) {
 	
 				case "slot":
 					var j = new Image();
-					var num;
+					var num = 0;
 					if (i.slotLoc === "itemBar") {
 						var item = itemBarItems[i.slotNum];
 						if (item !== null) {
@@ -421,8 +431,13 @@ noa.on('beforeRender', function(dt) {
 					}
 					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
 
-					if (num) {
-						//uiContext.drawImage(numbersImage, (3 * num), 0, 3, 6, x, y, 3 * 4, 6 * 4);
+					if (num > 1) {
+						if (num < 10) {
+							uiContext.drawImage(numbersImage, ((num - Math.floor(num / 10) * 10) * 3), 0, 3, 6, x, y, 3 * 4, 6 * 4);
+						} else {
+							uiContext.drawImage(numbersImage, (Math.floor(num / 10) * 3), 0, 3, 6, x, y, 3 * 4, 6 * 4);
+							uiContext.drawImage(numbersImage, ((num - Math.floor(num / 10) * 10) * 3), 0, 3, 6, x + 16, y, 3 * 4, 6 * 4);
+						}
 					}
 	
 					break;
@@ -431,6 +446,19 @@ noa.on('beforeRender', function(dt) {
 	}
 	if (heldItem !== null) {
 		uiContext.drawImage(heldItem.texture, mouseX - 32, mouseY - 32, 64, 64);
+	}
+
+	// Handle item removal
+	for (var i = 0; i < inventoryItemsCount.length; i++) {
+		if (inventoryItemsCount[i] < 1) {
+			inventoryItems[i] = null;
+		}
+	}
+
+	for (var i = 0; i < itemBarItemsCount.length; i++) {
+		if (itemBarItemsCount[i] < 1) {
+			itemBarItems[i] = null;
+		}
 	}
 });
 
@@ -483,29 +511,43 @@ function click(event) {
 						if (i.slotLoc === "itemBar") {
 							if (heldItem === null) {
 								heldItem = itemBarItems[i.slotNum];
+								heldItemCount = itemBarItemsCount[i.slotNum];
 								itemBarItems[i.slotNum] = null;
+								itemBarItemsCount[i.slotNum] = 0;
 							} else {
 								if (itemBarItems[i.slotNum] === null) {
 									itemBarItems[i.slotNum] = heldItem;
+									itemBarItemsCount[i.slotNum] = heldItemCount;
 									heldItem = null;
+									heldItemCount = 0;
 								} else {
-									var temp = heldItem;
+									var temp1 = heldItem;
+									var temp2 = heldItemCount;
 									heldItem = itemBarItems[i.slotNum];
-									itemBarItems[i.slotNum] = temp;
+									heldItemCount = itemBarItemsCount[i.slotNum];
+									itemBarItems[i.slotNum] = temp1;
+									itemBarItemsCount[i.slotNum] = temp2;
 								}
 							}
 						} else if (i.slotLoc === "inventory") {
 							if (heldItem === null) {
 								heldItem = inventoryItems[i.slotNum];
+								heldItemCount = inventoryItemsCount[i.slotNum];
 								inventoryItems[i.slotNum] = null;
+								inventoryItemsCount[i.slotNum] = 0;
 							} else {
 								if (inventoryItems[i.slotNum] === null) {
 									inventoryItems[i.slotNum] = heldItem;
+									inventoryItemsCount[i.slotNum] = heldItemCount;
 									heldItem = null;
+									heldItemCount = 0;
 								} else {
-									var temp = heldItem;
+									var temp1 = heldItem;
+									var temp2 = heldItemCount;
 									heldItem = inventoryItems[i.slotNum];
-									inventoryItems[i.slotNum] = temp;
+									heldItemCount = inventoryItemsCount[i.slotNum];
+									inventoryItems[i.slotNum] = temp1;
+									inventoryItemsCount[i.slotNum] = temp2;
 								}
 							}
 						}
