@@ -1,7 +1,27 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>Gallery</title>
+		<style>
+			/* CSS FROM https://www.quackit.com/html/html_editors/scratchpad/?example=/css/grid/examples/photo_gallery_flexible_width_evenly_sized_images */
+			.grid { 
+  				display: grid;
+  				grid-template-columns: 1fr 1fr 1fr;
+  				grid-gap: 1vw;
+  			}
+
+			.grid img {
+ 				box-shadow: 2px 2px 6px 0px  rgba(0,0,0,0.3);
+  				max-width: 100%;
+			}
+		</style>
+	</head>
 	<body>
-		This page is obviously a work in progress.<br>
-		<img src="screenshots/rp_0.png" alt="Gallery Image">
+		<div class="grid"> 
+			<img src="screenshots/rp_0.png" alt="Gallery Image">
+			<img src="screenshots/rp_1.png" alt="Gallery Image">
+			<img src="screenshots/rp_2.png" alt="Gallery Image">
+		</div>
+		
 	</body>
 </html>
