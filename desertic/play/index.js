@@ -108,8 +108,12 @@ for (var i of Object.keys(blocks)) {
 		j['onUnset'] = removeUpdatingBlock;
 		j['onUnload'] = removeUpdatingBlock;
 	}
-	nppb.registerBlock(++currentID, j, { hardness: blocks[i].hardness, tool: blocks[i].tool });
 	items["block_" + i] = {name: blocks[i].name, tool: tools.hands, texture: "textures/" + blocks[i].name + ".png"};
+	var drop = items[blocks[i].drop];
+	if (!drop) {
+		drop = items["block_" + i];
+	}
+	nppb.registerBlock(++currentID, j, { hardness: blocks[i].hardness, tool: blocks[i].tool, drop: drop });
 	blocks[i] = currentID;
 	items["block_" + i].placeBlock = currentID;
 }
@@ -132,38 +136,38 @@ var itemBarItems = [
 	items.item_crude_shovel,
 	items.item_crude_cactus_saw,
 	null,
-	items.block_stone
+	null
 ];
 var itemBarItemsCount = [
 	1,
 	1,
 	1,
 	0,
-	99
+	0
 ];
 var itemBarSelection = 0;
 
 var inventoryItems = [
-	items.block_sand,
-	items.block_cactus_top,
-	items.block_dry_dirt,
-	null,
-	null,
-	null,
-	null,
-
 	items.item_twine,
 	items.item_rocks,
 	items.item_stick,
 	null,
 	null,
 	null,
+	null,
+
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
 	null
 ];
 var inventoryItemsCount = [
-	99,
-	99,
-	99,
+	0,
+	0,
+	0,
 	0,
 	0,
 	0,
@@ -296,6 +300,7 @@ noa.on("tick", function(dt) {
 					noa.setBlock(blocks.cactus_bottom, i[0], i[1], i[2]);
 				} else if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
 					noa.setBlock(0, i[0], i[1], i[2]);
+					addItem(items.block_cactus_top);
 				} else {
 					if (random <= 0.00001) {
 						var j = 1;
@@ -317,6 +322,7 @@ noa.on("tick", function(dt) {
 			case blocks.cactus_bottom:
 				if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
 					noa.setBlock(0, i[0], i[1], i[2]);
+					addItem(items.block_cactus_bottom);
 				} else {
 					if (random <= 0.0001) {
 						if (noa.getBlock(i[0], i[1] + 1, i[2]) === 0) {
@@ -360,11 +366,17 @@ noa.on('beforeRender', function(dt) {
 		var neededTool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
 		var correct = false;
 		var itemTool = itemBarItems[itemBarSelection];
+
 		if (itemTool === null) {
 			itemTool = tools.hands;
 		} else {
-			itemTool = itemTool.tool;
+			itemTool = tools[itemTool.tool];
 		}
+
+		if (!itemTool) {
+			itemTool = tools.hands;
+		}
+
 		for (var i of neededTool) {
 			if (i === itemTool.name) {
 				correct = true;
@@ -587,3 +599,75 @@ function move(event) {
 	mouseX = event.clientX;
 	mouseY = event.clientY;
 }
+
+function addItem(item) {
+	var j = itemInInventory(item);
+	var k = false;
+	var l = 0;
+
+	for (var i of itemBarItems) {
+		if (j === true) {
+			if (i === item) {
+				k = true;
+				itemBarItemsCount[l]++;
+				break;
+			}
+		} else {
+			if (i === null) {
+				k = true;
+				itemBarItems[l] = item;
+				itemBarItemsCount[l] = 1;
+				break;
+			}
+		}
+		
+		l++;
+	}
+	
+	l = 0;
+	if (k === false) {
+		for (var i of inventoryItems) {
+			if (j === true) {
+				if (i === item) {
+					inventoryItemsCount[l]++;
+					break;
+				}
+			} else {
+				if (i === null) {
+					inventoryItems[l] = item;
+					inventoryItemsCount[l] = 1;
+					break;
+				}
+			}
+			
+			l++;
+		}
+	}
+}
+
+function itemInInventory(item) {
+	var out = false;
+	
+	for (var i of itemBarItems) {
+		if (i === item) {
+			out = true;
+			break;
+		}
+	}
+
+	if (out === false) {
+		for (var i of inventoryItems) {
+			if (i === item) {
+				out = true;
+				break;
+			}
+		}
+	}
+	
+	return out;
+}
+
+function onBlockBreak(block) {
+	addItem(nppb.getBlockCustomOptions(block, "drop"));
+}
+noaBlockBreak.addHook(onBlockBreak);

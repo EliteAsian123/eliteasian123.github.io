@@ -7,12 +7,12 @@ var tools = {
 };
 
 var items = {
-	item_crude_pickaxe: {name: "Pickaxe", tool: tools.pickaxe, texture: "textures/crude_pickaxe.png"},
-	item_crude_shovel: {name: "Shovel", tool: tools.shovel, texture: "textures/crude_shovel.png"},
-	item_crude_cactus_saw: {name: "Cactus Saw", tool: tools.cactus_saw, texture: "textures/crude_cactus_saw.png"},
-	item_twine: {name: "Twine", tool: tools.hands, texture: "textures/twine.png"},
-	item_rocks: {name: "Rocks", tool: tools.rocks, texture: "textures/rocks.png"},
-	item_stick: {name: "Stick", tool: tools.hands, texture: "textures/stick.png"}
+	item_crude_pickaxe: {name: "Pickaxe", tool: "pickaxe", texture: "textures/crude_pickaxe.png"},
+	item_crude_shovel: {name: "Shovel", tool: "shovel", texture: "textures/crude_shovel.png"},
+	item_crude_cactus_saw: {name: "Cactus Saw", tool: "cactus_saw", texture: "textures/crude_cactus_saw.png"},
+	item_twine: {name: "Twine", tool: "hands", texture: "textures/twine.png"},
+	item_rocks: {name: "Rocks", tool: "rocks", texture: "textures/rocks.png"},
+	item_stick: {name: "Stick", tool: "hands", texture: "textures/stick.png"}
 };
 
 var materials = [
@@ -29,7 +29,7 @@ var blocks = {
 	sand: {name: "sand", material: "sand", hardness: 2.8, tool: ["hands", "shovel", "rocks"]},
 	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]},
 	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true},
-	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true}
+	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true, drop: "blocks_cactus_top"}
 };
 
 var uis = {
