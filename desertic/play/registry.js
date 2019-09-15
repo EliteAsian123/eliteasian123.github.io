@@ -29,7 +29,7 @@ var blocks = {
 	sand: {name: "sand", material: "sand", hardness: 2.8, tool: ["hands", "shovel", "rocks"]},
 	stone: {name: "stone", material: "stone", hardness: 10, tool: ["pickaxe"]},
 	cactus_top: {name: "cactus_top", material: ["cactus_top", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true},
-	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true, drop: "blocks_cactus_top"}
+	cactus_bottom: {name: "cactus_bottom", material: ["cactus_bottom", "cactus_bottom", "cactus_side"], hardness: 10, tool: ["cactus_saw"], updatingBlock: true, drop: "block_cactus_top"}
 };
 
 var uis = {
