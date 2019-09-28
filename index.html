@@ -13,22 +13,15 @@
 	</head>
 
 	<body>
-	
 		<nav>
-			<a href="desertic/" class="nav-link">Desertic</a>
-			<a href="minecraft-reborn/" class="nav-link">Minecraft Reborn</a>
+			<a href="https://eliteasian123.github.io"><img src="https://i.imgur.com/7gq6S8T.png"></img>
+			<a href="desertic/" class="nav-item">Desertic</a>
+			<!--<a href="minecraft-reborn/" class="nav-item">Minecraft Reborn</a>-->
 		</nav>
-	
-	
-		<div id="cover-bg-box">
-			<div id="cover-bg"></div>
-		</div>
 		
-		<div id="cover-center-text">
-			EliteAsian123
-		</div>
-
-		<div id="cover-after">
+		<h2 id="page-text">EliteAsian123</h2>
+		<div id="portal-container"><div id="portal" onclick="gotoSpace()"></div></div>
+		<div id="after">
 			<h1>About</h1>
 			<p>
 				My name is Alex (aka EliteAsian123 or EliteAsian), and I love programming! I created this website to show off projects I've been working on. If you want to see any of them, click on any of the links in the navbar!<br>
@@ -41,21 +34,20 @@
 			
 			<h1>My Projects</h1>
 			<p>
-				The only one of my games that are on my website is <a href="desertic/">Desertic</a>! <a href="desertic/">Desertic</a> is a voxel game that has strong inspiration from Minecraft. The point of the game is to survive in the desert you spawn in! Keep in mind that this game is in pre-alpha so it is not finished and there will be bugs.<br>
-				Another one of my projects are <a href="minecraft-reborn/">Minecraft Reborn</a>. <a href="minecraft-reborn/">Minecraft Reborn</a> is a Minecraft Mod that aims to reimagine Minecraft. It is not in development yet, and development will start once Minecraft 1.15 comes out. In the mean time, I am working on the resource pack for this mod, which
-				adds alternative block textures.
+				The only one of my games that are on my website is <a href="desertic/">Desertic</a>! <a href="desertic/">Desertic</a> is a voxel game that has strong inspiration from Minecraft. The point of the game is to survive in the desert you spawn in! Keep in mind that this game is in pre-alpha so it is not finished and there will be bugs.
 			</p>
-
-			<br>
-			<br>
-
-			<h1>News!</h1>
-			<p>
-				Here are the updates I have released! You can scroll down in the updates window! If you want to see a fullscreen updates page, click <a href="news.html">here</a>.
-			</p>
-			<iframe src="news.html"></iframe>
 		</div>
-	
 	</body>
+	
+	<script>
+		function gotoSpace() {
+			var element = document.getElementById("portal");
+			element.style.animation = "1s spaceAnimation";
+			element.style.width = "200vw";
+			element.style.height = "200vw";
+			element.style.marginLeft = "-100vw";
+			element.style.marginTop = "-100vw";
+		}
+	</script>
 
 </html>
