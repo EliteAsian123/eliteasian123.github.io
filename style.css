@@ -151,6 +151,12 @@ a:hover {
 	color: var(--color-1);
 }
 
+#spaceCanvas {
+	background-color: transparent;
+	position: absolute;
+	display: none;
+}
+
 @-webkit-keyframes spaceAnimation {
 	from {
 		width: 30vw;
