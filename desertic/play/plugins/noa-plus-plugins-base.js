@@ -36,6 +36,7 @@ NoaPlusPlugins.prototype.getBlockCustomOptions = function(id, optionName) {
 function Decal(nppb, glvec3, name, texturePath) {
 	this.nppb = nppb;
 	this.glvec3 = glvec3;
+	this.dpos = [];
 	var decalMesh = this.nppb.babylon.Mesh.CreatePlane(name, 1.0, scene);
 	var material = this.nppb.noa.rendering.makeStandardMaterial(name + "Material");
 	material.backFaceCulling = false;
@@ -57,14 +58,19 @@ Decal.prototype.changeTexture = function(texturePath) {
 }
 
 Decal.prototype.showOnFace = function(positionArray, normalArray) {
-	// Borrowed from NOA rendering.js line 200
-	var dist = this.glvec3.dist(this.nppb.noa.camera.getPosition(), positionArray);
-	var slop = 0.001 * dist;
-	var pos = this.glvec3.create();
-	for (var i = 0; i < 3; ++i) {
-		pos[i] = Math.floor(positionArray[i]) + .5 + ((0.5 + slop) * normalArray[i]);
+	// Borrowed from NOA rendering.js line 193
+
+	this.nppb.noa.globalToLocal(positionArray, null, this.dpos);
+	var dist = this.glvec3.dist(this.nppb.noa.camera._localGetPosition(), this.dpos);
+	var slop = 0.001 + 0.002 * dist;
+	for (var i = 0; i < 3; i++) {
+		if (normalArray[i] === 0) {
+			this.dpos[i] += 0.5;
+        } else {
+			this.dpos[i] += (normalArray[i] > 0) ? 1 + slop : -slop;
+        }
 	}
-	this.mesh.position.copyFromFloats(pos[0], pos[1], pos[2]);
+	this.mesh.position.copyFromFloats(this.dpos[0], this.dpos[1], this.dpos[2]);
 	this.mesh.rotation.x = (normalArray[1]) ? Math.PI / 2 : 0;
 	this.mesh.rotation.y = (normalArray[0]) ? Math.PI / 2 : 0;
 	

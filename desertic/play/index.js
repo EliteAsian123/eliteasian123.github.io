@@ -27,7 +27,8 @@ var opts = {
     chunkSize: 32,
     chunkAddDistance: 2.5,
     chunkRemoveDistance: 3.5,
-	playerAutoStep: true
+	playerAutoStep: true,
+	originRebaseDistance: 5
 };
 var noa = new Engine(opts);
 
@@ -66,10 +67,6 @@ showUI(false);
  
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
-
-var noaEnvironment = new NoaEnvironment(nppb, "textures/clouds.png");
-nppb.addPlugin(noaEnvironment);
-noaEnvironment.setCloudOptions(0.35, new BABYLON.Color4(1, 1, 1), 250);
 
 var mouseX = 0;
 var mouseY = 0;
@@ -264,7 +261,7 @@ noa.inputs.up.on("fire", function() {
 	noaBlockBreak.fireUp();
 });
 
-// Place some grass on right click
+// Place a block on right click
 noa.inputs.down.on("alt-fire", function() {
 	if (noa.targetedBlock) {
 		if (itemBarItems[itemBarSelection] !== null) {
@@ -354,9 +351,6 @@ noa.inputs.down.on("slot5", function() {
 
 // Ran before every frame
 noa.on('beforeRender', function(dt) {
-	// Move clouds
-	noaEnvironment.moveClouds(dt / 500000, dt / 1000000);
-	
 	// Handle block breaking
 	if (noa.targetedBlock) {
 		var neededTool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
