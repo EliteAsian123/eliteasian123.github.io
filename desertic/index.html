@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="../style.css">
 	</head>
 
-	<body>
+	<body class="preload">
 		<nav>
 			<a href="https://eliteasian123.github.io"><img src="../logo.png"></img>
 			<a href="" class="nav-item">Desertic</a>
@@ -18,7 +18,28 @@
 	
 		<h2 id="page-text" style="color: black;">Desertic</h2>
 		<img id="page-image" src="screenshot.png"></img>
-		<a class="button" href="play/warning.html">Play!</a>
+		<div class="button" id="center-button" onclick="openAlert()">Play!</div>
+		
+		<div id="glass-effect"></div>
+		
+		<div id="alert">
+			<h2>WARNING! All browsers don't support this game!</h2>
+			<p>
+				This game requires some things that certain browsers do not support! If your browser doesn't support something, the game could be buggy or not work entirely. <b>The recommended browser for this game is Google Chrome.</b>
+			</p>
+			
+			<h2>Controls</h2>
+			<ul>
+				<li>WASD or Arrow Keys: Move</li>
+				<li>Space: Jump</li>
+				<li>Left Click or Q: Break</li>
+				<li>Right Click or E: Place</li>
+				<li>Scroll Wheel or 1-5: Change item</li>
+				<li>Tab: Inventory</li>
+			</ul>
+			
+			<a href="play/" class="button small centerX" style="position: absolute; bottom: 10px;">Play Desertic</a>
+		</div>
 
 		<div id="after">
 			<h1>About</h1>
@@ -31,11 +52,22 @@
 			
 			<h1>Playing</h1>
 			<p>
-				If you want to play Desertic click <a href="play/warning.html">here</a>. <br>
 				To play Desertic, use to WASD keys to move and space to jump. If you are using a mouse, you can left click to place blocks and right click to place them. If not, use Q to break and E to place. Use the scroll wheel or 1 to 5 to scroll through items in your item bar. Press tab to open you inventory, you can move items by clicking on them. Use F11 to go in fullscreen mode. That's about it!
 			</p>
 			
 		</div>
+	
+		<script type="text/javascript" src="../preload.js"></script>
+		
+		<script>
+			function openAlert() {
+				document.getElementById("alert").style.display = "block";
+				document.getElementById("alert").style.animation = "0.25s fadeIn";
+				
+				document.getElementById("glass-effect").style.display = "block";
+				document.getElementById("glass-effect").style.animation = "0.5s fadeIn";
+			}
+		</script>
 	
 	</body>
 
