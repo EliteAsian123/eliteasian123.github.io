@@ -16,6 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "@babylonjs/core": "^4.0.3",
+    "lz-string": "^1.4.4",
     "murmur-numbers": "0.0.1",
     "noa-engine": "github:andyhall/noa#develop",
     "voxel-crunch": "^0.2.1"

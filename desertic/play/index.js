@@ -20,6 +20,9 @@ var hash = require("murmur-numbers");
 // GL Vector3
 var glvec3 = require("gl-vec3");
 
+// lzstring
+var lzstring = require("lz-string");
+
 // Load game engine
 var opts = {
     debug: true,
@@ -67,6 +70,104 @@ showUI(false);
  
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
+
+// Set itemBar items
+var itemBarItems = [ 
+	"item_crude_pickaxe",
+	"item_crude_shovel",
+	"item_crude_cactus_saw",
+	null,
+	"block_sand"
+];
+var itemBarItemsCount = [
+	1,
+	1,
+	1,
+	0,
+	99
+];
+var itemBarSelection = 0;
+
+var inventoryItems = [
+	"item_twine",
+	"item_rocks",
+	"item_stick",
+	null,
+	null,
+	null,
+	null,
+
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null
+];
+var inventoryItemsCount = [
+	1,
+	1,
+	1,
+	0,
+	0,
+	0,
+	0,
+
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
+];
+var heldItem = null;
+var heldItemCount = 0;
+
+// Save game on unload
+window.onbeforeunload = function() {
+	save();
+	return true;
+};
+
+function save() {
+	noa.world.invalidateAllChunks();
+	setTimeout(function() {
+		var data_world = noaChunkSave.getSaveData();
+
+		var data_inv = [inventoryItems, inventoryItemsCount, itemBarItems, itemBarItemsCount];
+
+		var data = {v: "0", world: data_world, inv: data_inv};
+		var data = JSON.stringify(data);
+		var data = lzstring.compress(data);
+		localStorage.setItem("game", data);
+	}, 100);
+}
+
+// Load game from browser
+if (localStorage.getItem("game") && localStorage.getItem("game") !== null) {
+	var data = localStorage.getItem("game");
+	data = lzstring.decompress(data);
+
+	data = JSON.parse(data);
+	
+	var dataKeys = Object.keys(data.world);
+	for (var element of dataKeys) {
+		if (typeof data.world[element] !== Uint8Array) {
+			data.world[element] = Object.keys(data.world[element]).map(function(key) {
+				return data.world[element][key];
+			});
+		}
+	}
+
+	noaChunkSave.setSaveData(data.world);
+	
+	inventoryItems = data.inv[0];
+	inventoryItemsCount = data.inv[1];
+	itemBarItems = data.inv[2];
+	itemBarItemsCount = data.inv[3];
+}
 
 var mouseX = 0;
 var mouseY = 0;
@@ -122,60 +223,6 @@ for (var i of Object.keys(items)) {
 var genResources = [
 	//{block: blocks.dirt, chance: 0.05, minAmount: 2, maxAmount: 10, minY: -5, maxY: 3, inBlock: blocks.dry_dirt}
 ];
-
-// Set itemBar items
-var itemBarItems = [ 
-	items.item_crude_pickaxe,
-	items.item_crude_shovel,
-	items.item_crude_cactus_saw,
-	null,
-	items.block_sand
-];
-var itemBarItemsCount = [
-	1,
-	1,
-	1,
-	0,
-	99
-];
-var itemBarSelection = 0;
-
-var inventoryItems = [
-	items.item_twine,
-	items.item_rocks,
-	items.item_stick,
-	null,
-	null,
-	null,
-	null,
-
-	null,
-	null,
-	null,
-	null,
-	null,
-	null,
-	null
-];
-var inventoryItemsCount = [
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-
-	1,
-	1,
-	1,
-	0,
-	0,
-	0,
-	0
-];
-var heldItem = null;
-var heldItemCount = 0;
 
 // chunkBeingRemoved Event
 noa.world.on("chunkBeingRemoved", function(id, array, userData) {
@@ -265,8 +312,8 @@ noa.inputs.up.on("fire", function() {
 noa.inputs.down.on("alt-fire", function() {
 	if (noa.targetedBlock) {
 		if (itemBarItems[itemBarSelection] !== null) {
-			if (itemBarItems[itemBarSelection].placeBlock !== null && itemBarItems[itemBarSelection].placeBlock) {
-				noa.addBlock(itemBarItems[itemBarSelection].placeBlock, noa.targetedBlock.adjacent);
+			if (items[itemBarItems[itemBarSelection]].placeBlock !== null && items[itemBarItems[itemBarSelection]].placeBlock) {
+				noa.addBlock(items[itemBarItems[itemBarSelection]].placeBlock, noa.targetedBlock.adjacent);
 				itemBarItemsCount[itemBarSelection]--;
 			}
 		}
@@ -293,7 +340,7 @@ noa.on("tick", function(dt) {
 					noa.setBlock(blocks.cactus_bottom, i[0], i[1], i[2]);
 				} else if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
 					noa.setBlock(0, i[0], i[1], i[2]);
-					addItem(items.block_cactus_top);
+					addItem("block_cactus_top");
 				} else {
 					if (random <= 0.00001) {
 						var j = 1;
@@ -315,7 +362,7 @@ noa.on("tick", function(dt) {
 			case blocks.cactus_bottom:
 				if (noa.getBlock(i[0], i[1] - 1, i[2]) === 0) {
 					noa.setBlock(0, i[0], i[1], i[2]);
-					addItem(items.block_cactus_top);
+					addItem("block_cactus_top");
 				} else {
 					if (random <= 0.0001) {
 						if (noa.getBlock(i[0], i[1] + 1, i[2]) === 0) {
@@ -355,9 +402,9 @@ noa.on('beforeRender', function(dt) {
 	if (noa.targetedBlock) {
 		var neededTool = nppb.getBlockCustomOptions(noa.targetedBlock.blockID, "tool");
 		var correct = false;
-		var itemTool = itemBarItems[itemBarSelection];
+		var itemTool = items[itemBarItems[itemBarSelection]];
 
-		if (itemTool === null) {
+		if (!itemTool) {
 			itemTool = tools.hands;
 		} else {
 			itemTool = tools[itemTool.tool];
@@ -385,8 +432,8 @@ noa.on('beforeRender', function(dt) {
 	itemBarContext.drawImage(itemBarImage, 0, 0, itemBarElement.width, itemBarElement.height);
 	itemBarContext.drawImage(itemBarImageSelection, (itemBarSelection * 72) + 8, 8, 72, 72);
 	for (var i = 0; i < itemBarItems.length; i++) {
-		if (itemBarItems[i] !== null) {
-			itemBarContext.drawImage(itemBarItems[i].texture, (i * 72) + 12, 12, 64, 64);
+		if (itemBarItems[i] !== null && items[itemBarItems[i]]) {
+			itemBarContext.drawImage(items[itemBarItems[i]].texture, (i * 72) + 12, 12, 64, 64);
 			if (itemBarItemsCount[i] > 1) {
 				if (itemBarItemsCount[i] < 10) {
 					itemBarContext.drawImage(numbersImage, (itemBarItemsCount[i] * 3), 0, 3, 6, (i * 72) + 12, 12, 3 * 4, 6 * 4);
@@ -417,14 +464,14 @@ noa.on('beforeRender', function(dt) {
 					var j = new Image();
 					var num = 0;
 					if (i.slotLoc === "itemBar") {
-						var item = itemBarItems[i.slotNum];
-						if (item !== null) {
+						var item = items[itemBarItems[i.slotNum]];
+						if (item) {
 							j = item.texture;
 							num = itemBarItemsCount[i.slotNum];
 						}
 					} else if (i.slotLoc === "inventory") {
-						var item = inventoryItems[i.slotNum];
-						if (item !== null) {
+						var item = items[inventoryItems[i.slotNum]];
+						if (item) {
 							j = item.texture;
 							num = inventoryItemsCount[i.slotNum];
 						}
@@ -448,8 +495,8 @@ noa.on('beforeRender', function(dt) {
 	}
 
 	// Handle heldItem drawing
-	if (heldItem !== null) {
-		uiContext.drawImage(heldItem.texture, mouseX - 32, mouseY - 32, 64, 64);
+	if (heldItem) {
+		uiContext.drawImage(items[heldItem].texture, mouseX - 32, mouseY - 32, 64, 64);
 		if (heldItemCount > 1) {
 			if (heldItemCount < 10) {
 				uiContext.drawImage(numbersImage, ((heldItemCount - Math.floor(heldItemCount / 10) * 10) * 3), 0, 3, 6, mouseX - 32, mouseY - 32, 3 * 4, 6 * 4);
@@ -688,9 +735,9 @@ function itemInInventory(item) {
 function onBlockBreak(block) {
 	var drop = nppb.getBlockCustomOptions(block, "drop");
 	if (drop) {
-		addItem(items[drop]);
+		addItem(drop);
 	} else {
-		addItem(items["block_" + nppb.getBlockCustomOptions(block, "name")]);
+		addItem("block_" + nppb.getBlockCustomOptions(block, "name"));
 	}
 }
 noaBlockBreak.addHook(onBlockBreak);
