@@ -56,30 +56,30 @@ var itemBarImage = new Image();
 itemBarImage.src = "textures/item_bar.png";
 var itemBarImageSelection = new Image();
 itemBarImageSelection.src = "textures/item_bar_selection.png";
-var numbersImage = new Image();
-numbersImage.src = "textures/numbers.png";
-
-var currentUI = null;
 
 var uiElement = document.getElementById("ui");
 var uiContext = uiElement.getContext("2d");
 uiElement.width = window.innerWidth;
 uiElement.height = window.innerHeight;
 uiContext.imageSmoothingEnabled = false;
+
+var currentUI = null;
+var ui = new UI(uiElement.width, uiElement.height);
+
 showUI(false);
  
 var noaChunkSave = new NoaChunkSave(nppb, voxelCrunch);
 nppb.addPlugin(noaChunkSave);
 
 // Set itemBar items
-var itemBarItems = [ 
+itemBarItems = [ 
 	"item_crude_pickaxe",
 	"item_crude_shovel",
 	"item_crude_cactus_saw",
 	null,
 	"block_sand"
 ];
-var itemBarItemsCount = [
+itemBarItemsCount = [
 	1,
 	1,
 	1,
@@ -88,7 +88,7 @@ var itemBarItemsCount = [
 ];
 var itemBarSelection = 0;
 
-var inventoryItems = [
+inventoryItems = [
 	"item_twine",
 	"item_rocks",
 	"item_stick",
@@ -105,7 +105,7 @@ var inventoryItems = [
 	null,
 	null
 ];
-var inventoryItemsCount = [
+inventoryItemsCount = [
 	1,
 	1,
 	1,
@@ -122,8 +122,8 @@ var inventoryItemsCount = [
 	0,
 	0
 ];
-var heldItem = null;
-var heldItemCount = 0;
+heldItem = null;
+heldItemCount = 0;
 
 // Save game on unload
 window.onbeforeunload = function() {
@@ -448,50 +448,11 @@ noa.on('beforeRender', function(dt) {
 	// Handle UI drawing
 	if (currentUI !== null) {
 		uiContext.clearRect(0, 0, uiElement.width, uiElement.height);
-		for (var i of currentUI) {
-			var x = (uiElement.width / 2) - (i.width * 4 / 2) + i.x * 4;
-			var y = (uiElement.height / 2) - (i.height * 4 / 2) + i.y * 4;
-	
-			switch (i.type) {
-				case "image":
-					var j = new Image();
-					j.src = i.path;
-					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
-					
-					break;
-	
-				case "slot":
-					var j = new Image();
-					var num = 0;
-					if (i.slotLoc === "itemBar") {
-						var item = items[itemBarItems[i.slotNum]];
-						if (item) {
-							j = item.texture;
-							num = itemBarItemsCount[i.slotNum];
-						}
-					} else if (i.slotLoc === "inventory") {
-						var item = items[inventoryItems[i.slotNum]];
-						if (item) {
-							j = item.texture;
-							num = inventoryItemsCount[i.slotNum];
-						}
-					} else {
-						j.src = "textures/break_decal_7.png";
-					}
-					uiContext.drawImage(j, x, y, i.width * 4, i.height * 4);
-
-					if (num > 1) {
-						if (num < 10) {
-							uiContext.drawImage(numbersImage, ((num - Math.floor(num / 10) * 10) * 3), 0, 3, 6, x, y, 3 * 4, 6 * 4);
-						} else {
-							uiContext.drawImage(numbersImage, (Math.floor(num / 10) * 3), 0, 3, 6, x, y, 3 * 4, 6 * 4);
-							uiContext.drawImage(numbersImage, ((num - Math.floor(num / 10) * 10) * 3), 0, 3, 6, x + 16, y, 3 * 4, 6 * 4);
-						}
-					}
-	
-					break;
-			}
+		ui.setSize(uiElement.width, uiElement.height);
+		if (ui.isEmpty()) {
+			currentUI(ui, uiElement.width, uiElement.height);
 		}
+		ui.renderAll(uiContext);
 	}
 
 	// Handle heldItem drawing
@@ -544,6 +505,7 @@ function keyDown(event) {
 		event.preventDefault();
 		if (currentUI === null) {
 			currentUI = uis.inventory;
+			ui.clear();
 			showUI(true);
 			noa.container.setPointerLock(false);
 			noa.entities.removeComponent(noa.playerEntity, noa.ents.names.receivesInputs);
@@ -559,95 +521,7 @@ function keyDown(event) {
 function click(event) {
 	if (currentUI !== null) {
 		var mousePos = getMousePos(event);
-
-		for (var i of currentUI) {
-			var x = (uiElement.width / 2) - (i.width * 4 / 2) + i.x * 4;
-			var y = (uiElement.height / 2) - (i.height * 4 / 2) + i.y * 4;
-
-			switch (i.type) {
-				case "slot":
-					if (isInsideRect(mousePos, x, y, i.width, i.height)) {
-						if (i.slotLoc === "itemBar") {
-							if (heldItem === null) {
-								heldItem = itemBarItems[i.slotNum];
-								heldItemCount = itemBarItemsCount[i.slotNum];
-								itemBarItems[i.slotNum] = null;
-								itemBarItemsCount[i.slotNum] = 0;
-							} else {
-								if (itemBarItems[i.slotNum] === null) {
-									itemBarItems[i.slotNum] = heldItem;
-									itemBarItemsCount[i.slotNum] = heldItemCount;
-									heldItem = null;
-									heldItemCount = 0;
-								} else {
-									if (itemBarItems[i.slotNum] === heldItem) {
-										var finishingAmount = itemBarItemsCount[i.slotNum] + heldItemCount;
-										if (finishingAmount > 99) {
-											itemBarItemsCount[i.slotNum] = 99;
-											heldItemCount = finishingAmount - 99;
-										} else {
-											itemBarItemsCount[i.slotNum] = finishingAmount;
-											heldItem = null;
-											heldItemCount = 0;
-										}
-									} else {
-										var temp1 = heldItem;
-										var temp2 = heldItemCount;
-										heldItem = itemBarItems[i.slotNum];
-										heldItemCount = itemBarItemsCount[i.slotNum];
-										itemBarItems[i.slotNum] = temp1;
-										itemBarItemsCount[i.slotNum] = temp2;
-									}
-								}
-							}
-						} else if (i.slotLoc === "inventory") {
-							if (heldItem === null) {
-								heldItem = inventoryItems[i.slotNum];
-								heldItemCount = inventoryItemsCount[i.slotNum];
-								inventoryItems[i.slotNum] = null;
-								inventoryItemsCount[i.slotNum] = 0;
-							} else {
-								if (inventoryItems[i.slotNum] === null) {
-									inventoryItems[i.slotNum] = heldItem;
-									inventoryItemsCount[i.slotNum] = heldItemCount;
-									heldItem = null;
-									heldItemCount = 0;
-								} else {
-									if (inventoryItems[i.slotNum] === heldItem) {
-										var finishingAmount = inventoryItemsCount[i.slotNum] + heldItemCount;
-										if (finishingAmount > 99) {
-											inventoryItemsCount[i.slotNum] = 99;
-											heldItemCount = finishingAmount - 99;
-										} else {
-											inventoryItemsCount[i.slotNum] = finishingAmount;
-											heldItem = null;
-											heldItemCount = 0;
-										}
-									} else {
-										var temp1 = heldItem;
-										var temp2 = heldItemCount;
-										heldItem = inventoryItems[i.slotNum];
-										heldItemCount = inventoryItemsCount[i.slotNum];
-										inventoryItems[i.slotNum] = temp1;
-										inventoryItemsCount[i.slotNum] = temp2;
-									}
-								}
-							}
-						}
-					}
-
-					break;
-
-				case "trash":
-					if (isInsideRect(mousePos, x, y, i.width, i.height)) {
-						if (heldItem !== null) {
-							heldItem = null;
-						}
-					}
-					
-					break;
-			}
-		}
+		ui.clickAll(mousePos);
 	}
 }
 
@@ -655,10 +529,6 @@ function resize() {
 	uiElement.width = window.innerWidth;
 	uiElement.height = window.innerHeight;
 	uiContext.imageSmoothingEnabled = false;
-}
-
-function isInsideRect(pos, x, y, w, h){
-	return pos.x > x && pos.x < x + w * 4 && pos.y < y + h * 4 && pos.y > y;
 }
 
 function getMousePos(event) {

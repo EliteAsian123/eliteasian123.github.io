@@ -243,6 +243,12 @@ a:hover {
 	display: none;
 }
 
+iframe {
+	border: none;
+	width: 100%;
+	height: auto;
+}
+
 @-webkit-keyframes spaceAnimation {
 	from {
 		width: 30vw;

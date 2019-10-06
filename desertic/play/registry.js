@@ -1,3 +1,16 @@
+// Important Variables //
+var itemBarItems;
+var itemBarItemsCount;
+var inventoryItems;
+var inventoryItemsCount;
+
+var heldItem;
+var heldItemCount;
+
+var numbersImage = new Image();
+numbersImage.src = "textures/numbers.png";
+
+// Registery //
 var tools = {
 	hands: {name: "hands", incorrectToolEfficiency: 0.15, correctToolEfficiency: 0.5},
 	rocks: {name: "rocks", incorrectToolEfficiency: 0.25, correctToolEfficiency: 0.65},
@@ -33,30 +46,52 @@ var blocks = {
 };
 
 var uis = {
-	inventory: [
-		{type: "image", path: "textures/item_inventory.png", x: 0, y: 0, width: 130, height: 78},
-		{type: "slot", x: -54 + (18 * 1), y: -8 + (18 * 2), width: 16, height: 16, slotLoc: "itemBar", slotNum: 0},
-		{type: "slot", x: -54 + (18 * 2), y: -8 + (18 * 2), width: 16, height: 16, slotLoc: "itemBar", slotNum: 1},
-		{type: "slot", x: -54 + (18 * 3), y: -8 + (18 * 2), width: 16, height: 16, slotLoc: "itemBar", slotNum: 2},
-		{type: "slot", x: -54 + (18 * 4), y: -8 + (18 * 2), width: 16, height: 16, slotLoc: "itemBar", slotNum: 3},
-		{type: "slot", x: -54 + (18 * 5), y: -8 + (18 * 2), width: 16, height: 16, slotLoc: "itemBar", slotNum: 4},
+	inventory: function(ui) {
+		// UI Image
+		ui.add(new UIImage(0, 0, 130, 78, new AnchorCenter(ui), "textures/item_inventory.png"));
 
-		{type: "slot", x: -54 + (18 * 0), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 0},
-		{type: "slot", x: -54 + (18 * 1), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 1},
-		{type: "slot", x: -54 + (18 * 2), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 2},
-		{type: "slot", x: -54 + (18 * 3), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 3},
-		{type: "slot", x: -54 + (18 * 4), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 4},
-		{type: "slot", x: -54 + (18 * 5), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 5},
-		{type: "slot", x: -54 + (18 * 6), y: -8 + (18 * 0), width: 16, height: 16, slotLoc: "inventory", slotNum: 6},
+		// Itembar Slots
+		for (var i = 0; i < 5; i++) {
+			/* TODO: Better way to do this. */
+			eval(`
+				ui.add(new UIItemSlot(-54 + (18 * (` + i + ` + 1)), -8 + (18 * 2), 16, 16, new AnchorCenter(ui), function() {
+					return itemBarItems[` + i + `];
+				}, function() {
+					return itemBarItemsCount[` + i + `];
+				}, function(x) {
+					itemBarItems[` + i + `] = x;
+				}, function(x) {
+					itemBarItemsCount[` + i + `] = x;
+				}));
+			`);
+		}
 
-		{type: "slot", x: -54 + (18 * 0), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 7},
-		{type: "slot", x: -54 + (18 * 1), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 8},
-		{type: "slot", x: -54 + (18 * 2), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 9},
-		{type: "slot", x: -54 + (18 * 3), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 10},
-		{type: "slot", x: -54 + (18 * 4), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 11},
-		{type: "slot", x: -54 + (18 * 5), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 12},
-		{type: "slot", x: -54 + (18 * 6), y: -8 + (18 * 1), width: 16, height: 16, slotLoc: "inventory", slotNum: 13},
-
-		{type: "trash", x: 54, y: -30, width: 16, height: 16}
-	]
+		// Inventory Slots
+		for (var i = 0; i < 14; i++) {
+			var x;
+			var y;
+			if (i >= 7) {
+				x = -54 + (18 * (i - 7));
+				y = -8 + (18 * 1);
+			} else {
+				x = -54 + (18 * i);
+				y = -8 + (18 * 0);
+			}
+			/* TODO: Better way to do this. */
+			eval(`
+				ui.add(new UIItemSlot(` + x + `, ` + y + `, 16, 16, new AnchorCenter(ui), function() {
+					return inventoryItems[` + i + `];
+				}, function() {
+					return inventoryItemsCount[` + i + `];
+				}, function(x) {
+					inventoryItems[` + i + `] = x;
+				}, function(x) {
+					inventoryItemsCount[` + i + `] = x;
+				}));
+			`);
+		}
+		
+		// Trash Slot
+		ui.add(new UIItemTrash(54, -30, 16, 16, new AnchorCenter(ui)));
+	}
 };
