@@ -1,3 +1,5 @@
+/* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.23, autoprefixer: v9.7.3) */
+
 /* https://fonts.google.com/specimen/Raleway */
 @import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
 
@@ -128,6 +130,11 @@ nav img {
 	-webkit-transition: 0.25s;
 	-o-transition: 0.25s;
 	transition: 0.25s;
+	cursor: pointer;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	    -ms-user-select: none;
+	        user-select: none;
 }
 
 .button:hover {

@@ -119,6 +119,8 @@ nav img {
 	text-align: center;
 	outline: none;
 	transition: 0.25s;
+	cursor: pointer;
+	user-select: none;
 }
 
 .button:hover {
