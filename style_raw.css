@@ -62,7 +62,7 @@ nav {
 	top: 0;
 	padding: 0 15px;
 	font-size: 150%;
-	z-index: 2;
+	z-index: 5;
 }
 
 nav * {
