@@ -192,3 +192,20 @@ nav img {
   text-decoration: none;
   font-family: "Raleway", sans-serif;
 }
+
+@media (max-width: 1150px) {
+	nav {
+		padding: 0 10px;
+		font-size: 100%;
+	}
+	
+	nav * {
+		padding: 1px 10px;
+	}
+	
+	nav img {
+		width: 30px;
+		height: 30px;
+		margin-top: 8px;
+  }
+}
