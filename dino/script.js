@@ -576,7 +576,8 @@
                         this.currentSpeed += this.config.ACCELERATION;
                     }
                 } else {
-                    this.gameOver();
+                    if (!document.getElementById('noDeath').checked)
+                        this.gameOver();
                 }
 
                 var playAchievementSound = this.distanceMeter.update(deltaTime,
@@ -614,6 +615,40 @@
                 this.tRex.update(deltaTime);
                 this.scheduleNextUpdate();
             }
+
+            if (document.getElementById('disableSpeedLimit').checked) {
+                Runner.config.MAX_SPEED = Infinity;
+            } else {
+                Runner.config.MAX_SPEED = 13;
+            }
+
+            var acc = Runner.config.ACCELERATION;
+            switch(document.getElementById('accSpeed').value) {
+                case "0":
+                    acc = 0;
+                    break;
+                case "1":
+                    acc = 0.0005;
+                    break;
+                case "2":
+                    acc = 0.001;
+                    break;
+                case "3":
+                    acc = 0.002;
+                    break;
+                case "4":
+                    acc = 0.01;
+                    break;
+                case "5":
+                    acc = 0.1;
+                    break;
+                case "6":
+                    acc = 1;
+                    break;
+                case "7":
+                    acc = 32;
+            }
+            Runner.config.ACCELERATION = acc;
         },
 
         /**

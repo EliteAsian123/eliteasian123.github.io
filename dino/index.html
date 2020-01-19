@@ -25,6 +25,22 @@
                     <li>Space, up arrow or W to Jump. (Tap for small jump, Hold for long)</li>
                     <li>Down arrow or S to crouch.</li>
                 </ul>
+                Settings:<br>
+                <ul>
+                <li>Disable Speed Limit: <input type="checkbox" id="disableSpeedLimit" tabindex="-1" onkeydown="return false" /></li>
+                <li>Acceleration Speed: <select id="accSpeed" tabindex="-1" onkeydown="return false">
+                    <option value="0">None</option>
+                    <option value="1">Half</option>
+                    <option selected value="2">Normal</option>
+                    <option value="3">Double</option>
+                    <option value="4">Fast</option>
+                    <option value="5">Very Fast</option>
+                    <option value="6">EXTREMELY FAST</option>
+                    <option value="7">What the...</option>
+                </select></li>
+                <li>Disable Death: <input type="checkbox" id="noDeath" tabindex="-1" onkeydown="return false" /></li>
+                <li><a href="" onclick="localStorage.setItem('highscore', 0);location.reload();" tabindex="-1" onkeydown="return false">Reset Highscore</a></li>
+                </ul>
             </div>
         </div>
         <div id="offline-resources">
