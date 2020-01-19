@@ -39,6 +39,13 @@
                     <option value="7">What the...</option>
                 </select></li>
                 <li>Disable Death: <input type="checkbox" id="noDeath" tabindex="-1" onkeydown="return false" /></li>
+                <li>Gravity: <select id="gravity" tabindex="-1" onkeydown="return false">
+                    <option value="0">Zero</option>
+                    <option value="1">Half</option>
+                    <option selected value="2">Normal</option>
+                    <option value="3">Double</option>
+                    <option value="4">Hmmm...</option>
+                </select></li>
                 <li><a href="" onclick="localStorage.setItem('highscore', 0);location.reload();" tabindex="-1" onkeydown="return false">Reset Highscore</a></li>
                 </ul>
             </div>

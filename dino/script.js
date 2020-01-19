@@ -64,12 +64,7 @@
         // Images.
         this.images = {};
         this.imagesLoaded = 0;
-
-        if (this.isDisabled()) {
-            this.setupDisabledRunner();
-        } else {
-            this.loadImages();
-        }
+        this.loadImages();
     }
     window['Runner'] = Runner;
 
@@ -229,38 +224,6 @@
 
 
     Runner.prototype = {
-        /**
-         * Whether the easter egg has been disabled. CrOS enterprise enrolled devices.
-         * @return {boolean}
-         */
-        isDisabled: function () {
-            // return loadTimeData && loadTimeData.valueExists('disabledEasterEgg');
-            return false;
-        },
-
-        /**
-         * For disabled instances, set up a snackbar with the disabled message.
-         */
-        setupDisabledRunner: function () {
-            this.containerEl = document.createElement('div');
-            this.containerEl.className = Runner.classes.SNACKBAR;
-            this.containerEl.textContent = loadTimeData.getValue('disabledEasterEgg');
-            this.outerContainerEl.appendChild(this.containerEl);
-
-            // Show notification when the activation key is pressed.
-            document.addEventListener(Runner.events.KEYDOWN, function (e) {
-                if (Runner.keycodes.JUMP[e.keyCode]) {
-                    this.containerEl.classList.add(Runner.classes.SNACKBAR_SHOW);
-                    document.querySelector('.icon').classList.add('icon-disabled');
-                }
-            }.bind(this));
-        },
-
-        /**
-         * Setting individual settings for debugging.
-         * @param {string} setting
-         * @param {*} value
-         */
         updateConfigSetting: function (setting, value) {
             if (setting in this.config && value != undefined) {
                 this.config[setting] = value;
@@ -617,9 +580,9 @@
             }
 
             if (document.getElementById('disableSpeedLimit').checked) {
-                Runner.config.MAX_SPEED = Infinity;
+                this.updateConfigSetting("MAX_SPEED", Infinity);
             } else {
-                Runner.config.MAX_SPEED = 13;
+                this.updateConfigSetting("MAX_SPEED", 13);
             }
 
             var acc = Runner.config.ACCELERATION;
@@ -648,7 +611,26 @@
                 case "7":
                     acc = 32;
             }
-            Runner.config.ACCELERATION = acc;
+            this.updateConfigSetting("ACCELERATION", acc);
+
+            var gra = Runner.config.GRAVITY;
+            switch(document.getElementById('gravity').value) {
+                case "0":
+                    gra = 0;
+                    break;
+                case "1":
+                    gra = 0.3;
+                    break;
+                case "2":
+                    gra = 0.6;
+                    break;
+                case "3":
+                    gra = 1.2;
+                    break;
+                case "4":
+                    gra = 128;
+            }
+            this.updateConfigSetting("GRAVITY", gra);
         },
 
         /**
