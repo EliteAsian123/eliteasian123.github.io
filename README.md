@@ -12,4 +12,4 @@ Thanks to my friends, Ethan and Noah for helping me with textures and ideas for 
 
 # License
 All code (that is mine) in this project is under the MIT License<br>
-Copyright © 2019 EliteAsian123
+Copyright © 2019-2020 EliteAsian123
