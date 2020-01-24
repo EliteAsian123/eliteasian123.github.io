@@ -16,7 +16,8 @@ var tools = {
 	rocks: {name: "rocks", incorrectToolEfficiency: 0.25, correctToolEfficiency: 0.65},
 	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
 	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
-	cactus_saw: {name: "cactus_saw", incorrectToolEfficiency: 0.35, correctToolEfficiency: 2.4}
+	cactus_saw: {name: "cactus_saw", incorrectToolEfficiency: 0.35, correctToolEfficiency: 2.4},
+	admin_tool: {name: "admin_tool", incorrectToolEfficiency: 10, correctToolEfficiency: 10}
 };
 
 var items = {
@@ -25,7 +26,8 @@ var items = {
 	item_crude_cactus_saw: {name: "Cactus Saw", tool: "cactus_saw", texture: "textures/crude_cactus_saw.png"},
 	item_twine: {name: "Twine", tool: "hands", texture: "textures/twine.png"},
 	item_rocks: {name: "Rocks", tool: "rocks", texture: "textures/rocks.png"},
-	item_stick: {name: "Stick", tool: "hands", texture: "textures/stick.png"}
+	item_stick: {name: "Stick", tool: "hands", texture: "textures/stick.png"},
+	item_admin_tool: {name: "Admin Tool", tool: "admin_tool", texture: "textures/admin_tool.png"}
 };
 
 var materials = [
