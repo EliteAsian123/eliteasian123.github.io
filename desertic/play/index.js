@@ -138,7 +138,7 @@ function save() {
 
 		var data_inv = [inventoryItems, inventoryItemsCount, itemBarItems, itemBarItemsCount];
 
-		var data = {v: "0", world: data_world, inv: data_inv};
+		var data = {v: "1", world: data_world, inv: data_inv};
 		var data = JSON.stringify(data);
 		var data = lzstring.compress(data);
 		localStorage.setItem("game", data);
@@ -151,22 +151,24 @@ if (localStorage.getItem("game") && localStorage.getItem("game") !== null) {
 	data = lzstring.decompress(data);
 
 	data = JSON.parse(data);
-	
-	var dataKeys = Object.keys(data.world);
-	for (var element of dataKeys) {
-		if (typeof data.world[element] !== Uint8Array) {
-			data.world[element] = Object.keys(data.world[element]).map(function(key) {
-				return data.world[element][key];
-			});
-		}
-	}
 
-	noaChunkSave.setSaveData(data.world);
+	if (data.v === "1") {
+		var dataKeys = Object.keys(data.world);
+		for (var element of dataKeys) {
+			if (typeof data.world[element] !== Uint8Array) {
+				data.world[element] = Object.keys(data.world[element]).map(function(key) {
+					return data.world[element][key];
+				});
+			}
+		}
+
+		noaChunkSave.setSaveData(data.world);
 	
-	inventoryItems = data.inv[0];
-	inventoryItemsCount = data.inv[1];
-	itemBarItems = data.inv[2];
-	itemBarItemsCount = data.inv[3];
+		inventoryItems = data.inv[0];
+		inventoryItemsCount = data.inv[1];
+		itemBarItems = data.inv[2];
+		itemBarItemsCount = data.inv[3];
+	}
 }
 
 var mouseX = 0;

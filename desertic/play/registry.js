@@ -17,7 +17,7 @@ var tools = {
 	pickaxe: {name: "pickaxe", incorrectToolEfficiency: 0.45, correctToolEfficiency: 1.5},
 	shovel: {name: "shovel", incorrectToolEfficiency: 0.2, correctToolEfficiency: 0.95},
 	cactus_saw: {name: "cactus_saw", incorrectToolEfficiency: 0.35, correctToolEfficiency: 2.4},
-	admin_tool: {name: "admin_tool", incorrectToolEfficiency: 10, correctToolEfficiency: 10}
+	admin_tool: {name: "admin_tool", incorrectToolEfficiency: 100, correctToolEfficiency: 100}
 };
 
 var items = {

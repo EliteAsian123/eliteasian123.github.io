@@ -3,7 +3,7 @@
 	<head>
 		<title>EliteAsian123</title>
 		<meta name="author" content="EliteAsian123">
-		<meta name="keywords" content="EliteAsian, EliteAsian123, Desertic, Games, Website, Voxel Game, Voxel Games, Desertic Game, Game">
+		<meta name="keywords" content="EliteAsian, EliteAsian123, Desertic, Games, Website, Voxel Game, Voxel Games, Desertic Game, Game, Dino Game, Dinosaur Game">
 		<meta name="description" content="The Offical Website for EliteAsian123! On it you can play Desertic, a Voxel Game!">
 		
 		<!-- Google Site Verification -->
@@ -38,14 +38,6 @@
 				All the code on this website is open source! Check out the github for this website <a href="https://github.com/EliteAsian123/eliteasian123.github.io">here</a>. Keep in mind that it is a MIT License!<br>
 				If you like this website, please consider giving it a star on github! Have a good day!
 			</p>
-
-			<br>
-			<br>
-			
-			<h1>My Projects</h1>
-			<p>
-				The only one of my games that are on my website is <a href="desertic/">Desertic</a>! <a href="desertic/">Desertic</a> is a voxel game that has strong inspiration from Minecraft. The point of the game is to survive in the desert you spawn in! Keep in mind that this game is in pre-alpha so it is not finished and there will be bugs.<br><br>
-			</p>
 		</div>
 
 		<script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -64,7 +56,11 @@
 			var fpsArray = [];
 			var fps = 0;
 
+			var paused = false;
+
 			function gotoSpace() {
+				starPositions = [];
+
 				var element = document.getElementById("portal");
 				var container = document.getElementById("portal-container");
 	
@@ -83,7 +79,7 @@
 				for (var i = 0; i < density; i++) {
 					var x = Math.floor(spaceCanvas.width * Math.random());
 					var y = Math.floor(spaceCanvas.height * Math.random());
-					var s = Math.floor((5 * Math.random()) + 1);
+					var s = (5 * Math.random()) + 1;
 					starPositions.push([x, y, s]);
 				}
 
@@ -108,24 +104,32 @@
 
 				if (time > 0.2) {
 					starPositions.forEach(function(element, index) {
-						if (element[0] > spaceCanvas.width) {
+						if (element[0] > spaceCanvas.width)
 							starPositions[index][0] = -3;
-						} else {
+						else {
 							spaceContext.fillRect(element[0], element[1], 3, 3);
 							starPositions[index][0] += element[2] / (fps / 10);
 						}
 					});
 
-					if (alpha < 1) {
+					if (alpha < 1)
 						alpha += 0.01;
-					}
 				}
 	
-				if (fps !== 0) {
-				time += 1 / fps;
-				}	
+				if (fps !== 0)
+					time += 1 / fps;
 
-				requestAnimationFrame(renderLoop);
+				if (!paused) requestAnimationFrame(renderLoop);
+			}
+
+			// Handel Pausing
+			window.onblur = function() {
+    			paused = true;
+			}
+
+			window.onfocus = function() {
+    			paused = false;
+    			gotoSpace();
 			}
 		</script>
 	</body>
