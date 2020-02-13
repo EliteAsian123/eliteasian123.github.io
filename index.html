@@ -12,6 +12,12 @@
 		<link rel="shortcut icon" href="favicon.ico">
 		
 		<link rel="stylesheet" href="style.css">
+
+		<style>
+			body {
+				background: black;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -22,15 +28,13 @@
 		</nav>
 		
 		<h2 id="page-text">EliteAsian123</h2>
-		<div id="github-button-container">
+		<div id="github-button-container" style="opacity: 0;">
 			<a class="github-button" href="https://github.com/EliteAsian123" data-size="large" aria-label="Follow @EliteAsian123 on GitHub">Follow @EliteAsian123</a>
 			<a class="github-button" href="https://github.com/EliteAsian123/eliteasian123.github.io" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star EliteAsian123/eliteasian123.github.io on GitHub">Star</a>
 		</div>
 
-		<div id="portal-container">
-			<div id="portal" onclick="gotoSpace()"></div>
-			<canvas id="spaceCanvas"></canvas>
-		</div>
+		<div id="page-image"></div>
+
 		<div id="after">
 			<h1>About</h1>
 			<p>
@@ -43,94 +47,86 @@
 		<script async defer src="https://buttons.github.io/buttons.js"></script>
 
 		<script type="text/javascript" src="preload.js"></script>
-	
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+
 		<script>
-			var spaceCanvas;
-			var spaceContext;
 
-			var starPositions = [];
+			var camera, scene, renderer;
+			var stars, starGeometry;
 
-			var time = 0;
-			var alpha = 0;
+			var mouseX = 0, mouseY = 0;
 
-			var fpsArray = [];
-			var fps = 0;
+			const starCount = 10000;
 
-			var paused = false;
+			function init() {
+				scene = new THREE.Scene();
+				
+				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+				camera.position.z = 1;
+				
+				starGeometry = new THREE.Geometry();
+				for (var i = 0; i < starCount; i++) {
+					var star = new THREE.Vector3(
+						Math.random() * 600 - 300,
+						Math.random() * 600 - 300,
+						Math.random() * 600 - 300
+					)
 
-			function gotoSpace() {
-				starPositions = [];
-
-				var element = document.getElementById("portal");
-				var container = document.getElementById("portal-container");
-	
-				element.style.animation = "1s spaceAnimation";
-				element.style.width = "200vw";
-				element.style.height = "200vw";
-				element.style.marginLeft = "-100vw";
-				element.style.marginTop = "-100vw";
-	
-				spaceCanvas = document.getElementById("spaceCanvas");
-				spaceCanvas.style.display = "block";
-				spaceCanvas.width = container.clientWidth;
-				spaceCanvas.height = container.clientWidth;
-
-				var density = (window.innerWidth / window.innerHeight) * 200;
-				for (var i = 0; i < density; i++) {
-					var x = Math.floor(spaceCanvas.width * Math.random());
-					var y = Math.floor(spaceCanvas.height * Math.random());
-					var s = (5 * Math.random()) + 1;
-					starPositions.push([x, y, s]);
+					starGeometry.vertices.push(star);
 				}
 
-				spaceContext = spaceCanvas.getContext("2d");
-				requestAnimationFrame(renderLoop);
+				var starSprite = new THREE.TextureLoader().load("star.png");
+				var starMat = new THREE.PointsMaterial({
+					color: 0xFFFFFF,
+					size: 1.0,
+					map: starSprite,
+					transparent: true
+				});
+
+				stars = new THREE.Points(starGeometry, starMat);
+				scene.add(stars);
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.domElement.style.opacity = 0;
+			
+				document.getElementById("page-image").appendChild(renderer.domElement);
+
+				document.addEventListener("mousemove", mouseMove, false);
+				window.addEventListener("resize", windowResize, false);
+
+				renderer.domElement.style.animation = "2s fadeIn";
+				renderer.domElement.style.opacity = 1;
+				document.getElementById("github-button-container").style.animation = "2s fadeIn";
+				document.getElementById("github-button-container").style.opacity = 1;
 			}
 
-			function renderLoop(now) {
-				// Clear
-				spaceContext.clearRect(0, 0, spaceCanvas.width, spaceCanvas.height);
+			function windowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
 
-				// Calculate FPS
-				fpsArray.unshift(now);
-				if (fpsArray.length > 10) {
-					var temp = fpsArray.pop();
-					fps = Math.floor(1000 * 10 / (now - temp));
-				}
-
-				// Draw stars
-				spaceContext.globalAlpha = alpha;
-				spaceContext.fillStyle = "#ddd";
-
-				if (time > 0.2) {
-					starPositions.forEach(function(element, index) {
-						if (element[0] > spaceCanvas.width)
-							starPositions[index][0] = -3;
-						else {
-							spaceContext.fillRect(element[0], element[1], 3, 3);
-							starPositions[index][0] += element[2] / (fps / 10);
-						}
-					});
-
-					if (alpha < 1)
-						alpha += 0.01;
-				}
-	
-				if (fps !== 0)
-					time += 1 / fps;
-
-				if (!paused) requestAnimationFrame(renderLoop);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 			}
 
-			// Handel Pausing
-			window.onblur = function() {
-    			paused = true;
+			function mouseMove(event) {
+				mouseX = (event.clientX - window.innerWidth / 2);
+				mouseY = (event.clientY - window.innerHeight / 2);
+			}
+			
+			function render() {
+				camera.rotation.y = (-mouseX - camera.position.x) / 3000;
+				camera.rotation.x = (-mouseY - camera.position.y) / 3000;
+
+				stars.rotation.y += 0.0001;
+
+				renderer.render(scene, camera);
+				requestAnimationFrame(render);
 			}
 
-			window.onfocus = function() {
-    			paused = false;
-    			gotoSpace();
-			}
+            init();
+			render();
+
 		</script>
 	</body>
 </html>

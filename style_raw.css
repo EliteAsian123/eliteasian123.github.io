@@ -11,8 +11,30 @@
 
 	--color-0: #4ba0cf;
 	--color-1: #8d56cf;
-	--color-2: #FE9900;
+	--color-2: #fe9900;
 }
+
+/* Exotics */
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+  
+::-webkit-scrollbar-track {
+	background: var(--dark-0);
+}
+  
+::-webkit-scrollbar-thumb {
+	background: var(--secondary-color);
+	border-radius: 10px;
+}
+
+::selection {
+	color: var(--primary-color);
+	background: var(--color-0);
+}
+
+/* CSS */
 
 .preload * {
 	transition: none !important;
@@ -90,13 +112,24 @@ nav img {
 	color: white;
 }
 
+#github-button-container {
+	position: absolute;
+	top: 225px;
+	left: 75px;
+}
+
 #page-image {
 	min-height: 100vh;
-	width: 100%;
 	position: absolute;
+	width: 100%;
 	top: 0;
 	left: 0;
 	z-index: -1;
+	overflow: hidden;
+}
+
+#page-image > * {
+	
 }
 
 #center-button {
@@ -131,37 +164,6 @@ nav img {
 .button.small {
 	padding: 20px;
 	border-radius: 7.5px;
-}
-
-#portal-container {
-	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: -2;
-}
-
-#portal {
-	width: 25vw;
-	height: 25vw;
-	background-color: black;
-	border-radius: 50%;
-	transition: 0.25s;
-	position: absolute;
-	left: 65%;
-	top: 57%;
-	margin-left: -12.5vw;
-	margin-top: -12.5vw;
-	z-index: -1;
-}
-
-#portal:hover {
-	width: 30vw;
-	height: 30vw;
-	margin-left: -15vw;
-	margin-top: -15vw;
 }
 
 #after {
@@ -219,12 +221,6 @@ a:hover {
 .centerX {
 	left: 50%;
 	transform: translateX(-50%);
-}
-
-#spaceCanvas {
-	background-color: transparent;
-	position: absolute;
-	display: none;
 }
 
 iframe {
@@ -287,9 +283,8 @@ iframe {
 		text-align: center;
 	}
 
-	#portal {
-		left: 50%;
-		top: 55%;
+	#github-button-container {
+		display: none;
 	}
 
 	#after {
@@ -308,55 +303,5 @@ iframe {
 		border-radius: 7.5px;
 		font-size: 100%;
 		line-height: 50px;
-	}
-}
-
-@media (max-height: 500px) and (min-width: 1150px) {
-	#portal {
-		width: 18.75vw;
-		height: 18.75vw;
-		margin-left: -9.375vw;
-		margin-top: -9.375vw;
-	}
-
-	#portal:hover {
-		width: 22.5vw;
-		height: 22.5vw;
-		margin-left: -11.25vw;
-		margin-top: -11.25vw;
-	}
-}
-
-@media (max-height: 400px) {
-	#portal {
-		display: none;
-	}
-}
-
-@media (max-height: 420px) and (max-width: 1150px) {
-	#portal {
-		display: none;
-	}
-}
-
-@media (max-height: 600px) and (max-width: 1150px) {
-	#portal {
-		top: 65%;
-	}
-}
-
-@media (max-height: 475px) and (max-width: 1150px) {
-	#portal {
-		width: 18.75vw;
-		height: 18.75vw;
-		margin-left: -9.375vw;
-		margin-top: -9.375vw;
-	}
-
-	#portal:hover {
-		width: 22.5vw;
-		height: 22.5vw;
-		margin-left: -11.25vw;
-		margin-top: -11.25vw;
 	}
 }
