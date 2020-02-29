@@ -712,7 +712,7 @@
                         }
                     }
                     //  Play sound effect and jump on starting the game for the first time.
-                    if (!this.tRex.jumping && !this.tRex.ducking) {
+                    if (!this.tRex.jumping || document.getElementById('infiniteJumps').checked && !this.tRex.ducking) {
                         this.playSound(this.soundFx.BUTTON_PRESS);
                         this.tRex.startJump(this.currentSpeed);
                     }
@@ -1782,14 +1782,12 @@
          * @param {number} speed
          */
         startJump: function (speed) {
-            if (!this.jumping) {
-                this.update(0, Trex.status.JUMPING);
-                // Tweak the jump velocity based on the speed.
-                this.jumpVelocity = this.config.INIITAL_JUMP_VELOCITY - (speed / 10);
-                this.jumping = true;
-                this.reachedMinHeight = false;
-                this.speedDrop = false;
-            }
+            this.update(0, Trex.status.JUMPING);
+            // Tweak the jump velocity based on the speed.
+            this.jumpVelocity = this.config.INIITAL_JUMP_VELOCITY - (speed / 10);
+            this.jumping = true;
+            this.reachedMinHeight = false;
+            this.speedDrop = false;
         },
 
         /**

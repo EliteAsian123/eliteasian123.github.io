@@ -68,9 +68,9 @@
 				starGeometry = new THREE.Geometry();
 				for (var i = 0; i < starCount; i++) {
 					var star = new THREE.Vector3(
-						Math.random() * 600 - 300,
-						Math.random() * 600 - 300,
-						Math.random() * 600 - 300
+						THREE.Math.randFloat(-300, 300),
+						THREE.Math.randFloat(-300, 300),
+						THREE.Math.randFloat(-300, 300)
 					)
 
 					starGeometry.vertices.push(star);
