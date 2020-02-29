@@ -712,7 +712,7 @@
                         }
                     }
                     //  Play sound effect and jump on starting the game for the first time.
-                    if (!this.tRex.jumping || document.getElementById('infiniteJumps').checked && !this.tRex.ducking) {
+                    if ((!this.tRex.jumping || document.getElementById('infiniteJumps').checked) && !this.tRex.ducking) {
                         this.playSound(this.soundFx.BUTTON_PRESS);
                         this.tRex.startJump(this.currentSpeed);
                     }
