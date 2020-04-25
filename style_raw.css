@@ -114,7 +114,7 @@ nav img {
 
 #github-button-container {
 	position: absolute;
-	top: 225px;
+	top: 230px;
 	left: 75px;
 }
 
@@ -252,23 +252,8 @@ iframe {
 }
 
 @media (max-width: 1150px) {
-	nav {
-		padding: 0 10px;
-		font-size: 100%;
-	}
-	
-	nav * {
-		padding: 1px 10px;
-	}
-	
-	nav img {
-		width: 30px;
-		height: 30px;
-		margin-top: 8px;
-	}
-	
-	.nav-item {
-		padding: 15px;
+	#github-button-container {
+		display: none;
 	}
 	
 	#page-text {
@@ -277,10 +262,6 @@ iframe {
 		left: 0;
 		top: 75px;
 		text-align: center;
-	}
-
-	#github-button-container {
-		display: none;
 	}
 
 	#after {
