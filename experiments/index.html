@@ -9,25 +9,87 @@
 		
 		<link rel="shortcut icon" href="../favicon.ico">
 		
-		<link rel="stylesheet" href="../style_raw.css">
+		<link rel="stylesheet" href="../style.css">
 		
-		<style>
+		<style>	
+			/* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
+
 			#things {
 				position: absolute;
 				top: 250px;
 				left: 75px;
+				
+				display: -ms-grid;
+				
+				display: grid;
+				-ms-grid-columns: 1fr 50px 1fr 50px 1fr;
+				grid-template-columns: repeat(3, 1fr);
+				grid-auto-rows: minmax(375px, 400px);
+				grid-gap: 50px;
+				
+				width: calc(100% - 150px);
 			}
 			
-			#things a {
-				width: 33vw;
-				height: 100px;
+			#things > a {
+				-webkit-box-sizing: border-box;
+				        box-sizing: border-box;
+				background-color: black;
+				width: 100%;
+				height: 100%;
+				background-position: center center;
+				background-repeat: no-repeat;
+				background-size: cover;
+				overflow: hidden;
+				border: 3px solid var(--dark-0);
+				border-radius: 5px;
+				margin-bottom: 50px;
 			}
 			
-			#things > a > img {
-				width: auto !important; /*override the width below*/
-				max-width: 678px;
-				float: left;
-				clear: both;
+			#things > a > h1 {
+				opacity: 0;
+				-webkit-transition: 0.25s;
+				-o-transition: 0.25s;
+				transition: 0.25s;
+				
+				color: var(--primary-color);
+				background-color: var(--dark-0);
+				text-align: center;
+				padding: 10px;
+			}
+			
+			#things > a:hover > h1 {
+				opacity: 1;
+			}
+			
+			#things > a > div {
+				-webkit-transform: translate(0, 75%);
+				    -ms-transform: translate(0, 75%);
+				        transform: translate(0, 75%);
+				-webkit-transition: 0.25s;
+				-o-transition: 0.25s;
+				transition: 0.25s;
+			
+				background-color: var(--dark-0);
+				height: 100%;
+				padding: 10px;
+				color: var(--primary-color);
+			}
+			
+			#things > a:hover > div {
+				-webkit-transform: translate(0, 50%);
+				    -ms-transform: translate(0, 50%);
+				        transform: translate(0, 50%);
+			}
+			
+			@media (max-width: 1150px) {		
+				#things {
+					-ms-grid-columns: 1fr;
+					grid-template-columns: repeat(1, 1fr);
+				}
+				
+				#things > a > h1 {
+					opacity: 1;
+				}
 			}
 		</style>
 	</head>
@@ -41,8 +103,14 @@
 		<h2 id="page-text">Experiments</h2>
 
 		<div id="things">
-			<a href="../desertic">
-				<img src="../desertic/screenshot.png" />
+			<a href="../desertic" style="background-image: url('../desertic/screenshot.webp'); background-position: center 75%;">
+				<h1>Desertic</h1>
+				<div>A bad Minecraft clone... fully in your browser!</div>
+			</a>
+			
+			<a href="../dino" style="background-image: url('../dino/screenshot.webp');">
+				<h1>Dino Game</h1>
+				<div>A modified version of Chrome's "dinosaur game" that has a load of settings you can mess around with.</div>
 			</a>
 		</div>
 

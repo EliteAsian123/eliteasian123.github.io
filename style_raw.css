@@ -46,32 +46,6 @@ body {
 	font-family: "Raleway", sans-serif;
 }
 
-.code {
-	width: 100%;
-	padding: 12px 20px;
-	font-size: 100%;
-	box-sizing: border-box;
-	border: 3px solid var(--dark-1);
-	border-radius: 3px;
-	background-color: var(--dark-2);
-	color: var(--secondary-color);
-	font-family: Consolas, monaco, monospace;
-	outline: none;
-	transition: 0.25s;
-}
-
-.code:focus {
-	border: 3px solid var(--dark-0);
-}
-
-.code .c-default {
-	color: var(--secondary-color);
-}
-
-.code .c-highlighted {
-	color: var(--color-0);
-}
-
 hr {
 	border: 1px solid var(--secondary-color);
 }
@@ -223,22 +197,6 @@ iframe {
 	border: none;
 	width: 100%;
 	height: auto;
-}
-
-@keyframes spaceAnimation {
-	from {
-		width: 30vw;
-		height: 30vw;
-		margin-left: -15vw;
-		margin-top: -15vw;
-	}
-
-	to {
-		width: 200vw;
-		height: 200vw;
-		margin-left: -100vw;
-		margin-top: -100vw;
-	}
 }
 
 @keyframes fadeIn {
