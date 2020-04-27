@@ -55,16 +55,38 @@
 				background-color: var(--dark-0);
 				text-align: center;
 				padding: 10px;
+				
+				position: relative;
+				top: -30px;
 			}
 			
 			#things > a:hover > h1 {
 				opacity: 1;
 			}
 			
+			#things > a > img {
+				opacity: 0;
+				-webkit-transition: 0.25s;
+				-o-transition: 0.25s;
+				transition: 0.25s;
+				
+				z-index: 1;
+			
+				position: relative;
+				top: 37px;
+				width: 30px;
+				height: 30px;
+				margin-left: 8px;
+			}
+			
+			#things > a:hover > img {
+				opacity: 1;
+			}
+			
 			#things > a > div {
-				-webkit-transform: translate(0, 75%);
-				    -ms-transform: translate(0, 75%);
-				        transform: translate(0, 75%);
+				-webkit-transform: translate(0, 70%);
+				    -ms-transform: translate(0, 70%);
+				        transform: translate(0, 70%);
 				-webkit-transition: 0.25s;
 				-o-transition: 0.25s;
 				transition: 0.25s;
@@ -76,9 +98,9 @@
 			}
 			
 			#things > a:hover > div {
-				-webkit-transform: translate(0, 50%);
-				    -ms-transform: translate(0, 50%);
-				        transform: translate(0, 50%);
+				-webkit-transform: translate(0, 45%);
+				    -ms-transform: translate(0, 45%);
+				        transform: translate(0, 45%);
 			}
 			
 			@media (max-width: 1150px) {		
@@ -88,6 +110,10 @@
 				}
 				
 				#things > a > h1 {
+					opacity: 1;
+				}
+				
+				#things > a > img {
 					opacity: 1;
 				}
 			}
@@ -104,11 +130,13 @@
 
 		<div id="things">
 			<a href="../desertic" style="background-image: url('../desertic/screenshot.webp'); background-position: center 75%;">
+				<img src="no_phone.svg"></img>
 				<h1>Desertic</h1>
 				<div>A bad Minecraft clone... fully in your browser!</div>
 			</a>
 			
 			<a href="../dino" style="background-image: url('../dino/screenshot.webp');">
+				<img src="no_phone.svg"></img>
 				<h1>Dino Game</h1>
 				<div>A modified version of Chrome's "dinosaur game" that has a load of settings you can mess around with.</div>
 			</a>
