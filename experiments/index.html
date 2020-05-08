@@ -81,7 +81,19 @@
 				        transform: translate(0, 50%);
 			}
 			
-			@media (max-width: 1150px) {		
+			#warning {
+				display: none;
+				
+				text-align: center;
+				color: white;
+				margin-top: 100px;
+			}
+			
+			@media (max-width: 1150px) {
+				#warning {
+					display: block;
+				}
+			
 				#things {
 					-ms-grid-columns: 1fr;
 					grid-template-columns: repeat(1, 1fr);
@@ -101,6 +113,7 @@
 		</nav>
 		
 		<h2 id="page-text">Experiments</h2>
+		<p id="warning"><span style="color: red;">WARNING:</span> All experiments are <b>NOT</b> mobile friendly.</p>
 
 		<div id="things">
 			<a href="../desertic" style="background-image: url('../desertic/screenshot.webp'); background-position: center 75%;">
