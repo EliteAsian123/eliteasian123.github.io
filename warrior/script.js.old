@@ -1,0 +1,203 @@
+// PRE-INIT
+const colorData = {
+	"yellow": "var(--color-yellow)",
+	"blue": "var(--color-blue)",
+	"red": "var(--color-red)"
+}
+
+let loadingElement = $("#loading");
+let coverElement = $("#cover");
+
+let timelineContainer = $("#timeline-container"); 
+
+let leftArrow = $("#left-arrow");
+let rightArrow = $("#right-arrow");
+
+let scrollOffset = 0;
+
+let scrollIndex = 0;
+
+loadingElement.fadeIn(250);
+
+// INIT
+let save = {
+	"name": "Untitled World",
+	
+	"timeline": {
+		"0": {
+			"eventName": "The Kingdom of Gods is Founded",
+			"category": "blue"
+		},
+		"26": {
+			"eventName": "The Kingdom of Gods Rules The World",
+			"category": "yellow"
+		},
+		"34": {
+			"eventName": "The 30 Year War Starts",
+			"category": "red"
+		},
+		"64": {
+			"eventName": "The Kingdom of Gods Falls and Loses The 30 Year War",
+			"category": "red"
+		},
+		"70": {
+			"eventName": "The Kingdom of Wizards is Founded",
+			"category": "blue"
+		},
+		"74": {
+			"eventName": "The North World was Discovered",
+			"category": "blue"
+		},
+		"83": {
+			"eventName": "Population Boom",
+			"category": "blue"
+		},
+		"95": {
+			"eventName": "The Kingdom of Wizards' Civil War",
+			"category": "red"
+		},
+		"99": {
+			"eventName": "The Wizard Treaty is Signed",
+			"category": "yellow"
+		},
+		"103": {
+			"eventName": "The Plague of the 100s Start",
+			"category": "yellow"
+		},
+		"111": {
+			"eventName": "The Kingdom of Wizards Falls to the Plauge",
+			"category": "red"
+		},
+		"115": {
+			"eventName": "50% of the Population Dies to the Plauge",
+			"category": "red"
+		},
+		"121": {
+			"eventName": "75% of the Population Dies to the Plauge",
+			"category": "red"
+		},
+		"125": {
+			"eventName": "The Plauge has ended with 84% of the Population Dead",
+			"category": "yellow"
+		},
+		"164": {
+			"eventName": "The East World was Discovered",
+			"category": "blue"
+		}
+	}
+};
+
+updateElements();
+
+$(window).bind("mousewheel", function(event){
+	if(event.originalEvent.wheelDelta < 0) {
+		changeScrollOffset(10);
+	} else {
+		changeScrollOffset(-10);
+	}
+	
+	timelineContainer.css("right", scrollOffset);
+});
+
+// POST-INIT
+loadingElement.fadeOut(250);
+coverElement.fadeOut(1000);
+
+// FUNCTIONS
+function updateElements() {
+	let majorLabels = [];
+	let minorLabels = [];
+	
+	timelineContainer.children(".timelineElementContainer").remove();
+	
+	for (let elementKey in save.timeline) {
+		let timelineElement = save.timeline[elementKey];
+		
+		let j = $("<div class=\"timeline-element-container\" style=\"left: " + (elementKey * 10) + "px;\"></div>");
+
+		j.mouseenter(function() {
+			$(this).append("<div class=\"timeline-element\" style=\"background-color: " + colorData[save.timeline[elementKey].category] + ";\">" + timelineElement.eventName + "</div>");
+		});
+		
+		j.mouseleave(function() {
+			$(this).children(".timeline-element").remove();
+		});
+		
+		timelineContainer.append(j);
+		
+		majorLabels.push(parseInt(elementKey));
+	}
+	
+	let minYear = getMinYear();
+	let maxYear = getMaxYear();
+	
+	for (let i = minYear; i <= maxYear; i += 10) {
+		minorLabels.push(i);
+	}
+	
+	for (let label of majorLabels) {
+		let j = $("<div class=\"timeline-major-label\" style=\"left: " + (label * 10) + "px; background-color: " + colorData[save.timeline[label.toString()].category] + ";\">" + label + "</div>");
+		
+		timelineContainer.append(j);
+	}
+	
+	for (let label of minorLabels) {
+		let j = $("<div class=\"timeline-minor-label\" style=\"left: " + (label * 10) + "px;\">" + label + "</div>");
+		
+		timelineContainer.append(j);
+	}
+	
+	$("#title").text(save.name);
+}
+
+function changeScrollOffset(amount) {
+	if (amount < 0) {
+		let min = getMinYear();
+		if (scrollOffset + amount >= min) {
+			scrollOffset += amount;
+		} else {
+			scrollOffset = min;
+		}
+	} else {
+		let max = getMaxYear()
+		if (scrollOffset + amount <= max * 10) {
+			scrollOffset += amount;
+		} else {
+			scrollOffset = max * 10;
+		}
+	}
+}
+
+function getMaxYear() {
+	let max = -1;
+	for (let elementKey in save.timeline) {
+		let intKey = parseInt(elementKey);
+		
+		if (max == -1) {
+			max = intKey;
+			continue;
+		}
+		
+		if (intKey > max)
+			max = intKey;
+	}
+	
+	return max;
+}
+
+function getMinYear() {
+	let min = -1;
+	for (let elementKey in save.timeline) {
+		let intKey = parseInt(elementKey);
+		
+		if (min == -1) {
+			min = intKey;
+			continue;
+		}
+		
+		if (intKey < min)
+			min = intKey;
+	}	
+	
+	return min;
+}

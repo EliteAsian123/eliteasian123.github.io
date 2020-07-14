@@ -61,8 +61,6 @@
 			var camera, scene, renderer;
 			var stars, starGeometry;
 
-			var mouseX = 0, mouseY = 0;
-
 			const starCount = 20000;
 
 			function init() {
@@ -99,7 +97,6 @@
 			
 				document.getElementById("page-image").appendChild(renderer.domElement);
 
-				document.addEventListener("mousemove", mouseMove, false);
 				window.addEventListener("resize", windowResize, false);
 
 				renderer.domElement.style.animation = "2s fadeIn";
@@ -114,16 +111,8 @@
 
 				renderer.setSize(window.innerWidth, window.innerHeight);
 			}
-
-			function mouseMove(event) {
-				mouseX = (event.clientX - window.innerWidth / 2);
-				mouseY = (event.clientY - window.innerHeight / 2);
-			}
 			
 			function render() {
-				camera.rotation.y = (-mouseX - camera.position.x) / 30000;
-				camera.rotation.x = (-mouseY - camera.position.y) / 30000;
-
 				stars.rotation.y += 0.0001;
 
 				renderer.render(scene, camera);

@@ -6,7 +6,8 @@ This is the github page for my github website. Visit it [here](https://eliteasia
 [NOA](https://github.com/andyhall/noa) by [Andy Hall](https://github.com/andyhall). <br>
 [Voxel-Crunch](https://github.com/mikolalysenko/voxel-crunch) by [Mikola Lysenko](https://github.com/mikolalysenko). <br>
 [LZString](https://github.com/pieroxy/lz-string) by [Pieroxy](https://github.com/pieroxy). <br>
-[Dino Game Source](https://github.com/wayou/t-rex-runner) by [Wayou Liu](https://github.com/wayou).
+[Dino Game Source](https://github.com/wayou/t-rex-runner) by [Wayou Liu](https://github.com/wayou). <br>
+[Material Icons](https://material.io/resources/icons/) by [Material.io](https://material.io/).
 
 Thanks to my friends, Ethan and Noah for helping me with textures and ideas for Desertic.
 
