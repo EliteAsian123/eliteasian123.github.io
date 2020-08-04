@@ -26,9 +26,15 @@
 	background-repeat: no-repeat;
 	background-size: cover;
 	overflow: hidden;
-	border: 3px solid var(--dark-0);
-	border-radius: 5px;
+	border-radius: 4px;
 	margin-bottom: 50px;
+}
+
+#things > a:hover {
+	-webkit-transform: scale(1.1);
+		-ms-transform: scale(1.1);
+			transform: scale(1.1);
+	box-shadow: 5px 5px rgba(0, 0, 0, 0.4);
 }
 			
 #things > a > h1 {
