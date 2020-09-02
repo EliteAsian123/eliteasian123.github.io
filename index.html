@@ -58,8 +58,8 @@
 		<!-- Stars! -->
 		<script>
 
-			var camera, scene, renderer;
-			var stars, starGeometry;
+			let camera, scene, renderer;
+			let stars, starGeometry;
 
 			const starCount = 20000;
 
@@ -70,8 +70,8 @@
 				camera.position.z = 1;
 				
 				starGeometry = new THREE.Geometry();
-				for (var i = 0; i < starCount; i++) {
-					var star = new THREE.Vector3(
+				for (let i = 0; i < starCount; i++) {
+					let star = new THREE.Vector3(
 						THREE.Math.randFloat(-300, 300),
 						THREE.Math.randFloat(-300, 300),
 						THREE.Math.randFloat(-300, 300)
@@ -80,8 +80,8 @@
 					starGeometry.vertices.push(star);
 				}
 
-				var starSprite = new THREE.TextureLoader().load("star.png");
-				var starMat = new THREE.PointsMaterial({
+				let starSprite = new THREE.TextureLoader().load("star.png");
+				let starMat = new THREE.PointsMaterial({
 					color: 0xFFFFFF,
 					size: 1.0,
 					map: starSprite,
