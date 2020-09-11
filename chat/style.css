@@ -1,0 +1,57 @@
+body {
+	font-family: Arial;
+	font-size: 18px;
+	
+	margin: 0;
+}	
+
+#chat {
+	background: #bdddff;
+	
+	list-style-type: none;
+	padding: 15px;
+	
+	height: calc(100vh - 15px - 15px - 50px);
+
+	overflow-y: scroll;
+
+	margin: 0;
+}
+
+#chat > li {
+	background: #cce5ff;
+	padding: 5px;
+	
+	overflow-wrap: break-word;
+}
+
+#chat > li:nth-child(odd) {
+	background: #dbecff;
+}
+
+#chatBox {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+
+	width: 100%;
+	height: 50px;
+	
+	border-radius: 0;
+	border: none;
+	border-top: 2px solid #84a2c2;
+	
+	background: #cce5ff;
+	
+	font-size: 18px;
+	
+	padding-left: 18px;
+	
+	transition: 0.25s background;
+}
+
+#chatBox:focus {
+	background: #dbecff;
+	
+	outline: none;
+}
