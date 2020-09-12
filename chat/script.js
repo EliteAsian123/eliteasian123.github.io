@@ -59,21 +59,27 @@ function sendMessage() {
 		nick = chatBox.val().substr(6);
 		
 		chatBox.val("");
+	} else if (chatBox.val().startsWith("/system ")) {
+		addMessageToDatabase("System", chatBox.val().substr(8), "m-system");
 	} else if (!chatBox.val().isEmpty()) {
-		database.ref("nextMessageId").once("value").then(function(snapshot) {
-			database.ref("messages/" + snapshot.val()).set({
-				sender: nick,
-				content: chatBox.val(),
-				class: ""
-			});
-			
-			database.ref("nextMessageId").set(snapshot.val() + 1);
-			
-			chatBox.val("");
-			
-			scrollChatToBottom();
-		});
+		addMessageToDatabase(nick, chatBox.val(), "");
 	}
+}
+
+function addMessageToDatabase(author, content, class) {
+	database.ref("nextMessageId").once("value").then(function(snapshot) {
+		database.ref("messages/" + snapshot.val()).set({
+			sender: author,
+			content: content,
+			class: class
+		});
+		
+		database.ref("nextMessageId").set(snapshot.val() + 1);
+		
+		chatBox.val("");
+		
+		scrollChatToBottom();
+	});
 }
 
 function filter(str) {
