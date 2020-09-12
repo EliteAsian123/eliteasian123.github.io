@@ -53,7 +53,7 @@ function sendMessage() {
 		database.ref("nextMessageId").set(1);
 		
 		chatBox.val("");
-	} else if (chatBox.val().startsWith("/nick")) {
+	} else if (chatBox.val().startsWith("/nick ")) {
 		nick = chatBox.val().substr(6);
 		
 		chatBox.val("");
