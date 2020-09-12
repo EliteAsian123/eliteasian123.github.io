@@ -2,6 +2,7 @@ const chat = $("#chat");
 const chatBox = $("#chatBox");
 
 let nick = "Guest";
+let id = Math.floor(1000 + Math.random() * 9000).toString();
 
 let firebaseConfig = {
 	apiKey: "AIzaSyC0I4quaWku2AX5Qi7iHSBMDt8hzvf34X0",
@@ -37,7 +38,7 @@ function updateChat(messages) {
 		const message = messages[messageId];
 		
 		chat.append($("<li class=\"" + classFilter(message.class) + "\"><span class=\"message-title\">" + filter(message.sender) + 
-			"</span><br><span class=\"message-content\">" + filter(message.content) + "</span></li>"));
+			"</span><span class=\"message-id\"> " + filter(message.sender_id) + "</span><br><span class=\"message-content\">" + filter(message.content) + "</span></li>"));
 	}
 	
 	scrollChatToBottom();
@@ -48,6 +49,7 @@ function onEnter() {
 		database.ref("messages").set({
 			"0": {
 				sender: "System",
+				sender_id: "",
 				content: nick + " cleared the chat. You can clear the chat with \"/clear\"",
 				class: "m-system"
 			}
@@ -56,11 +58,11 @@ function onEnter() {
 	} else if (chatBox.val().startsWith("/nick ")) {
 		nick = chatBox.val().substr(6);
 	} else if (chatBox.val().startsWith("/a ")) {
-		sendMessage(" < Anonymous > ", chatBox.val().substr(3), "m-anonymous");
+		sendMessage(" < Anonymous > ", chatBox.val().substr(3), "m-anonymous", "");
 	
 		scrollChatToBottom();
 	} else if (!chatBox.val().isEmpty()) {
-		sendMessage(nick, chatBox.val(), "");
+		sendMessage(nick, chatBox.val(), "", id);
 		
 		scrollChatToBottom();
 	}
@@ -68,10 +70,11 @@ function onEnter() {
 	chatBox.val("");
 }
 
-function sendMessage(author, content, classes) {
+function sendMessage(author, content, classes, authorId) {
 	database.ref("nextMessageId").once("value").then(function(snapshot) {
 		database.ref("messages/" + snapshot.val()).set({
 			sender: author,
+			sender_id: authorId,
 			content: content,
 			class: classes
 		});
@@ -81,6 +84,9 @@ function sendMessage(author, content, classes) {
 }
 
 function filter(str) {
+	if (!str)
+		return "";
+	
 	let modified = str.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	
 	const profanityInfos = profanityFilter.check(modified);
@@ -97,6 +103,9 @@ function filter(str) {
 }
 
 function classFilter(str) {
+	if (!str)
+		return "";
+	
 	return str.replaceAll("\"", "").replaceAll("\\", "")
 }
 

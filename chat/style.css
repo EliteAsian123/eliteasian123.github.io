@@ -83,6 +83,10 @@ body {
 	outline: none;
 }
 
+.message-id {
+	color: var(--secondary-color);
+}
+
 .message-title {
 	font-weight: bold;
 }
