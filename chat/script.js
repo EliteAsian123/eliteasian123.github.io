@@ -36,7 +36,8 @@ function updateChat(messages) {
 	for (const messageId in messages) {
 		const message = messages[messageId];
 		
-		chat.append($("<li><b>" + filter(message.sender) + "</b><br>" + filter(message.content) + "</li>"));
+		chat.append($("<li class=\"" + classFilter(message.class) + "\"><span class=\"message-title\">" + filter(message.sender) + 
+			"</span><br><span class=\"message-content\">" + filter(message.content) + "</span></li>"));
 	}
 	
 	scrollChatToBottom();
@@ -47,7 +48,8 @@ function sendMessage() {
 		database.ref("messages").set({
 			"0": {
 				sender: "System",
-				content: nick + " cleared the chat. You can clear the chat with \"/clear\""
+				content: nick + " cleared the chat. You can clear the chat with \"/clear\"",
+				class: "m-system"
 			}
 		});
 		database.ref("nextMessageId").set(1);
@@ -61,7 +63,8 @@ function sendMessage() {
 		database.ref("nextMessageId").once("value").then(function(snapshot) {
 			database.ref("messages/" + snapshot.val()).set({
 				sender: nick,
-				content: chatBox.val()
+				content: chatBox.val(),
+				class: ""
 			});
 			
 			database.ref("nextMessageId").set(snapshot.val() + 1);
@@ -87,6 +90,10 @@ function filter(str) {
 	}
 	
 	return modified;
+}
+
+function classFilter(str) {
+	return str.replaceAll("\"", "").replaceAll("\\", "")
 }
 
 function scrollChatToBottom() {
