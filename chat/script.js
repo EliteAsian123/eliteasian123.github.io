@@ -1,6 +1,8 @@
 const chat = $("#chat");
 const chatBox = $("#chatBox");
 
+let nick = "Guest";
+
 let firebaseConfig = {
 	apiKey: "AIzaSyC0I4quaWku2AX5Qi7iHSBMDt8hzvf34X0",
 	authDomain: "eliteasian123-chat.firebaseapp.com",
@@ -45,16 +47,20 @@ function sendMessage() {
 		database.ref("messages").set({
 			"0": {
 				sender: "System",
-				content: "Guest cleared the chat. You can clear the chat with \"/clear\""
+				content: nick + " cleared the chat. You can clear the chat with \"/clear\""
 			}
 		});
 		database.ref("nextMessageId").set(1);
 		
 		chatBox.val("");
+	} else if (chatBox.val().startsWith("/nick")) {
+		nick = chatBox.val().substr(6);
+		
+		chatBox.val("");
 	} else if (!chatBox.val().isEmpty()) {
 		database.ref("nextMessageId").once("value").then(function(snapshot) {
 			database.ref("messages/" + snapshot.val()).set({
-				sender: "Guest",
+				sender: nick,
 				content: chatBox.val()
 			});
 			

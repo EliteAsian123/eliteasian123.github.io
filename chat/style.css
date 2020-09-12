@@ -6,12 +6,14 @@ body {
 }	
 
 #chat {
+	box-sizing: border-box;
+	
 	background: #bdddff;
 	
 	list-style-type: none;
 	padding: 15px;
 	
-	height: calc(100vh - 15px - 15px - 50px);
+	height: calc(100vh - 50px);
 
 	overflow-y: scroll;
 
