@@ -66,12 +66,12 @@ function sendMessage() {
 	}
 }
 
-function addMessageToDatabase(author, content, class) {
+function addMessageToDatabase(author, content, classes) {
 	database.ref("nextMessageId").once("value").then(function(snapshot) {
 		database.ref("messages/" + snapshot.val()).set({
 			sender: author,
 			content: content,
-			class: class
+			class: classes
 		});
 		
 		database.ref("nextMessageId").set(snapshot.val() + 1);
