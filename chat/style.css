@@ -90,3 +90,10 @@ body {
 .m-system > .message-title {
 	color: var(--color-0);
 }
+
+.m-anonymous > .message-title {
+	font-weight: normal;
+	font-style: italic;
+	
+	color: var(--secondary-color);
+}

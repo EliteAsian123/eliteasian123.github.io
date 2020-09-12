@@ -24,7 +24,7 @@ database.ref("messages").on("value", function(snapshot) {
 
 $(document).on("keypress", "input", function(e) {
 	if (e.which === 13) {
-		sendMessage();
+		onEnter();
 	}
 });
 
@@ -43,7 +43,7 @@ function updateChat(messages) {
 	scrollChatToBottom();
 }
 
-function sendMessage() {
+function onEnter() {
 	if (chatBox.val() === "/clear") {
 		database.ref("messages").set({
 			"0": {
@@ -53,20 +53,22 @@ function sendMessage() {
 			}
 		});
 		database.ref("nextMessageId").set(1);
-		
-		chatBox.val("");
 	} else if (chatBox.val().startsWith("/nick ")) {
 		nick = chatBox.val().substr(6);
-		
-		chatBox.val("");
-	} else if (chatBox.val().startsWith("/system ")) {
-		addMessageToDatabase("System", chatBox.val().substr(8), "m-system");
+	} else if (chatBox.val().startsWith("/a ")) {
+		sendMessage(" < Anonymous > ", chatBox.val().substr(3), "m-anonymous");
+	
+		scrollChatToBottom();
 	} else if (!chatBox.val().isEmpty()) {
-		addMessageToDatabase(nick, chatBox.val(), "");
+		sendMessage(nick, chatBox.val(), "");
+		
+		scrollChatToBottom();
 	}
+	
+	chatBox.val("");
 }
 
-function addMessageToDatabase(author, content, classes) {
+function sendMessage(author, content, classes) {
 	database.ref("nextMessageId").once("value").then(function(snapshot) {
 		database.ref("messages/" + snapshot.val()).set({
 			sender: author,
@@ -75,10 +77,6 @@ function addMessageToDatabase(author, content, classes) {
 		});
 		
 		database.ref("nextMessageId").set(snapshot.val() + 1);
-		
-		chatBox.val("");
-		
-		scrollChatToBottom();
 	});
 }
 
