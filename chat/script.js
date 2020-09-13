@@ -106,7 +106,7 @@ function classFilter(str) {
 	if (!str)
 		return "";
 	
-	return str.replaceAll("\"", "").replaceAll("\\", "")
+	return str.replaceAll("\"", "").replaceAll("\\", "").replaceAll("'", "")
 }
 
 function scrollChatToBottom() {
