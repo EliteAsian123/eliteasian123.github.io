@@ -15,9 +15,14 @@
 	</head>
 	
 	<body>
-		<ul id="chat"></ul>
+		<div id="outerChatContainer">
+			<div id="chatContainer">
+				<ul id="chat"></ul>
 
-		<input type="text" id="chatBox">
+				<input type="text" id="chatBox">
+				<img src="send.svg" id="chatSend">
+			</div>
+		</div>
 		
 		<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>

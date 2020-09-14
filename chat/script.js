@@ -1,5 +1,6 @@
 const chat = $("#chat");
 const chatBox = $("#chatBox");
+const chatSend = $("#chatSend");
 
 let nick = "Guest";
 let id = Math.floor(1000 + Math.random() * 9000).toString();
@@ -29,6 +30,9 @@ $(document).on("keypress", "input", function(e) {
 	}
 });
 
+chatSend.click(function() {
+	onEnter();
+});
 
 
 function updateChat(messages) {
