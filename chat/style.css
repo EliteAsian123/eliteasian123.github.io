@@ -136,6 +136,8 @@ body {
 	
 	-webkit-user-drag: none;
 	-webkit-user-select: none;
+	
+	z-index: 5;
 }
 
 #buttonSettings {
@@ -150,6 +152,8 @@ body {
 	
 	-webkit-user-drag: none;
 	-webkit-user-select: none;
+	
+	z-index: 5;
 }
 
 #settingsMenu {
