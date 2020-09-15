@@ -1,9 +1,17 @@
 const chat = $("#chat");
 const chatBox = $("#chatBox");
-const chatSend = $("#chatSend");
+
+const buttonSend = $("#buttonSend");
+const buttonSettings = $("#buttonSettings");
+
+const settingsMenu = $("#settingsMenu");
+const profanityCheckbox = $("#profanityCheckbox");
+const systemMessagesCheckbox = $("#systemMessagesCheckbox");
 
 let nick = "Guest";
 let id = Math.floor(1000 + Math.random() * 9000).toString();
+
+let lastMessageSnapshot;
 
 let firebaseConfig = {
 	apiKey: "AIzaSyC0I4quaWku2AX5Qi7iHSBMDt8hzvf34X0",
@@ -21,7 +29,8 @@ firebase.initializeApp(firebaseConfig);
 let database = firebase.database();
 
 database.ref("messages").on("value", function(snapshot) {
-	updateChat(snapshot.val());
+	lastMessageSnapshot = snapshot.val();
+	updateChat(lastMessageSnapshot);
 });
 
 $(document).on("keypress", "input", function(e) {
@@ -30,9 +39,17 @@ $(document).on("keypress", "input", function(e) {
 	}
 });
 
-chatSend.click(function() {
+buttonSend.click(function() {
 	onEnter();
 });
+
+buttonSettings.click(function() {
+	settingsMenu.toggleClass("closed");
+});
+
+profanityCheckbox.click(function() { if (lastMessageSnapshot) updateChat(lastMessageSnapshot) });
+systemMessagesCheckbox.click(function() { if (lastMessageSnapshot) updateChat(lastMessageSnapshot) });
+
 
 
 function updateChat(messages) {
@@ -40,6 +57,9 @@ function updateChat(messages) {
 
 	for (const messageId in messages) {
 		const message = messages[messageId];
+		
+		if (!systemMessagesCheckbox.prop("checked") && message.class.includes("m-system"))
+			continue;
 		
 		chat.append($("<li class=\"" + classFilter(message.class) + "\"><span class=\"message-title\">" + filter(message.sender) + 
 			"</span><span class=\"message-id\"> " + filter(message.sender_id) + "</span><br><span class=\"message-content\">" + filter(message.content) + "</span></li>"));
@@ -93,12 +113,14 @@ function filter(str) {
 	
 	let modified = str.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	
-	const profanityInfos = profanityFilter.check(modified);
+	if (profanityCheckbox.prop("checked")) {
+		const profanityInfos = profanityFilter.check(modified);
 	
-	for (const profanityInfo of profanityInfos) {
-		if (profanityInfo.info >= 1) {
-			for (let i = 1; i < profanityInfo.replacedLen; i++) {
-				modified = modified.replaceAt(profanityInfo.start + i, "*");
+		for (const profanityInfo of profanityInfos) {
+			if (profanityInfo.info >= 1) {
+				for (let i = 1; i < profanityInfo.replacedLen; i++) {
+					modified = modified.replaceAt(profanityInfo.start + i, "*");
+				}
 			}
 		}
 	}

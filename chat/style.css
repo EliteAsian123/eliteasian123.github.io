@@ -32,7 +32,7 @@ body {
 	margin: 0;
 }	
 
-#outerChatContainer {
+#outerAppContainer {
 	box-sizing: border-box;
 	
 	position: absolute;
@@ -45,7 +45,7 @@ body {
 	overflow: hidden;
 }
 
-#chatContainer {
+#appContainer {
 	position: relative;
 	
 	box-sizing: border-box;
@@ -92,7 +92,7 @@ body {
 	bottom: 0;
 	left: 0;
 
-	width: 100%;
+	width: calc(100% - 84px);
 	height: 50px;
 	
 	border-radius: 0;
@@ -113,12 +113,21 @@ body {
 	outline: none;
 }
 
-#chatSend {
+#buttonContainer {
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	
-	background: var(--light-0);
+	width: 84px;
+	height: 50px;
+	
+	background-color: var(--light-0);
+}
+
+#buttonSend {
+	position: absolute;
+	bottom: 0;
+	right: 0;
 	
 	width: 24px;
 	height: 24px;
@@ -127,6 +136,55 @@ body {
 	
 	-webkit-user-drag: none;
 	-webkit-user-select: none;
+}
+
+#buttonSettings {
+	position: absolute;
+	bottom: 0;
+	right: 36px;
+	
+	width: 24px;
+	height: 24px;
+	
+	transform: translate(-50%, -50%);
+	
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+}
+
+#settingsMenu {
+	box-sizing: border-box;
+	
+	position: absolute;
+	bottom: 50px;
+	right: 0;
+	
+	padding: 32px;
+	
+	width: calc(100% - 40px);
+	height: calc(100% - 50px - 40px);
+	
+	max-width: 325px;
+	
+	margin: 20px;
+	
+	border-radius: 10px;
+	
+	background: var(--light-0);
+	
+	color: var(--primary-color);
+	
+	transform: none;
+	
+	transition: 0.5s transform;
+}
+
+#settingsMenu.closed {
+	transform: translate(120%, 0);
+}
+
+#settingsMenu > * {
+	margin: 4px;
 }
 
 .message-id {
@@ -146,4 +204,18 @@ body {
 	font-style: italic;
 	
 	color: var(--secondary-color);
+}
+
+@media (max-width: 550px) {
+	#settingsMenu {
+		bottom: 70px;
+		
+		padding: 16px;
+		margin: 0;
+		
+		width: 100%;
+		height: calc(100% - 50px - 20px);
+		
+		max-width: none;
+	}
 }

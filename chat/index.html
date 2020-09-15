@@ -15,12 +15,22 @@
 	</head>
 	
 	<body>
-		<div id="outerChatContainer">
-			<div id="chatContainer">
+		<div id="outerAppContainer">
+			<div id="appContainer">
 				<ul id="chat"></ul>
 
 				<input type="text" id="chatBox">
-				<img src="send.svg" id="chatSend">
+				
+				<div id="buttonContainer">
+					<img src="send.svg" id="buttonSend">
+					<img src="settings.svg" id="buttonSettings">
+				</div>
+				
+				<div id="settingsMenu" class="closed">
+					<b>WORK IN PROGRESS</b>
+					<div>Profanity Filter <input type="checkbox" id="profanityCheckbox" checked></div>
+					<div>Show System Messages <input type="checkbox" id="systemMessagesCheckbox" checked></div>
+				</div>
 			</div>
 		</div>
 		
