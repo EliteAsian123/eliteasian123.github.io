@@ -210,6 +210,18 @@ body {
 	color: var(--secondary-color);
 }
 
+input[type="checkbox"] {
+	cursor: pointer;
+	
+	width: 16px;
+	height: 16px;
+}
+
+#settingsMenu > header {
+	text-align: center;
+	color: var(--secondary-color);
+}
+
 @media (max-width: 550px) {
 	#settingsMenu {
 		bottom: 70px;
