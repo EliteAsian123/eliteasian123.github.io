@@ -7,6 +7,7 @@ const buttonSettings = $("#buttonSettings");
 const settingsMenu = $("#settingsMenu");
 const profanityCheckbox = $("#profanityCheckbox");
 const systemMessagesCheckbox = $("#systemMessagesCheckbox");
+const anonymousMessagesCheckbox = $("#anonymousMessagesCheckbox");
 
 let nick = "Guest";
 let id = Math.floor(1000 + Math.random() * 9000).toString();
@@ -49,6 +50,7 @@ buttonSettings.click(function() {
 
 profanityCheckbox.click(function() { if (lastMessageSnapshot) updateChat(lastMessageSnapshot) });
 systemMessagesCheckbox.click(function() { if (lastMessageSnapshot) updateChat(lastMessageSnapshot) });
+anonymousMessagesCheckbox.click(function() { if (lastMessageSnapshot) updateChat(lastMessageSnapshot) });
 
 
 
@@ -59,6 +61,9 @@ function updateChat(messages) {
 		const message = messages[messageId];
 		
 		if (!systemMessagesCheckbox.prop("checked") && message.class.includes("m-system"))
+			continue;
+		
+		if (!anonymousMessagesCheckbox.prop("checked") && message.class.includes("m-anonymous"))
 			continue;
 		
 		chat.append($("<li class=\"" + classFilter(message.class) + "\"><span class=\"message-title\">" + filter(message.sender) + 

@@ -15,7 +15,7 @@
 }
   
 ::-webkit-scrollbar-track {
-	background: var(--background-color);
+	background: transparent;
 }
   
 ::-webkit-scrollbar-thumb {
@@ -181,6 +181,9 @@ body {
 	transform: none;
 	
 	transition: 0.5s transform;
+	
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 #settingsMenu.closed {
@@ -220,6 +223,9 @@ input[type="checkbox"] {
 #settingsMenu > header {
 	text-align: center;
 	color: var(--secondary-color);
+	
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
 @media (max-width: 550px) {
