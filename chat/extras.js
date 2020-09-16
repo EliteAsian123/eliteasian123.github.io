@@ -12,6 +12,6 @@ String.prototype.replaceAt = function(index, replacement) {
 // Add "replaceAll" if it doesn't exist
 if (!String.prototype.replaceAll) {
 	String.prototype.replaceAll = function(a, b) {
-		return this.replace(new RegExp(a, "g"), b);
+		return this.split(a).join(b);
 	}
 }
