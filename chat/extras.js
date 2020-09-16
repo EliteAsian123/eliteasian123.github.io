@@ -9,8 +9,9 @@ String.prototype.replaceAt = function(index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
 
+// Add "replaceAll" if it doesn't exist
 if (!String.prototype.replaceAll) {
 	String.prototype.replaceAll = function(a, b) {
-		this.split(a).join(b);
+		return this.replace(new RegExp(a, "g"), b);
 	}
 }
