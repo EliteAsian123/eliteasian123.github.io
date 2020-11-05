@@ -1,4 +1,9 @@
-/* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
 
 /* https://fonts.google.com/specimen/Raleway */
 @import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
@@ -271,5 +276,11 @@ iframe {
 		border-radius: 7.5px;
 		font-size: 100%;
 		line-height: 50px;
+	}
+}
+
+@media (max-width: 350px) {
+	nav {
+		display: none;
 	}
 }
