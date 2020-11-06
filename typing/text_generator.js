@@ -1,5 +1,5 @@
 // Based off of https://github.com/dariusk/corpora/blob/master/data/words/common.json
-let words = [
+let commonWords = [
 	"a",
 	"able",
 	"about",
@@ -636,7 +636,7 @@ let words = [
 	"post",
 	"pound",
 	"power",
-	"practise",
+	"practice",
 	"prepare",
 	"present",
 	"press",
@@ -986,7 +986,7 @@ let words = [
 function generateText() {
 	let output = "";
 	for (let i = 0; i < 25; i++) {
-		output += words[Math.floor(Math.random() * words.length)] + " ";
+		output += commonWords[Math.floor(Math.random() * commonWords.length)] + " ";
 	}
 
 	return output.trim();

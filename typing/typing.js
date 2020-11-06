@@ -1,5 +1,3 @@
-const textPadding = 12;
-
 let textPanel = $("#textPanel");
 let wholeTextPanel = $("#wholeTextPanel");
 let loadingPanel = $("#loading");
@@ -8,11 +6,10 @@ let statsPanel = $("#stats");
 let pressEnterPanel = $("#pressEnter");
 
 let text = "";
+
 let textIndex = 0;
 let typingStatus = [];
-
 let characterTimes = [];
-
 let finished = false;
 
 loadingPanel.show();
@@ -144,32 +141,44 @@ function updateStats() {
 }
 
 $(window).keypress(function(event) {
-	if (textIndex < text.length) {
-		if (event.key == text.charAt(textIndex)) {
-			if (typingStatus[textIndex] == "none") {
-				typingStatus[textIndex] = "perfect";
+	if (!isSettingsShowing()) {
+		if (textIndex < text.length) {
+			if (event.key == text.charAt(textIndex)) {
+				if (typingStatus[textIndex] == "none") {
+					typingStatus[textIndex] = "perfect";
+				}
+				
+				textIndex++;
+				
+				characterTimes.push(event.timeStamp);
+			} else {
+				typingStatus[textIndex] = "mistake";
+				
+				if (skipErrors) {
+					textIndex++;
+					
+					characterTimes.push(event.timeStamp);
+				}
 			}
-			
-			textIndex++;
-			
-			characterTimes.push(event.timeStamp);
-		} else {
-			typingStatus[textIndex] = "mistake";
 		}
-	}
 
-	if (textIndex >= text.length) {
-		if (!finished)
-			finish();
-		
-		if (event.keyCode == 13)
-			start();
+		if (textIndex >= text.length) {
+			if (!finished)
+				finish();
+			
+			if (event.keyCode == 13) {
+				start();
+				return;
+			}
+		}
+
+		updateText();
 	}
-	
-	updateText();
 });
 
 $(function() {
+	loadSettings();
+	
 	start();
 	updateStats();
 });
