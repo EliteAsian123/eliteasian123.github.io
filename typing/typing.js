@@ -129,7 +129,7 @@ function getError() {
 		}
 	}
 	
-	return (error / (typingStatus.length - 1) * 100).toFixed(2);
+	return (error / (typingStatus.length) * 100).toFixed(2);
 }
 
 function updateStats() {
