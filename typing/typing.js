@@ -172,6 +172,11 @@ $(window).keypress(function(event) {
 			}
 		}
 
+		if (enterReset && event.keyCode == 13) {
+			start();
+			return;
+		}
+
 		updateText();
 	}
 });

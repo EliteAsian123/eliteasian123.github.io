@@ -36,6 +36,8 @@ body {
 	border: 1px solid black;
 	
 	font-size: 24px;
+	
+	overflow-wrap: break-word;
 }
 
 #stats {
@@ -160,17 +162,17 @@ body {
 	font-weight: bold;
 }
 
-.setting {
-	padding-top: 10px;
-}
-
 .setting > p {
 	margin-top: 4px;
 	
 	color: #808080;
 }
 
-input {
+.setting {
+	padding-top: 10px;
+}
+
+input, select {
 	border: 1px solid black;
 	outline: none;
 }

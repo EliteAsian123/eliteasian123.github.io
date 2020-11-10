@@ -46,6 +46,30 @@
 					<input id="skipErrorsSetting" type="checkbox">
 					<p>If you make an error, it will continue on instead of you having to correct it. (Recommended: Off)</p>
 				</div>
+				
+				<div class="setting">
+					<label>Enter to Reset</label>
+					<input id="enterResetSetting" type="checkbox">
+					<p>Press enter to reset the text. (Recommended: Off)</p>
+				</div>
+				
+				<header>Text Generator</header>
+				
+				<div class="setting">
+					<label>Base Generator</label>
+					<select id="baseGeneratorSetting">
+						<option value="common">Common English Words</option>
+						<option value="randomLetters">Random Letters</option>
+						<option value="pi">Digits of PI</option>
+					</select>
+					<p>This setting changes the words you have to type. (Recommended: Common English Words)</p>
+				</div>
+				
+				<div class="setting">
+					<label>Generation Count</label>
+					<input id="generationCountSetting" type="number" min="2" max="1000">
+					<p>How many words or letters you have to type. The maximum amout of characters allowed in the text is 1000. (Recommended: 12)</p>
+				</div>
 			</div>
 		</div>
 			
