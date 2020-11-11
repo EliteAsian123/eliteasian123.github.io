@@ -1013,5 +1013,10 @@ function generateText() {
 		output = pi.substring(0, generationCount);
 	}
 	
-	return output.trim().substring(0, 1000);
+	output = output.trim().substring(0, 1000);
+	
+	if (output.length < 2)
+		return generateText();
+	
+	return output;
 }
