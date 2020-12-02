@@ -47,8 +47,8 @@ function updateText() {
 	let output = "";
 	
 	if (textIndex < text.length) {
-		for (let i = 0; i < textPadding * 2 + 1; i++) {
-			let index = i - textPadding + textIndex;
+		for (let i = 0; i < settings.textPadding * 2 + 1; i++) {
+			let index = i - settings.textPadding + textIndex;
 			
 			let character = text.charAt(index);
 			if (character == "") {
@@ -61,7 +61,7 @@ function updateText() {
 					classes.push(status);
 				}
 				
-				if (i == textPadding) {
+				if (i == settings.textPadding) {
 					classes.push("currentChar");
 				}
 				
@@ -71,7 +71,7 @@ function updateText() {
 	} else {
 		output = "Time: " + getTime() + " sec.";
 		
-		let addedSpaces = textPadding * 2 + 1 - output.length;
+		let addedSpaces = settings.textPadding * 2 + 1 - output.length;
 		
 		for (let i = 0; i < addedSpaces; i++) {
 			output += " ";
@@ -154,7 +154,7 @@ $(window).keypress(function(event) {
 			} else {
 				typingStatus[textIndex] = "mistake";
 				
-				if (skipErrors) {
+				if (settings.skipErrors) {
 					textIndex++;
 					
 					characterTimes.push(event.timeStamp);
@@ -172,7 +172,7 @@ $(window).keypress(function(event) {
 			}
 		}
 
-		if (enterReset && event.keyCode == 13) {
+		if (settings.enterReset && event.keyCode == 13) {
 			start();
 			return;
 		}
@@ -182,6 +182,7 @@ $(window).keypress(function(event) {
 });
 
 $(function() {
+	// FIX
 	loadSettings();
 	
 	start();

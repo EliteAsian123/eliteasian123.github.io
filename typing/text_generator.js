@@ -390,7 +390,6 @@ let commonWords = [
 	"heart",
 	"heat",
 	"heavy",
-	"hell",
 	"help",
 	"here",
 	"high",
@@ -1001,16 +1000,26 @@ let pi = "3.14159265358979323846264338327950288419716939937510582097494459230781
 function generateText() {
 	let output = "";
 	
-	if (baseGenerator === "common") {
-		for (let i = 0; i < generationCount; i++) {
-			output += commonWords[Math.floor(Math.random() * commonWords.length)] + " ";
+	if (settings.baseGenerator === "common") {
+		for (let i = 0; i < settings.generationCount; i++) {
+			let j = commonWords[Math.floor(Math.random() * commonWords.length)] + " ";
+			if (settings.randomUppercase && Math.random() >= 0.75) {
+				j = j.charAt(0).toUpperCase() + j.slice(1);
+			}
+			
+			output += j;
 		}
-	} else if (baseGenerator === "randomLetters") {
-		for (let i = 0; i < generationCount; i++) {
-			output += randomLetters[Math.floor(Math.random() * randomLetters.length)];
+	} else if (settings.baseGenerator === "randomLetters") {
+		for (let i = 0; i < settings.generationCount; i++) {
+			let j = randomLetters[Math.floor(Math.random() * randomLetters.length)];
+			if (settings.randomUppercase && Math.random() >= 0.80) {
+				j = j.toUpperCase();
+			}
+			
+			output += j;
 		}
-	} else if (baseGenerator === "pi") {
-		output = pi.substring(0, generationCount);
+	} else if (settings.baseGenerator === "pi") {
+		output = pi.substring(0, settings.generationCount);
 	}
 	
 	output = output.trim().substring(0, 1000);

@@ -1,8 +1,11 @@
-let textPadding = 12;
-let skipErrors = false;
-let enterReset = false;
-let baseGenerator = "common";
-let generationCount = 12;
+let settings = {
+	textPadding: 12,
+	skipErrors: false,
+	enterReset: false,
+	baseGenerator: "common",
+	generationCount: 12,
+	randomUppercase: false
+};
 
 let settingsPanel = $("#settingsContainer");
 let settingsButton = $("#settingsButton"); 
@@ -13,6 +16,7 @@ let skipErrorsSetting = $("#skipErrorsSetting");
 let enterResetSetting = $("#enterResetSetting");
 let baseGeneratorSetting = $("#baseGeneratorSetting");
 let generationCountSetting = $("#generationCountSetting");
+let randomUppercaseSetting = $("#randomUppercaseSetting");
 
 settingsPanel.hide();
 
@@ -24,11 +28,12 @@ settingsButton.click(function() {
 	if (!isSettingsShowing()) {
 		settingsPanel.show();
 		
-		textPaddingSetting.val(textPadding);
-		skipErrorsSetting.prop("checked", skipErrors);
-		enterResetSetting.prop("checked", enterReset);
-		baseGeneratorSetting.val(baseGenerator);
-		generationCountSetting.val(generationCount);
+		textPaddingSetting.val(settings.textPadding);
+		skipErrorsSetting.prop("checked", settings.skipErrors);
+		enterResetSetting.prop("checked", settings.enterReset);
+		baseGeneratorSetting.val(settings.baseGenerator);
+		generationCountSetting.val(settings.generationCount);
+		randomUppercaseSetting.prop("checked", settings.randomUppercase);
 	}
 });
 
@@ -48,24 +53,24 @@ textPaddingSetting.bind("keyup mouseup", function() {
 	if (textPaddingSetting.val() < 6)
 		textPaddingSetting.val(6);
 	
-	textPadding = textPaddingSetting.val();
+	settings.textPadding = parseInt(textPaddingSetting.val());
 	saveSettings();
 	
 	updateText();
 });
 
 enterResetSetting.change(function() {
-	enterReset = enterResetSetting.prop("checked");
+	settings.enterReset = enterResetSetting.prop("checked");
 	saveSettings();
 });
 
 skipErrorsSetting.change(function() {
-	skipErrors = skipErrorsSetting.prop("checked");
+	settings.skipErrors = skipErrorsSetting.prop("checked");
 	saveSettings();
 });
 
 baseGeneratorSetting.change(function() {
-	baseGenerator = baseGeneratorSetting.val();
+	settings.baseGenerator = baseGeneratorSetting.val();
 	saveSettings();
 });
 
@@ -76,40 +81,63 @@ generationCountSetting.bind("keyup mouseup", function() {
 	if (generationCountSetting.val() < 2)
 		generationCountSetting.val(2);
 	
-	generationCount = generationCountSetting.val();
+	settings.generationCount = parseInt(generationCountSetting.val());
 	saveSettings();
 	
 	updateText();
 });
 
+randomUppercaseSetting.change(function() {
+	settings.randomUppercase = randomUppercaseSetting.prop("checked");
+	saveSettings();
+});
 
 function loadSettings() {
-	let textPaddingLocal = localStorage.getItem("textPadding");
-	let skipErrorsLocal = localStorage.getItem("skipErrors");
-	let enterResetLocal = localStorage.getItem("enterReset");
-	let baseGeneratorLocal = localStorage.getItem("baseGenerator");
-	let generationCountLocal = localStorage.getItem("generationCount");
+	let settingsString = localStorage.getItem("typingSettings");
 	
-	if (textPaddingLocal !== null)
-		textPadding = parseInt(textPaddingLocal);
-	
-	if (skipErrorsLocal !== null)
-		skipErrors = (skipErrorsLocal == "true");
-	
-	if (enterResetLocal !== null)
-		enterReset = (enterResetLocal == "true")
-	
-	if (baseGeneratorLocal !== null)
-		baseGenerator = baseGeneratorLocal;
-	
-	if (generationCountLocal !== null)
-		generationCount = parseInt(generationCountLocal);
+	if (settingsString !== null) {
+		newSettings = JSON.parse(settingsString)
+		
+		for (let i in settings) {
+			if (!newSettings[i]) {
+				newSettings[i] = settings[i];
+			}
+		}
+		
+		settings = newSettings;
+	} else {
+		// Legacy
+		let textPaddingLocal = localStorage.getItem("textPadding");
+		let skipErrorsLocal = localStorage.getItem("skipErrors");
+		let enterResetLocal = localStorage.getItem("enterReset");
+		let baseGeneratorLocal = localStorage.getItem("baseGenerator");
+		let generationCountLocal = localStorage.getItem("generationCount");
+		
+		if (textPaddingLocal !== null)
+			settings.textPadding = parseInt(textPaddingLocal);
+		
+		if (skipErrorsLocal !== null)
+			settings.skipErrors = (skipErrorsLocal == "true");
+		
+		if (enterResetLocal !== null)
+			settings.enterReset = (enterResetLocal == "true")
+		
+		if (baseGeneratorLocal !== null)
+			settings.baseGenerator = baseGeneratorLocal;
+		
+		if (generationCountLocal !== null)
+			settings.generationCount = parseInt(generationCountLocal);
+		
+		localStorage.removeItem("textPadding");
+		localStorage.removeItem("skipErrors");
+		localStorage.removeItem("enterReset");
+		localStorage.removeItem("baseGenerator");
+		localStorage.removeItem("generationCount");
+		
+		saveSettings();
+	}
 }
 
 function saveSettings() {
-	localStorage.setItem("textPadding", textPadding);
-	localStorage.setItem("skipErrors", skipErrors);
-	localStorage.setItem("enterReset", enterReset);
-	localStorage.setItem("baseGenerator", baseGenerator);
-	localStorage.setItem("generationCount", generationCount);
+	localStorage.setItem("typingSettings", JSON.stringify(settings));
 }
