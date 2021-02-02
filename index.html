@@ -55,32 +55,31 @@
 
 		<script type="text/javascript" src="preload.js"></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
-
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" 
+			integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" 
+			crossorigin="anonymous"></script>
+			
 		<!-- Stars! -->
 		<script>
-
 			let camera, scene, renderer;
 			let stars, starGeometry;
 
 			const starCount = 20000;
 
-			function init() {
+			function init() {		
 				scene = new THREE.Scene();
 				
 				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
 				camera.position.z = 1;
 				
-				starGeometry = new THREE.Geometry();
+				starGeometry = new THREE.BufferGeometry();
+				let verticesArray = [];
 				for (let i = 0; i < starCount; i++) {
-					let star = new THREE.Vector3(
-						THREE.Math.randFloat(-300, 300),
-						THREE.Math.randFloat(-300, 300),
-						THREE.Math.randFloat(-300, 300)
-					)
-
-					starGeometry.vertices.push(star);
+					verticesArray.push(THREE.Math.randFloat(-300, 300));
+					verticesArray.push(THREE.Math.randFloat(-300, 300));
+					verticesArray.push(THREE.Math.randFloat(-300, 300));
 				}
+				starGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verticesArray), 3));
 
 				let starSprite = new THREE.TextureLoader().load("star.png");
 				let starMat = new THREE.PointsMaterial({
@@ -105,6 +104,8 @@
 				renderer.domElement.style.opacity = 1;
 				document.getElementById("github-button-container").style.animation = "2s fadeIn";
 				document.getElementById("github-button-container").style.opacity = 1;
+				
+				render();
 			}
 
 			function windowResize() {
@@ -122,8 +123,6 @@
 			}
 
             init();
-			render();
-
 		</script>
 	</body>
 </html>
