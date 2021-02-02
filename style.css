@@ -37,12 +37,10 @@
 }
 
 ::-moz-selection {
-	color: var(--primary-color);
 	background: var(--color-0);
 }
 
 ::selection {
-	color: var(--primary-color);
 	background: var(--color-0);
 }
 

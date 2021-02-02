@@ -177,6 +177,12 @@ input, select {
 	outline: none;
 }
 
+textarea {
+	resize: none;
+	
+	width: 90%;
+}
+
 
 
 .perfect {

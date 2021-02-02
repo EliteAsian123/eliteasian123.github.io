@@ -12,10 +12,6 @@
                 color: #cccccc;
             }
 
-            h1 {
-                font-size: 8em;
-            }
-
             h2 {
                 font-size: 3em;
             }
@@ -31,16 +27,23 @@
             a:hover {
 	            color: #8d56cf;
             }
+			
+			#container {
+				position: fixed; 
+				top: 50%; 
+				left: 50%;
+				
+				transform: translate(-50%, -50%);
+			}
         </style>
     </head>
     <body>
-        <center>
-            <h1>404</h1>
-            <h2>Page not found.</h2>
-            <br>
-            Go back to the <a href="https://eliteasian123.github.io/">homepage</a>.
-            <br><br><br><br>
-            <img src="https://eliteasian123.github.io/logo.png" width="64" height="64" />
-        </center>
+		<div id="container">
+			<center>
+				<h2>404, Page not found.</h2>
+				<br>
+				Go back to the <a href="https://eliteasian123.github.io/">homepage</a>.
+			</center>
+		</div>
     </body>
 </html>

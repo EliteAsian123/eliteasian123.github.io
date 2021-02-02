@@ -1020,6 +1020,8 @@ function generateText() {
 		}
 	} else if (settings.baseGenerator === "pi") {
 		output = pi.substring(0, settings.generationCount);
+	} else if (settings.baseGenerator === "custom") {
+		output = settings.customText;
 	}
 	
 	output = output.trim().substring(0, 1000);

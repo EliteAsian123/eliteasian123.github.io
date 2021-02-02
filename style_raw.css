@@ -30,7 +30,6 @@
 }
 
 ::selection {
-	color: var(--primary-color);
 	background: var(--color-0);
 }
 

@@ -4,7 +4,8 @@ let settings = {
 	enterReset: false,
 	baseGenerator: "common",
 	generationCount: 12,
-	randomUppercase: false
+	randomUppercase: false,
+	customText: "Type the text you want to type here! The text CANNOT be less than 2 characters."
 };
 
 let settingsPanel = $("#settingsContainer");
@@ -15,6 +16,7 @@ let textPaddingSetting = $("#textPaddingSetting");
 let skipErrorsSetting = $("#skipErrorsSetting");
 let enterResetSetting = $("#enterResetSetting");
 let baseGeneratorSetting = $("#baseGeneratorSetting");
+let customTextSetting = $("#customTextSetting");
 let generationCountSetting = $("#generationCountSetting");
 let randomUppercaseSetting = $("#randomUppercaseSetting");
 
@@ -32,6 +34,7 @@ settingsButton.click(function() {
 		skipErrorsSetting.prop("checked", settings.skipErrors);
 		enterResetSetting.prop("checked", settings.enterReset);
 		baseGeneratorSetting.val(settings.baseGenerator);
+		customTextSetting.val(settings.customText);
 		generationCountSetting.val(settings.generationCount);
 		randomUppercaseSetting.prop("checked", settings.randomUppercase);
 	}
@@ -56,22 +59,37 @@ textPaddingSetting.bind("keyup mouseup", function() {
 	settings.textPadding = parseInt(textPaddingSetting.val());
 	saveSettings();
 	
-	updateText();
+	onSettingUpdate();
 });
 
 enterResetSetting.change(function() {
 	settings.enterReset = enterResetSetting.prop("checked");
 	saveSettings();
+	
+	onSettingUpdate();
 });
 
 skipErrorsSetting.change(function() {
 	settings.skipErrors = skipErrorsSetting.prop("checked");
 	saveSettings();
+	
+	onSettingUpdate();
 });
 
 baseGeneratorSetting.change(function() {
 	settings.baseGenerator = baseGeneratorSetting.val();
 	saveSettings();
+	
+	onSettingUpdate();
+});
+
+customTextSetting.bind("keyup", function() {
+	if (customTextSetting.val().length >= 2) {
+		settings.customText = customTextSetting.val();
+		saveSettings();
+	}
+	
+	onSettingUpdate();
 });
 
 generationCountSetting.bind("keyup mouseup", function() {
@@ -84,12 +102,14 @@ generationCountSetting.bind("keyup mouseup", function() {
 	settings.generationCount = parseInt(generationCountSetting.val());
 	saveSettings();
 	
-	updateText();
+	onSettingUpdate();
 });
 
 randomUppercaseSetting.change(function() {
 	settings.randomUppercase = randomUppercaseSetting.prop("checked");
 	saveSettings();
+	
+	onSettingUpdate();
 });
 
 function loadSettings() {
@@ -136,8 +156,34 @@ function loadSettings() {
 		
 		saveSettings();
 	}
+	
+	onSettingUpdate();
 }
 
 function saveSettings() {
 	localStorage.setItem("typingSettings", JSON.stringify(settings));
+}
+
+function onSettingUpdate() {
+	if (settings.baseGenerator !== "pi" && settings.baseGenerator !== "custom") {
+		randomUppercaseSetting.parent().show();
+	} else {
+		randomUppercaseSetting.parent().hide();
+	}
+	
+	if (settings.baseGenerator === "common") {
+		generationCountSetting.parent().find("._word").show();
+		generationCountSetting.parent().find("._character").hide();
+	} else {
+		generationCountSetting.parent().find("._word").hide();
+		generationCountSetting.parent().find("._character").show();
+	}
+	
+	if (settings.baseGenerator === "custom") {
+		customTextSetting.parent().show();
+		generationCountSetting.parent().hide();
+	} else {
+		customTextSetting.parent().hide();
+		generationCountSetting.parent().show();
+	}
 }

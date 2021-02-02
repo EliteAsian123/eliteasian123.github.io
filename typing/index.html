@@ -61,14 +61,27 @@
 						<option value="common">Common English Words</option>
 						<option value="randomLetters">Random Letters</option>
 						<option value="pi">Digits of PI</option>
+						<option value="custom">Custom Text</option>
 					</select>
 					<p>This setting changes the words you have to type. (Recommended: Common English Words)</p>
 				</div>
 				
 				<div class="setting">
-					<label>Generation Count</label>
+					<label>Custom Text</label>
+					<p style="margin-bottom: 4px;">The custom text you want to type. The text cannot be less than 2 characters!</p>
+					<textarea id="customTextSetting" rows="4"></textarea>
+					<br>
+					<br>
+				</div>
+				
+				<div class="setting">
+					<label class="_character">Character Count</label>
+					<label class="_word">Word Count</label>
+					
 					<input id="generationCountSetting" type="number" min="2" max="1000">
-					<p>How many words or letters you have to type. The maximum amout of characters allowed in the text is 1000. (Recommended: 12)</p>
+					
+					<p class="_character">How many characters you want to type. (Recommended: 12)</p>
+					<p class="_word">How many words you want to type. There is a maximum of 1000 characters. (Recommended: 12)</p>
 				</div>
 				
 				<div class="setting">
