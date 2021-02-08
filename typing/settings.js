@@ -93,8 +93,8 @@ customTextSetting.bind("keyup", function() {
 });
 
 generationCountSetting.bind("keyup mouseup", function() {
-	if (generationCountSetting.val() > 1000)
-		generationCountSetting.val(1000);
+	if (generationCountSetting.val() > 500)
+		generationCountSetting.val(500);
 	
 	if (generationCountSetting.val() < 2)
 		generationCountSetting.val(2);
