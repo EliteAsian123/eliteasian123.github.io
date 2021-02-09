@@ -1024,7 +1024,7 @@ function generateText() {
 		output = settings.customText;
 	}
 	
-	output = output.trim().substring(0, 500).replace(/[\n\r\t]/g, " ");
+	output = output.trim().substring(0, 500).replace(/[\n\r\t]/g, " ").replace(/ +(?= )/g, "");
 	
 	if (output.length < 2)
 		return generateText();
