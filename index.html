@@ -61,21 +61,35 @@
 		<script>
 			let camera, scene, renderer;
 			let stars, starGeometry;
+			let skybox, skyboxGeometry;
+			let theta = 0;
+			
+			let clock = new THREE.Clock();
 
 			const starCount = 20000;
+			
+			const skyboxImages = [
+				"right", 
+				"left", 
+				"top", 
+				"bottom", 
+				"front", 
+				"back"
+			];
 
 			function init() {		
 				scene = new THREE.Scene();
 				
-				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
-				camera.position.z = 1;
+				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 3, 1000);
+				
+				// STARS
 				
 				starGeometry = new THREE.BufferGeometry();
 				let verticesArray = [];
 				for (let i = 0; i < starCount; i++) {
-					verticesArray.push(THREE.Math.randFloat(-300, 300));
-					verticesArray.push(THREE.Math.randFloat(-300, 300));
-					verticesArray.push(THREE.Math.randFloat(-300, 300));
+					verticesArray.push(THREE.Math.randFloat(-200, 200));
+					verticesArray.push(THREE.Math.randFloat(-200, 200));
+					verticesArray.push(THREE.Math.randFloat(-200, 200));
 				}
 				starGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verticesArray), 3));
 
@@ -89,6 +103,23 @@
 
 				stars = new THREE.Points(starGeometry, starMat);
 				scene.add(stars);
+
+				// SKYBOX
+				
+				skyboxGeometry = new THREE.BoxGeometry(1000, 1000, 1000);	
+				
+				let skyboxMaterials = [];
+				for (let i = 0; i < skyboxImages.length; i++) {
+					skyboxMaterials.push(new THREE.MeshBasicMaterial({
+						map: new THREE.TextureLoader().load("skybox/" + skyboxImages[i] + ".png"),
+						side: THREE.BackSide
+					}));
+				}
+					
+				skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
+				scene.add(skybox);
+				
+				// THREE STUFF
 
 				renderer = new THREE.WebGLRenderer();
 				renderer.setSize(window.innerWidth, window.innerHeight);
@@ -114,7 +145,11 @@
 			}
 			
 			function render() {
-				stars.rotation.y += 0.0001;
+				theta += 0.05 * clock.getDelta();
+			
+				camera.position.y = Math.sin(theta * 2) * 10;
+				
+				camera.rotation.y = theta;
 
 				renderer.render(scene, camera);
 				requestAnimationFrame(render);
