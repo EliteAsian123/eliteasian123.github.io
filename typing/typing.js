@@ -179,10 +179,19 @@ $(window).keypress(function(event) {
 
 		updateText();
 	}
+}).keydown(function(event) {
+	if (textIndex > 0 && !finished) {
+		if (event.keyCode == 8 && settings.skipErrors) {
+			textIndex--;
+			
+			typingStatus[textIndex] = "none";
+			
+			updateText();
+		} 
+	}
 });
 
 $(function() {
-	// FIX
 	loadSettings();
 	
 	start();

@@ -1,6 +1,6 @@
 let settings = {
 	textPadding: 12,
-	skipErrors: false,
+	skipErrors: true,
 	enterReset: false,
 	baseGenerator: "common",
 	generationCount: 12,
