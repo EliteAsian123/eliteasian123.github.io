@@ -184,6 +184,10 @@ textarea {
 	width: 90%;
 }
 
+.spacing {
+	height: 64px;
+}
+
 
 
 .perfect {
@@ -192,13 +196,14 @@ textarea {
 
 .mistake {
 	color: #e30b0b;
+	background: #ffc9c9;
+}
+
+.corrected {
+	color: #0c870c;
 	background: #ffe3e3;
 }
 
 .currentChar {
 	background: #cfdbff !important;
-}
-
-.spacing {
-	height: 64px;
 }

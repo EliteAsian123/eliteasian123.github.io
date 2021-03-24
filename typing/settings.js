@@ -2,6 +2,7 @@ let settings = {
 	textPadding: 12,
 	skipErrors: true,
 	enterReset: false,
+	showCpm: false,
 	baseGenerator: "common",
 	generationCount: 12,
 	randomUppercase: false,
@@ -15,6 +16,7 @@ let closeButton = $("#closeButton");
 let textPaddingSetting = $("#textPaddingSetting");
 let skipErrorsSetting = $("#skipErrorsSetting");
 let enterResetSetting = $("#enterResetSetting");
+let showCpmSetting = $("#showCpmSetting");
 let baseGeneratorSetting = $("#baseGeneratorSetting");
 let customTextSetting = $("#customTextSetting");
 let generationCountSetting = $("#generationCountSetting");
@@ -33,6 +35,7 @@ settingsButton.click(function() {
 		textPaddingSetting.val(settings.textPadding);
 		skipErrorsSetting.prop("checked", settings.skipErrors);
 		enterResetSetting.prop("checked", settings.enterReset);
+		showCpmSetting.prop("checked", settings.showCpm);
 		baseGeneratorSetting.val(settings.baseGenerator);
 		customTextSetting.val(settings.customText);
 		generationCountSetting.val(settings.generationCount);
@@ -43,6 +46,7 @@ settingsButton.click(function() {
 closeButton.click(function() {
 	if (isSettingsShowing()) {
 		settingsPanel.hide();
+		updateStats();
 		start();
 	}
 });
@@ -64,6 +68,13 @@ textPaddingSetting.bind("keyup mouseup", function() {
 
 enterResetSetting.change(function() {
 	settings.enterReset = enterResetSetting.prop("checked");
+	saveSettings();
+	
+	onSettingUpdate();
+});
+
+showCpmSetting.change(function() {
+	settings.showCpm = showCpmSetting.prop("checked");
 	saveSettings();
 	
 	onSettingUpdate();

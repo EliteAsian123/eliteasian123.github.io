@@ -132,11 +132,23 @@ function getError() {
 	return (error / (typingStatus.length) * 100).toFixed(2);
 }
 
+function getScore() {
+	return (getWpm() * (1 - getError() / 100)).toFixed(2);
+}
+
 function updateStats() {
-	if (characterTimes.length <= 0) {
-		statsPanel.html("<b>WPM:</b> --.--, <b>CPM:</b> ---.--, <b>Error: </b> --.--%");
+	if (!settings.showCpm) {
+		if (characterTimes.length <= 0) {
+			statsPanel.html("<b>WPM:</b> --.--, <b>Error: </b> --.--%, <b>Score:</b> --.--");
+		} else {
+			statsPanel.html("<b>WPM:</b> " + getWpm() + ", <b>Error:</b> " + getError() + "%, <b>Score:</b> " + getScore());
+		}
 	} else {
-		statsPanel.html("<b>WPM:</b> " + getWpm() + ", <b>CPM:</b> " + getCpm() + ", <b>Error:</b> " + getError() + "%");
+		if (characterTimes.length <= 0) {
+			statsPanel.html("<b>CPM:</b> --.--, <b>Error: </b> --.--%, <b>Score:</b> --.--");
+		} else {
+			statsPanel.html("<b>CPM:</b> " + getCpm() + ", <b>Error:</b> " + getError() + "%, <b>Score:</b> " + getScore());
+		}
 	}
 }
 
@@ -146,6 +158,8 @@ $(window).keypress(function(event) {
 			if (event.key == text.charAt(textIndex)) {
 				if (typingStatus[textIndex] == "none") {
 					typingStatus[textIndex] = "perfect";
+				} else if (typingStatus[textIndex] == "wasMistake") {
+					typingStatus[textIndex] = "corrected";
 				}
 				
 				textIndex++;
@@ -184,7 +198,12 @@ $(window).keypress(function(event) {
 		if (event.keyCode == 8 && settings.skipErrors) {
 			textIndex--;
 			
-			typingStatus[textIndex] = "none";
+			if (typingStatus[textIndex] == "mistake") {
+				typingStatus[textIndex] = "wasMistake";
+			} else {
+				typingStatus[textIndex] = "none";
+			}
+				
 			
 			updateText();
 		} 
