@@ -12,7 +12,7 @@
 			crossorigin="anonymous"></script>
 	</head>
 
-	<body>
+	<body class="fira-mono">
 		<div id="loading">Loading...</div>
 		
 		<div id="container">
@@ -57,6 +57,17 @@
 					<label>Show CPM</label>
 					<input id="showCpmSetting" type="checkbox">
 					<p>Shows CPM (Characters per Minute) instead of WPM (Words per Minute). (Recommended: Off)</p>
+				</div>
+				
+				<div class="setting">
+					<label>Font</label>
+					<select id="fontSetting">
+						<option value="fira-mono">Fira Mono</option>
+						<option value="courier-prime">Courier Prime</option>
+						<option value="share-tech-mono">Share Tech Mono</option>
+						<option value="monospace">Monospace (Backup Font)</option>
+					</select>
+					<p>This setting changes the words you have to type. (Recommended: Common English Words)</p>
 				</div>
 				
 				<header>Text Generator</header>

@@ -198,7 +198,7 @@ $(window).keypress(function(event) {
 		if (event.keyCode == 8 && settings.skipErrors) {
 			textIndex--;
 			
-			if (typingStatus[textIndex] == "mistake") {
+			if (typingStatus[textIndex] == "mistake" || typingStatus[textIndex] == "corrected") {
 				typingStatus[textIndex] = "wasMistake";
 			} else {
 				typingStatus[textIndex] = "none";

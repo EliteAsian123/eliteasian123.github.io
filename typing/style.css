@@ -1,7 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
-		
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
 body {
+	font-variant-ligatures: none;
+}
+
+body.fira-mono {
 	font-family: 'Fira Mono', monospace;
+}
+
+body.courier-prime {
+	font-family: 'Courier Prime', monospace;
+}
+
+body.share-tech-mono {
+	font-family: 'Share Tech Mono', monospace;
+}
+
+body.monospace {
+	font-family: monospace;
 }
 
 #textPanel {
@@ -57,10 +75,8 @@ body {
 	position: absolute;
 	width: 100%;
 	
-	top: 50%;
+	top: 25%;
 	left: 0;
-	
-	transform: translateY(-50%);
 }
 
 #loading {

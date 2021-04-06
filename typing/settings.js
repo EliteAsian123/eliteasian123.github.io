@@ -6,7 +6,8 @@ let settings = {
 	baseGenerator: "common",
 	generationCount: 12,
 	randomUppercase: false,
-	customText: "Type the text you want to type here! The text CANNOT be less than 2 characters."
+	customText: "Type the text you want to type here! The text CANNOT be less than 2 characters.",
+	font: "fira-mono"
 };
 
 let settingsPanel = $("#settingsContainer");
@@ -17,6 +18,7 @@ let textPaddingSetting = $("#textPaddingSetting");
 let skipErrorsSetting = $("#skipErrorsSetting");
 let enterResetSetting = $("#enterResetSetting");
 let showCpmSetting = $("#showCpmSetting");
+let fontSetting = $("#fontSetting");
 let baseGeneratorSetting = $("#baseGeneratorSetting");
 let customTextSetting = $("#customTextSetting");
 let generationCountSetting = $("#generationCountSetting");
@@ -36,6 +38,7 @@ settingsButton.click(function() {
 		skipErrorsSetting.prop("checked", settings.skipErrors);
 		enterResetSetting.prop("checked", settings.enterReset);
 		showCpmSetting.prop("checked", settings.showCpm);
+		fontSetting.val(settings.font);
 		baseGeneratorSetting.val(settings.baseGenerator);
 		customTextSetting.val(settings.customText);
 		generationCountSetting.val(settings.generationCount);
@@ -83,6 +86,16 @@ showCpmSetting.change(function() {
 skipErrorsSetting.change(function() {
 	settings.skipErrors = skipErrorsSetting.prop("checked");
 	saveSettings();
+	
+	onSettingUpdate();
+});
+
+fontSetting.change(function() {
+	settings.font = fontSetting.val();
+	saveSettings();
+	
+	$("body").removeClass();
+	$("body").addClass(settings.font);
 	
 	onSettingUpdate();
 });
@@ -167,6 +180,9 @@ function loadSettings() {
 		
 		saveSettings();
 	}
+	
+	$("body").removeClass();
+	$("body").addClass(settings.font);
 	
 	onSettingUpdate();
 }
