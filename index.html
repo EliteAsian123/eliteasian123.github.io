@@ -1,162 +1,132 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>EliteAsian123</title>
-		<meta name="author" content="EliteAsian123">
-		<meta name="keywords" content="EliteAsian, EliteAsian123, Desertic, Games, Website, Voxel Game, Voxel Games, Desertic Game, Game, Dino Game, Dinosaur Game">
-		<meta name="description" content="The Offical Website for EliteAsian123! On it you can play Desertic, a Voxel Game!">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		
-		<!-- Google Site Verification -->
-		<meta name="google-site-verification" content="zKbmUXvXM7b1FMLO9gyuW5CLl9HDVVmjinHmmYMxbzU">
-		
-		<link rel="shortcut icon" href="favicon.ico">
-		
-		<link rel="stylesheet" href="style.css">
 
-		<style>
-			body {
-				background: black;
-				overflow: hidden;
-			}
-			
-			#follow-button {
-				background: white;
-				padding: 7px;
-				margin: 5px;
-				color: black;
-				border-radius: 5px;
-			}
-			
-			#follow-button svg {
-				height: 20px;
-				transform: translate(0, 12%);
-			}
-		</style>
-	</head>
+<head>
+	<title>EliteAsian123</title>
+	<meta name="author" content="EliteAsian123">
+	<meta name="keywords" content="EliteAsian, EliteAsian123">
+	<meta name="description" content="EliteAsian123's offical website.">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-	<body>
-		<nav>
-			<a href="https://eliteasian123.github.io"><img src="logo.png"></img></a>
-			<a href="typing/" class="nav-item">Typing Practice</a>
-		</nav>
-		
-		<h2 id="page-text">EliteAsian123</h2>
-		<div id="github-button-container">
-			<a id="follow-button" href="https://github.com/EliteAsian123">
-				<svg viewBox="0 0 16 16" style="width: 16px; height: 16px;" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-				Follow Me!
-			</a>
-		</div>
-		
-		<div id="page-image"></div>
+	<!-- Google Site Verification -->
+	<meta name="google-site-verification" content="zKbmUXvXM7b1FMLO9gyuW5CLl9HDVVmjinHmmYMxbzU">
 
-		<script type="text/javascript" src="preload.js"></script>
+	<link rel="shortcut icon" href="favicon.ico">
+</head>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" 
-			integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" 
-			crossorigin="anonymous"></script>
-			
-		<!-- Stars! -->
-		<script>
-			let camera, scene, renderer;
-			let stars, starGeometry;
-			let skybox, skyboxGeometry;
-			let theta = 0;
-			
-			let clock = new THREE.Clock();
+<body>
+	<div style="position: fixed; left: 0; top: 0; right: 0; bottom: 0;" id="canvas"></div>
 
-			let seed = 123;
-
-			const starCount = 20000;
-			
-			const skyboxImages = [
-				"right", 
-				"left", 
-				"top", 
-				"bottom", 
-				"front", 
-				"back"
-			];
-
-			function init() {		
-				scene = new THREE.Scene();
-				
-				camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 3, 1000);
-				
-				// STARS
-				
-				starGeometry = new THREE.BufferGeometry();
-				let verticesArray = [];
-				for (let i = 0; i < starCount * 3; i++) {
-					verticesArray.push(THREE.Math.randFloat(-200, 200));
-				}
-				starGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verticesArray), 3));
-
-				let starSprite = new THREE.TextureLoader().load("space/star.png");
-				let starMat = new THREE.PointsMaterial({
-					color: 0xFFFFFF,
-					size: 0.75,
-					map: starSprite,
-					transparent: true,
-					depthWrite: false
-				});
-
-				stars = new THREE.Points(starGeometry, starMat);
-				scene.add(stars);
-
-				// SKYBOX
-				
-				skyboxGeometry = new THREE.BoxGeometry(1000, 1000, 1000);	
-				
-				let skyboxMaterials = [];
-				for (let i = 0; i < skyboxImages.length; i++) {
-					skyboxMaterials.push(new THREE.MeshBasicMaterial({
-						map: new THREE.TextureLoader().load("space/" + skyboxImages[i] + ".png"),
-						side: THREE.BackSide
-					}));
-				}
-					
-				skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
-				scene.add(skybox);
-				
-				// THREE STUFF
-
-				renderer = new THREE.WebGLRenderer();
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				renderer.domElement.style.opacity = 0;
-			
-				// HTML STUFF
-			
-				document.getElementById("page-image").appendChild(renderer.domElement);
-
-				window.addEventListener("resize", windowResize, false);
-
-				renderer.domElement.style.animation = "2s fadeIn";
-				renderer.domElement.style.opacity = 1;
-				
-				render();
-			}
-
-			function windowResize() {
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize(window.innerWidth, window.innerHeight);
-			}
-			
-			function render() {
-				theta += 0.07 * clock.getDelta();
-			
-				camera.position.y = Math.sin(theta * 2) * 10;
-				
-				camera.rotation.y = theta;
-
-				renderer.render(scene, camera);
-				requestAnimationFrame(render);
-			}
-
-            init();
+	<script type=" text/javascript" src="preload.js">
 		</script>
-	</body>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r125/three.min.js" integrity="sha512-XI02ivhfmEfnk8CEEnJ92ZS6hOqWoWMKF6pxF/tC/DXBVxDXgs2Kmlc9CHA0Aw2dX03nrr8vF54Z6Mqlkuabkw==" crossorigin="anonymous"></script>
+
+	<!-- Stars! -->
+	<script>
+		let camera, scene, renderer;
+		let stars, starGeometry;
+		let skybox, skyboxGeometry;
+		let theta = 0;
+
+		let clock = new THREE.Clock();
+
+		let seed = 123;
+		const starCount = 20000;
+
+		const skyboxImages = [
+			"right",
+			"left",
+			"top",
+			"bottom",
+			"front",
+			"back"
+		];
+
+		function init() {
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 3, 5000);
+
+			// STARS
+
+			starGeometry = new THREE.BufferGeometry();
+			let verticesArray = [];
+			for (let i = 0; i < starCount * 3; i++) {
+				verticesArray.push(THREE.Math.randFloat(-200, 200));
+			}
+			starGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(verticesArray), 3));
+
+			let starSprite = new THREE.TextureLoader().load("space/star.png");
+			let starMat = new THREE.PointsMaterial({
+				color: 0xFFFFFF,
+				size: 0.75,
+				map: starSprite,
+				transparent: true,
+				depthWrite: false
+			});
+
+			stars = new THREE.Points(starGeometry, starMat);
+			scene.add(stars);
+
+			// SKYBOX
+
+			skyboxGeometry = new THREE.BoxGeometry(1000, 1000, 1000);
+
+			let skyboxMaterials = [];
+			for (let i = 0; i < skyboxImages.length; i++) {
+				skyboxMaterials.push(new THREE.MeshBasicMaterial({
+					map: new THREE.TextureLoader().load("space/" + skyboxImages[i] + ".png"),
+					side: THREE.BackSide
+				}));
+			}
+
+			skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
+			scene.add(skybox);
+
+			// THREE STUFF
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.domElement.style.opacity = 0;
+
+			// HTML STUFF
+
+			document.getElementById("canvas").appendChild(renderer.domElement);
+
+			window.addEventListener("resize", windowResize, false);
+
+			renderer.domElement.style.animation = "2s fadeIn";
+			renderer.domElement.style.opacity = 1;
+
+			render();
+		}
+
+		function windowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function lerp(a, b, t) {
+			return a + (b - a) * t;
+		}
+
+		function render() {
+			const delta = clock.getDelta();
+
+			theta += 0.07 * delta;
+
+			camera.position.y = Math.sin(theta * 2) * 10;
+			camera.rotation.y = theta;
+
+			renderer.render(scene, camera);
+			requestAnimationFrame(render);
+		}
+
+		init();
+	</script>
+</body>
+
 </html>
