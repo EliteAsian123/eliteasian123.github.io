@@ -1,284 +1,40 @@
-/*
-* Prefixed by https://autoprefixer.github.io
-* PostCSS: v7.0.29,
-* Autoprefixer: v9.7.6
-* Browsers: last 4 version
-*/
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
-/* https://fonts.google.com/specimen/Raleway */
-@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
-
-:root {
-	--background-color: #2e2e2e;
-	--primary-color: #cccccc;
-	--secondary-color: #949494;
-	--dark-0: #222222;
-	--dark-1: #1e1e1e;
-	--dark-2: #1a1a1a;
-
-	--color-0: #4ba0cf;
-	--color-1: #8d56cf;
-	--color-2: #fe9900;
-}
-
-/* Exotics */
-
-::-webkit-scrollbar {
-	width: 10px;
-}
-  
-::-webkit-scrollbar-track {
-	background: var(--dark-0);
-}
-  
-::-webkit-scrollbar-thumb {
-	background: var(--secondary-color);
-	border-radius: 10px;
-}
-
-::-moz-selection {
-	background: var(--color-0);
-}
-
-::selection {
-	background: var(--color-0);
-}
-
-/* CSS */
-
-.preload * {
-	-webkit-transition: none !important;
-	-o-transition: none !important;
-	transition: none !important;
-}
-
-body {
-	background: -webkit-gradient(linear, left top, right top, from(var(--color-0)), to(var(--color-1)));
-	background: -o-linear-gradient(left, var(--color-0), var(--color-1));
-	background: linear-gradient(90deg, var(--color-0), var(--color-1));
-	color: var(--primary-color);
-	font-family: "Raleway", sans-serif;
-}
-
-hr {
-	border: 1px solid var(--secondary-color);
-}
-
-nav {
+#canvasContainer {
 	position: fixed;
-	background-color: var(--dark-0);
-	width: 100%;
-	left: 0;
-	top: 0;
-	padding: 0 15px;
-	font-size: 150%;
-	z-index: 5;
-}
-
-nav * {
-	float: left;
-	padding: 2px 15px;
-}
-
-nav img {
-	width: 45px;
-	height: 45px;
-	margin-top: 8px;
-}
-
-.nav-item {
-	padding: 20px;
-	color: var(--primary-color);
-	text-decoration: none;
-}
-
-#page-text {
-	position: absolute;
-	top: 100px;
-	left: 75px;
-	font-size: 400%;
-	color: white;
-}
-
-#github-button-container {
-	position: absolute;
-	top: 230px;
-	left: 75px;
-}
-
-#page-image {
-	min-height: 100vh;
-	position: absolute;
-	width: 100%;
 	top: 0;
 	left: 0;
-	z-index: -1;
-	overflow: hidden;
+	right: 0;
+	bottom: 0;
 }
 
-#center-button {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-left: -200px;
-	margin-top: -50px;
-	width: 400px;
-	height: 100px;
-	vertical-align: middle;
-	line-height: 100px;
-	font-size: 200%;
-}
+#nameContainer {
+	user-select: none;
 
-.button {
-	background-color: var(--color-0);
-	border-radius: 15px;
 	color: white;
+	font-family: "JetBrains Mono", monospace;
+	font-size: 1.1em;
 	text-align: center;
-	outline: none;
-	-webkit-transition: 0.25s;
-	-o-transition: 0.25s;
-	transition: 0.25s;
-	cursor: pointer;
-	-webkit-user-select: none;
-	   -moz-user-select: none;
-	    -ms-user-select: none;
-	        user-select: none;
-}
 
-.button:hover {
-	background-color: var(--color-1);
-	color: white;
-}
+	background-color: rgba(0.8, 0.8, 0.8, 0.5);
+	backdrop-filter: blur(2px);
 
-.button.small {
-	padding: 20px;
-	border-radius: 7.5px;
-}
-
-#after {
-	-webkit-transform: translateY(100vh);
-	    -ms-transform: translateY(100vh);
-	        transform: translateY(100vh);
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 99%;
-	padding: 1vw;
-	padding-right: 0;
-	background-color: var(--background-color);
-	overflow-x: hidden;
-	font-size: 112.5%;
-}
-
-#glass-effect {
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	background-color: rgba(255, 255, 255, .15);  
-	-webkit-backdrop-filter: blur(5px);  
-	        backdrop-filter: blur(5px);
-	z-index: 50;
-	display: none;
-}
-
-#alert {
-	width: 80%;
-	height: 80%;
-	position: fixed;
-	display: none;
-	background-color: var(--dark-2);
 	z-index: 100;
-	border-radius: 10px;
-	border: 6px solid var(--dark-0);
-	font-size: 112.5%;
-	padding: 0 15px;
+
+	position: fixed;
 	top: 50%;
 	left: 50%;
-	margin-left: calc(-40vw + -12px);
-	margin-top: calc(-40vh + -12px);
+	transform: translate(-50%, -50%);
+
+	padding: 32px;
+	border-radius: 25px;
+}
+
+header {
+	font-size: 3em;
 }
 
 a {
-	color: var(--color-0);
+	color: lightskyblue;
 	text-decoration: none;
-	-webkit-transition: 0.25s;
-	-o-transition: 0.25s;
-	transition: 0.25s;
-}
-
-a:hover {
-	color: var(--color-1);
-}
-
-.centerX {
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	    -ms-transform: translateX(-50%);
-	        transform: translateX(-50%);
-}
-
-iframe {
-	border: none;
-	width: 100%;
-	height: auto;
-}
-
-@-webkit-keyframes fadeIn {
-    from { 
-		opacity: 0;
-	}
-	
-    to   { 
-		opacity: 1;
-	}
-}
-
-@keyframes fadeIn {
-    from { 
-		opacity: 0;
-	}
-	
-    to   { 
-		opacity: 1;
-	}
-}
-
-@media (max-width: 1150px) {
-	#github-button-container {
-		display: none;
-	}
-	
-	#page-text {
-		font-size: 300%;
-		position: relative;
-		left: 0;
-		top: 75px;
-		text-align: center;
-	}
-
-	#after {
-		font-size: 100%;
-	}
-	
-	#alert {
-		font-size: 100%;
-	}
-	
-	#center-button {
-		margin-left: -100px;
-		margin-top: -25px;
-		width: 200px;
-		height: 50px;
-		border-radius: 7.5px;
-		font-size: 100%;
-		line-height: 50px;
-	}
-}
-
-@media (max-width: 350px) {
-	nav {
-		display: none;
-	}
 }
