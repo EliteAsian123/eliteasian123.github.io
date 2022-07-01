@@ -30,7 +30,7 @@
 		<br />
 		<br />
 
-		<a id="randomSite">Random Site</a>
+		Random Site: <a id="randomSite"></a>
 	</div>
 
 	<div id="canvasContainer"></div>
@@ -40,28 +40,77 @@
 	<!-- Random Cool Site -->
 	<script>
 		const siteList = [
-			"https://monkeytype.com/",
-			"https://demo.geoguess.games/",
-			"https://www.wolframalpha.com/",
-			"https://vscode.dev/",
-			"https://everynoise.com/",
-			"https://quillbot.com/",
-			"https://pcpartpicker.com/",
-			"https://github.com/yt-dlp/yt-dlp#readme",
-			"https://labs.spitfireaudio.com/",
-			"https://vital.audio/",
-			"https://returnyoutubedislike.com/",
-			"https://projecteuler.net/",
-			"https://blog.studiominiboss.com/pixelart"
+			{
+				href: "https://monkeytype.com/",
+				text: "Monkey Type"
+			},
+			{
+				href: "https://github.com/GeoGuess/GeoGuess#readme",
+				text: "GeoGuess"
+			},
+			{
+				href: "https://www.wolframalpha.com/",
+				text: "Wolfram Alpha"
+			},
+			{
+				href: "https://vscode.dev/",
+				text: "VS Code (Online)"
+			},
+			{
+				href: "https://everynoise.com/",
+				text: "Every Noise"
+			},
+			{
+				href: "https://quillbot.com/",
+				text: "Quillbot"
+			},
+			{
+				href: "https://pcpartpicker.com/",
+				text: "PCPartPicker"
+			},
+			{
+				href: "https://github.com/yt-dlp/yt-dlp#readme",
+				text: "YT-DLP"
+			},
+			{
+				href: "https://labs.spitfireaudio.com/",
+				text: "LABS (Spitfire Audio)"
+			},
+			{
+				href: "https://vital.audio/",
+				text: "Vital"
+			},
+			{
+				href: "https://returnyoutubedislike.com/",
+				text: "Return YouTube Dislike"
+			},
+			{
+				href: "https://projecteuler.net/",
+				text: "Project Euler"
+			},
+			{
+				href: "https://blog.studiominiboss.com/pixelart",
+				text: "Pixel Art Guide"
+			},
+			{
+				href: "https://github.com/BetterDiscord/BetterDiscord#readme",
+				text: "BetterDiscord"
+			},
+			{
+				href: "https://softology.pro/voc.htm",
+				text: "Visions of Chaos"
+			},
+			{
+				href: "https://lineageos.org/",
+				text: "LineageOS"
+			},
 		];
 
-		function updateLink() {
-			let siteLink = document.getElementById("randomSite");
-			siteLink.href = siteList[Math.floor(Math.random() * siteList.length)];
-			siteLink.addEventListener("click", updateLink, { once: true });
-		}
+		const siteLink = document.getElementById("randomSite");
+		const link = siteList[Math.floor(Math.random() * siteList.length)];
 
-		updateLink();
+		siteLink.href = link.href;
+		siteLink.textContent = link.text;
 	</script>
 
 	<!-- Stars! -->
