@@ -1,40 +1,71 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap");
 
-#canvasContainer {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-}
-
-#nameContainer {
+* {
 	user-select: none;
-
-	color: white;
-	font-family: "JetBrains Mono", monospace;
-	font-size: 1.1em;
-	text-align: center;
-
-	background-color: rgba(255, 255, 255, 0.0225);
-	backdrop-filter: blur(4px);
-
-	z-index: 100;
-
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-
-	padding: 50px;
-	border-radius: 20px;
+	-webkit-user-drag: none;
 }
 
-header {
-	font-size: 3em;
+body {
+	background: black;
+	overflow: hidden;
 }
 
 a {
-	color: lightskyblue;
+	color: white;
 	text-decoration: none;
+}
+
+#container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+
+	transform: translate(-50%, -50%);
+}
+
+#logo {
+	position: relative;
+
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+
+	animation: logo 2s ease-in-out 0s infinite;
+	z-index: -100;
+}
+
+#name {
+	position: relative;
+
+	text-align: center;
+}
+
+#name > p {
+	font-family: "Quicksand", sans-serif;
+	color: gray;
+
+	font-size: 1.5em;
+}
+
+#name > header {
+	font-family: "Kanit", sans-serif;
+	color: white;
+
+	font-size: 3em;
+	line-height: 1em;
+}
+
+@keyframes logo {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	25% {
+		transform: rotate(45deg);
+	}
+
+	100% {
+		transform: rotate(45deg);
+	}
 }
