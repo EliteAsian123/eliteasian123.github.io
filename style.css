@@ -35,20 +35,20 @@ a {
 	z-index: -100;
 }
 
-#name {
+#text {
 	position: relative;
 
 	text-align: center;
 }
 
-#name > p {
+#text > p {
 	font-family: "Quicksand", sans-serif;
 	color: gray;
 
 	font-size: 1.5em;
 }
 
-#name > header {
+#text > header {
 	font-family: "Kanit", sans-serif;
 	color: white;
 
