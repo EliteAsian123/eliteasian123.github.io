@@ -1,31 +1,34 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Whoops!</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-		<div id="container">
-			<div id="text">
-				<header>404</header>
-				<p id="js">This place doesn't exist...</p>
-			</div>
-		</div>
-		
-		<script>
-			const p = document.getElementById("js");
-			
-			setTimeout(() => {
-				p.innerHTML = "Seriously!";
-			}, 2500);
 
-			setTimeout(() => {
-				p.innerHTML = "I'll bring you back.";
-			}, 5000);
-			
-			setTimeout(() => {
-				window.location.href = "/";
-			}, 7500);
-		</script>
-    </body>
+<head>
+	<title>Whoops!</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<div id="container">
+		<div id="text">
+			<header>404</header>
+			<p id="js">This place doesn't exist...</p>
+		</div>
+	</div>
+
+	<script>
+		const p = document.getElementById("js");
+
+		setTimeout(() => {
+			p.innerHTML = "Seriously!";
+		}, 2500);
+
+		setTimeout(() => {
+			p.innerHTML = "I'll bring you back.";
+		}, 5000);
+
+		setTimeout(() => {
+			window.location.href = "/";
+		}, 7500);
+	</script>
+</body>
+
 </html>
